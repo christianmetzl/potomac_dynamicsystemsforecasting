@@ -1,2 +1,2 @@
 # potomac_dynamicsystemsforecasting
-MITRE, QBRAID, JOMESTRADING
+MITRE, QBRAID, JONESTRADING
