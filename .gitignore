@@ -21,3 +21,4 @@ Thumbs.db
 # scaling sweep run artifacts (regenerable)
 scaling_sweep_run.log
 scaling_sweep_results.json
+scaling_sweep_results_multivariate.json
