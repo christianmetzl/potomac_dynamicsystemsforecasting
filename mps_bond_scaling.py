@@ -48,7 +48,11 @@ def main():
     ap.add_argument("--ns", type=int, nargs="+", default=[8, 10, 12, 14])
     ap.add_argument("--tau", type=float, default=2.0, help="evolution time (g-anchor scale)")
     ap.add_argument("--chis", type=int, nargs="+", default=[8, 16, 32, 64])
-    ap.add_argument("--chi-ref", type=int, default=128, help="generous chi for true-bond probe")
+    ap.add_argument("--chi-ref", type=int, default=256,
+                    help="CAP on the true-bond probe; per-n probe uses min(2^ceil(n/2), this)")
+    ap.add_argument("--steps", type=int, default=8,
+                    help="Trotter steps. Bond/entanglement is steps-insensitive (verified), so a "
+                         "small value is ~exact for bond/trunc while being much faster.")
     ap.add_argument("--dense-max", type=int, default=12, help="largest n to cross-check vs dense")
     ap.add_argument("--out", default="mps_bond_scaling.json")
     args = ap.parse_args()
@@ -63,25 +67,29 @@ def main():
     print("=" * 88)
     print(f"MPS BOND-DIMENSION SCALING  tau={args.tau}  input=peak-RV crisis row "
           f"({data['n_features']}-feat panel)")
-    print(f"  chi caps {args.chis} ; true-bond probe chi={args.chi_ref} ; dense check n<={args.dense_max}")
+    print(f"  chi caps {args.chis} ; true-bond probe chi=min(2^ceil(n/2),{args.chi_ref}) ; "
+          f"Trotter steps={args.steps} ; dense check n<={args.dense_max}")
     print("=" * 88)
 
     rows = []
     for n in args.ns:
         emb = crisis_row[:n]
         J = generate_coupling_matrix(n, 0.5, seed=0)     # g(n)-anchor coupling (seed 0)
-        rec = {"n": n, "max_bond_full": int(2 ** (n // 2))}
+        chi_ref = min(2 ** ((n + 1) // 2), args.chi_ref)  # exact if <= cap, else flagged saturated
+        rec = {"n": n, "max_bond_full": int(2 ** (n // 2)), "chi_ref": int(chi_ref),
+               "steps": args.steps}
 
         fdense = dense_features(emb, n, J, args.tau) if n <= args.dense_max else None
 
-        # true-bond probe at a generous chi
+        # true-bond probe at the per-n (possibly exact) chi
         t0 = time.time()
-        f_ref, bond_ref, te_ref = reservoir_features_mps(emb, n, J, args.tau, chi=args.chi_ref)
+        f_ref, bond_ref, te_ref = reservoir_features_mps(emb, n, J, args.tau,
+                                                         chi=chi_ref, steps=args.steps)
         rec["t_ref_s"] = round(time.time() - t0, 2)
         rec["bond_reached"] = int(bond_ref)
         rec["trunc_at_chiref"] = float(te_ref)
         # saturated == hit the cap AND still discarding real weight => true bond exceeds chi_ref
-        rec["bond_saturated"] = bool(bond_ref >= args.chi_ref and te_ref > 1e-10)
+        rec["bond_saturated"] = bool(bond_ref >= chi_ref and te_ref > 1e-10)
         if fdense is not None:
             rec["err_ref_vs_dense"] = float(np.max(np.abs(f_ref - fdense)))
 
@@ -89,14 +97,14 @@ def main():
         rec["chi"], rec["trunc"], rec["err_vs_dense"], rec["t_s"] = [], [], [], []
         for chi in args.chis:
             t0 = time.time()
-            f, bond, te = reservoir_features_mps(emb, n, J, args.tau, chi=chi)
+            f, bond, te = reservoir_features_mps(emb, n, J, args.tau, chi=chi, steps=args.steps)
             dt = time.time() - t0
             rec["chi"].append(chi); rec["trunc"].append(float(te)); rec["t_s"].append(round(dt, 2))
             rec["err_vs_dense"].append(float(np.max(np.abs(f - fdense))) if fdense is not None else None)
 
-        msg = (f"[n={n:2d}] bond@chi{args.chi_ref}={bond_ref:3d}"
+        msg = (f"[n={n:2d}] bond@chiref{chi_ref}={bond_ref:3d}"
                f"{'(SAT)' if rec['bond_saturated'] else '     '} "
-               f"trunc@chi{args.chi_ref}={te_ref:.1e}  2^(n/2)={2**(n//2):4d}  t_ref={rec['t_ref_s']:5.1f}s")
+               f"trunc={te_ref:.1e}  2^(n/2)={2**(n//2):4d}  t_ref={rec['t_ref_s']:5.1f}s")
         if fdense is not None:
             msg += f"  | err(chi={args.chis[-1]} vs dense)={rec['err_vs_dense'][-1]:.1e}"
         print(msg)
