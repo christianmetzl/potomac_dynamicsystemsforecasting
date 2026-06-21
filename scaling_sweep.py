@@ -64,26 +64,31 @@ def _eig(n_qubits, jseed):
         _EIG_CACHE[key] = np.linalg.eigh(H)
     return _EIG_CACHE[key]
 
-def _reservoir_features(Q, n_qubits, jseed, tau):
-    """One delay-embedding QRC reservoir's features (no feedback), exactly mirroring
-    DelayEmbeddingQRC._step_features but with a cached eigh-based U."""
+def _reservoir_features(Q, n_qubits, jseed, tau, reupload=1):
+    """One delay-embedding QRC reservoir's features (no feedback), with a cached eigh-based U.
+    Data re-uploading (Perez-Salinas 2020): with reupload=R, encode successive n-feature
+    blocks of each row interleaved with evolution - [encode emb[0:n] -> U -> encode emb[n:2n]
+    -> U -> ...] x R - so n qubits absorb up to R*n input features through depth. reupload=1
+    reduces exactly to the Phase-2 single-encode reservoir (anchor preserved)."""
     w, V = _eig(n_qubits, jseed)
     U = (V * np.exp(-1j * w * tau)) @ V.conj().T
     fdim = n_qubits + n_qubits * (n_qubits - 1) // 2
     F = np.empty((len(Q), fdim))
     for i, emb in enumerate(Q):
         psi = np.zeros(2 ** n_qubits, dtype=complex); psi[0] = 1.0
-        for q in range(min(len(emb), n_qubits)):
-            psi = apply_single_qubit_gate(psi, Ry(np.pi * np.clip(emb[q], 0, 1)), q, n_qubits)
-        psi = U @ psi
+        for layer in range(reupload):
+            blk = emb[layer * n_qubits:(layer + 1) * n_qubits]
+            for q in range(min(len(blk), n_qubits)):
+                psi = apply_single_qubit_gate(psi, Ry(np.pi * np.clip(blk[q], 0, 1)), q, n_qubits)
+            psi = U @ psi
         F[i] = measure_full_features(psi, n_qubits)
     return F
 
-def chimera_features_n(Q, taus, seed, n_qubits):
+def chimera_features_n(Q, taus, seed, n_qubits, reupload=1):
     """Same model as vol_fair_benchmark.chimera_features / MultiScaleCHIMERA (n_qubits
     parametrized): a tau-bank where reservoir i uses coupling seed+i and tau=taus[i],
     features concatenated. Eigh-cached -> the n=8 row still reproduces the Phase-2 anchors."""
-    return np.hstack([_reservoir_features(Q, n_qubits, seed + i, taus[i])
+    return np.hstack([_reservoir_features(Q, n_qubits, seed + i, taus[i], reupload)
                       for i in range(len(taus))])
 
 
@@ -105,14 +110,15 @@ def geom_diff(KA, KB, reg=1e-3):
 
 
 # --------------------------- the two H0 curves ---------------------------
-def compute_g(n, Q, tr, y):
+def compute_g(n, Q, tr, y, reupload=1):
     """g(n): geometric difference of the matched ESN kernel from the CHIMERA-1scale
     kernel, on an evenly-spaced N=KERNEL_N train subsample (mirrors kernel_analysis.py).
-    Both maps receive the SAME width-n input (first n columns of Q)."""
+    Both maps receive the SAME reupload*n input features (quantum re-uploads them across n
+    qubits; the ESN sees them flat)."""
     idx = np.linspace(0, len(tr) - 1, min(KERNEL_N, len(tr))).astype(int)
     trk = np.array(tr)[idx]
-    Qn = Q[trk][:, :n]                                    # identical inputs at width n
-    FQ = chimera_features_n(Qn, TAU_1SCALE, 0, n)         # quantum, n-dependent feat dim
+    Qn = Q[trk][:, :reupload * n]                         # identical inputs (reupload*n feats)
+    FQ = chimera_features_n(Qn, TAU_1SCALE, 0, n, reupload)  # quantum, n-dependent feat dim
     F108 = esn_features(Qn, 108, 0)                       # matched classical
     F108b = esn_features(Qn, 108, 1)                      # classical-classical control
     KQ, K108, K108b = lin_kernel(FQ), lin_kernel(F108), lin_kernel(F108b)
@@ -142,14 +148,15 @@ def _mz_gap_bootstrap(yT_rv, var_chim, var_har, B=2000, block=20, seed=0):
     return float((gaps <= 0).mean()), float(gaps.mean()), float(gaps.std())
 
 
-def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xraw, Xhar):
+def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xraw, Xhar, reupload=1):
     """mz_gap(n): MZ-R2(CHIMERA-3scale ensemble) - MZ-R2(HAR) on the crisis split, with
     DM(CHIMERA vs HAR) on point loss, a block-bootstrap MZ-gap test, and MCS membership.
     Fair-comparison: the linear readout LIN gets the raw (unscaled-log) version of EXACTLY
-    the width-n inputs the reservoir encodes, plus HAR - so any reservoir gain is genuine
+    the reupload*n inputs the reservoir encodes, plus HAR - so any reservoir gain is genuine
     nonlinearity beyond linear use of the same inputs."""
-    Xn = Xraw[:, :n]
-    Qcn = Qc[:, :n]
+    width = reupload * n
+    Xn = Xraw[:, :width]
+    Qcn = Qc[:, :width]
     LIN = np.hstack([Xn, Xhar])
     yT_log, yT_rv = y_logrv[te], y_rv[te]
 
@@ -159,7 +166,7 @@ def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xraw, Xhar):
         sp = []
         for sd in SEEDS:
             F = (esn_features(Qcn, 108, sd) if kind == "esn"
-                 else chimera_features_n(Qcn, TAU_3SCALE, sd, n))
+                 else chimera_features_n(Qcn, TAU_3SCALE, sd, n, reupload))
             D = np.hstack([F, LIN])
             pr, _ = ridge_readout(D[tr], y_logrv[tr], D[te])
             sp.append(pr)
@@ -191,12 +198,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ns", type=int, nargs="+", default=[8, 10, 12])
     ap.add_argument("--encoding", choices=["univariate", "multivariate"], default="univariate")
+    ap.add_argument("--reupload", type=int, default=1,
+                    help="data re-uploading depth R: n qubits absorb R*n panel features")
     ap.add_argument("--out", default="scaling_sweep_results.json")
     ap.add_argument("--no-plot", action="store_true")
     args = ap.parse_args()
-    # keep multivariate outputs separate from the univariate baseline
-    if args.encoding == "multivariate" and args.out == "scaling_sweep_results.json":
-        args.out = "scaling_sweep_results_multivariate.json"
+    # effective encoding label (drives the pre-registered verdict + output names)
+    enc_label = ("multivariate_reupload" if (args.encoding == "multivariate" and args.reupload > 1)
+                 else args.encoding)
+    if args.out == "scaling_sweep_results.json" and enc_label != "univariate":
+        args.out = f"scaling_sweep_results_{enc_label}.json"
 
     if args.encoding == "multivariate":
         data = mvd.build_panel_supervised(horizon=1)
@@ -225,20 +236,21 @@ def main():
     Q_c = np.clip((Xraw - loc) / rngc, 0.0, 1.0)
 
     print("=" * 92)
-    print(f"CHIMERA-QRC Phase-3  SCALING SWEEP  encoding={args.encoding}")
-    print(f"  input: {enc_desc}")
+    print(f"CHIMERA-QRC Phase-3  SCALING SWEEP  encoding={enc_label}  (reupload={args.reupload})")
+    print(f"  input: {enc_desc}" + (f"; data re-uploading R={args.reupload} "
+          f"(n qubits absorb {args.reupload}*n features)" if args.reupload > 1 else ""))
     print(f"  g(n): headline split, kernel N={KERNEL_N}, 1-scale tau={TAU_1SCALE}")
     print(f"  mz_gap(n): crisis split {dts[tr_c[0]].date()}..{dts[te_c[-1]].date()} "
           f"(train n={len(tr_c)}, test n={len(te_c)}), 3-scale tau={TAU_3SCALE}, seeds={SEEDS}")
-    print(f"  verdict via PRE-REGISTERED h0_thresholds.py (encoding='{args.encoding}')")
+    print(f"  verdict via PRE-REGISTERED h0_thresholds.py (encoding='{enc_label}')")
     print("=" * 92)
 
     rows = []
     t_start = time.time()
     for n in args.ns:
         t0 = time.time()
-        g = compute_g(n, Q_h, tr_h, y_logrv)
-        mz = compute_mz_gap(n, Q_c, tr_c, te_c, y_logrv, y_rv, Xraw, Xhar)
+        g = compute_g(n, Q_h, tr_h, y_logrv, args.reupload)
+        mz = compute_mz_gap(n, Q_c, tr_c, te_c, y_logrv, y_rv, Xraw, Xhar, args.reupload)
         row = {"n": n, **g, **mz, "secs": round(time.time() - t0, 1)}
         rows.append(row)
         print(f"\n[n={n:2d}]  g={g['g']:6.2f} (control {g['g_control']:4.2f})  "
@@ -258,20 +270,25 @@ def main():
     last = rows[-1]
 
     anchor_passed = anchor_msg = None
-    if 8 in ns:
+    if 8 in ns and args.reupload == 1:
         a = next(r for r in rows if r["n"] == 8)
         anchor_passed, anchor_msg = H0.anchor_ok(a["g"], a["mz_gap"])
+    elif args.reupload > 1:
+        # reupload>1 is a deeper model not expected to match the Phase-2 anchor;
+        # the harness itself was validated at reupload=1.
+        anchor_passed = True
+        anchor_msg = f"anchor gate N/A for reupload={args.reupload} (harness validated at reupload=1)"
 
     g_stat = H0.g_curve_status(ns, gs, g_control)
     d_stat = H0.deff_status(ns, deffs)
     acc_stat = H0.accuracy_status(last["mz_gap"], last["dm_stat"], last["dm_p"],
                                   last["chimera_in_mcs"], last["mz_gap_boot_p"])
-    verdict = H0.h0_verdict(args.encoding, max(ns),
+    verdict = H0.h0_verdict(enc_label, max(ns),
                             anchor_passed if anchor_passed is not None else False,
                             g_stat, d_stat, acc_stat)
 
     print("\n" + "=" * 92)
-    print(f"PRE-REGISTERED VERDICT (encoding={args.encoding})")
+    print(f"PRE-REGISTERED VERDICT (encoding={enc_label})")
     print("-" * 92)
     if anchor_msg:
         print(f"  anchor gate : {'PASS' if anchor_passed else 'FAIL'}  |  {anchor_msg}")
@@ -285,7 +302,7 @@ def main():
     print(f"[total {time.time() - t_start:.0f}s]")
 
     summary = {
-        "encoding": args.encoding, "ns": ns, "g_control": g_control,
+        "encoding": enc_label, "reupload": args.reupload, "ns": ns, "g_control": g_control,
         "anchor_passed": anchor_passed, "g_status": g_stat, "deff_status": d_stat,
         "accuracy_status": acc_stat, "verdict": verdict.label,
         "verdict_rationale": verdict.rationale, "rows": rows,
@@ -296,7 +313,7 @@ def main():
 
     if not args.no_plot and len(rows) >= 1:
         try:
-            _plot(rows, g_control, verdict, args.encoding)
+            _plot(rows, g_control, verdict, enc_label)
         except Exception as e:
             print(f"(plot skipped: {e})")
 

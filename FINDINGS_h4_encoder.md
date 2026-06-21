@@ -50,10 +50,42 @@ the added qubits genuinely new measures and:
   at n=12 (>12 min/point). Completing the curve to where g-growth either persists or
   saturates is what the **MPS / tensor-network backend (item 3)** is for.
 
+## Update — data re-uploading (encoding `multivariate_reupload`, R=2)
+
+`scaling_sweep.py --encoding multivariate --reupload 2` makes n qubits absorb 2n panel
+features by interleaving a second encoding between evolutions (Pérez-Salinas 2020). Result:
+
+| n | g (R=1) | g (R=2) | D_eff (R=1→R=2) | MZ-gap (R=2) | DM point-loss (R=2) |
+|---|---|---|---|---|---|
+| 8 | 62.7 | **188.8** | 1.81 → **3.95** | −0.065 | **−2.52 (p=0.012) → CHIMERA beats HAR** |
+| 10 | 76.9 | 118.2 | 2.22 → 2.09 | −0.119 | −1.25 (p=0.21) |
+
+**What re-uploading buys (honest):**
+- A large jump in **kernel distinctness and effective rank** — g ≈ 3× and D_eff ≈ 2× at n=8
+  vs single-encode. Encoding *depth* is a strong expressivity lever, complementary to width.
+- The **first point-forecast win over HAR**: at n=8, DM = −2.52 (p=0.012) on squared-error
+  loss. Re-uploading the richer panel improves point RMSE where HAR was previously unbeaten.
+
+**What it does NOT buy (honest):**
+- It does **not** improve the **regime-transition MZ-gap**, which stays negative
+  (−0.065 → −0.119). Re-uploading the (rv5-correlated ~0.93) measures trades a little
+  MZ-efficiency for raw expressivity and point accuracy.
+- The g(n) **curve still declines with n at fixed R** (188.8 → 118.2), echoing that naive
+  n-scaling without proportionally *more new* information saturates even with depth.
+
+**Synthesis.** Encoding density — width (new measures per qubit) and depth (re-uploading) —
+clearly controls the quantum reservoir's distinctness/expressivity (confirming the paper's
+H4 thesis) and even flips the point-RMSE comparison. But the **regime-transition MZ-gap (the
+H0 objective) remains ≤ 0 and is the genuine open question** that no lever has cracked at
+n ≤ 10 — consistent with H0 being a scale hypothesis, not an n≈10 phenomenon.
+
 ## Next
 
-1. Extend the panel with less-redundant information (cross-asset/sector RV, intraday/
-   order-flow) and add **data re-uploading** depth, to push D_eff growth and test whether the
-   MZ-gap crosses zero.
-2. Build the **MPS backend** to carry the multivariate sweep past n=12 toward the frontier,
-   logging bond dimension — the decisive H0 test region.
+1. **MPS / tensor-network backend (item 3)** — the binding constraint: carry the
+   multivariate (R=1 and R=2) sweeps past the n=12 dense wall toward the ~30-qubit frontier,
+   logging bond dimension, to see where g-growth and the MZ-gap actually go at scale.
+2. Enrich the panel with **less-redundant** information (cross-asset/sector RV covariance,
+   intraday/order-flow, leverage/return-sign) so width-scaling carries new signal, not
+   rv5-correlated copies.
+3. A **Fisher-information capacity** metric (paper's 3rd adjudication axis) to characterize
+   the expressivity gains re-uploading produces beyond g and D_eff.

@@ -8,6 +8,7 @@ the MZ-gap recovers toward HAR parity.
 Reads scaling_sweep_results.csv (univariate) and scaling_sweep_results_multivariate.csv.
 Team EIGENNEXUS | GIC 2026 - Phase 3.
 """
+import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -15,30 +16,39 @@ import pandas as pd
 
 u = pd.read_csv("scaling_sweep_results.csv").sort_values("n")
 m = pd.read_csv("scaling_sweep_results_multivariate.csv").sort_values("n")
+RU = "scaling_sweep_results_multivariate_reupload.csv"
+r = pd.read_csv(RU).sort_values("n") if os.path.exists(RU) else None
+
+def add(ax, df, col, color, label, marker="o-"):
+    if df is not None:
+        ax.plot(df["n"], df[col], marker, lw=2, color=color, label=label)
 
 fig, ax = plt.subplots(1, 3, figsize=(14, 4.3))
 
-ax[0].plot(u["n"], u["g"], "o-", lw=2, color="C3", label="univariate 8-lag")
-ax[0].plot(m["n"], m["g"], "o-", lw=2, color="C0", label="multivariate panel (H4)")
+add(ax[0], u, "g", "C3", "univariate 8-lag")
+add(ax[0], m, "g", "C0", "multivariate R=1 (H4)")
+add(ax[0], r, "g", "C2", "multivariate R=2 (re-upload)")
 ax[0].plot(u["n"], u["g_control"], "--", color="gray", alpha=.7, label="classical control")
 ax[0].set_xlabel("qubit count n"); ax[0].set_ylabel("geometric difference g(n)")
-ax[0].set_title("H0 curve 1: kernel distinctness g(n)\nunivariate collapses, H4 grows")
+ax[0].set_title("H0 curve 1: kernel distinctness g(n)\nnew info (width/depth) lifts g; univariate collapses")
 ax[0].legend(fontsize=8); ax[0].grid(alpha=.3)
 
-ax[1].plot(u["n"], u["deff_chimera"], "o-", lw=2, color="C3", label="univariate")
-ax[1].plot(m["n"], m["deff_chimera"], "o-", lw=2, color="C0", label="multivariate (H4)")
+add(ax[1], u, "deff_chimera", "C3", "univariate")
+add(ax[1], m, "deff_chimera", "C0", "multivariate R=1")
+add(ax[1], r, "deff_chimera", "C2", "multivariate R=2")
 ax[1].set_xlabel("qubit count n"); ax[1].set_ylabel("kernel effective rank D_eff")
-ax[1].set_title("Effective rank D_eff(n)"); ax[1].legend(fontsize=8); ax[1].grid(alpha=.3)
+ax[1].set_title("Effective rank D_eff(n)\nre-uploading ~doubles D_eff"); ax[1].legend(fontsize=8); ax[1].grid(alpha=.3)
 
 ax[2].axhline(0, color="k", lw=.8)
-ax[2].plot(u["n"], u["mz_gap"], "o-", lw=2, color="C3", label="univariate")
-ax[2].plot(m["n"], m["mz_gap"], "o-", lw=2, color="C0", label="multivariate (H4)")
+add(ax[2], u, "mz_gap", "C3", "univariate")
+add(ax[2], m, "mz_gap", "C0", "multivariate R=1")
+add(ax[2], r, "mz_gap", "C2", "multivariate R=2")
 ax[2].set_xlabel("qubit count n"); ax[2].set_ylabel("MZ-R²(CHIMERA) − MZ-R²(HAR)")
-ax[2].set_title("H0 curve 2: regime-transition gap\nH4 halts the collapse (-0.25 -> -0.02)")
+ax[2].set_title("H0 curve 2: regime-transition gap\nstill the hard, unsolved objective (<=0)")
 ax[2].legend(fontsize=8); ax[2].grid(alpha=.3)
 
-fig.suptitle("CHIMERA-QRC Phase-3: H4 encoding-density reverses the input bottleneck "
-             "(adding qubits that carry NEW information)", fontsize=11)
+fig.suptitle("CHIMERA-QRC Phase-3 H4: encoding density (width + re-uploading depth) controls "
+             "distinctness; the regime-transition gap remains the open scale question", fontsize=10)
 fig.tight_layout()
 fig.savefig("figures/fig_encoder_comparison.png", dpi=130)
 print("saved figures/fig_encoder_comparison.png")
