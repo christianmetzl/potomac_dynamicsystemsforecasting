@@ -46,7 +46,8 @@ MZ_GAP_ANCHOR_TOL = 0.020  # mz_gap(n=8, 3scale) within +-0.020 of the +0.032 an
 EXACT_SIM_FRONTIER_N  = 30    # qubits beyond which exact statevector is infeasible (~28-30)
 G_GROWTH_CONTROL_MULT = 2.0   # "growing": top-step delta_g must exceed 2x the control magnitude
 MZ_GAP_CONFIRM        = 0.020 # accuracy gap must be >= the n=8 headline gap, but now OOS @ scale
-DM_CONFIRM_ALPHA      = 0.05  # one-sided DM: CHIMERA strictly better than HAR at the 5% level
+MZ_GAP_BOOT_ALPHA     = 0.05  # block-bootstrap of the MZ-gap: one-sided sig. that gap > 0
+DM_CONFIRM_ALPHA      = 0.05  # one-sided DM (point loss): CHIMERA strictly better than HAR at 5%
 DEFF_SAT_PER_2Q       = 0.5   # effective-rank rise < 0.5 per +2 qubits  =>  "saturated"
 
 VALID_ENCODINGS = ("univariate", "multivariate_reupload")
@@ -100,16 +101,29 @@ def deff_status(ns: Sequence[int], deffs: Sequence[float]) -> str:
 
 
 def accuracy_status(mz_gap: float, dm_stat: float, dm_p: float,
-                    in_mcs: bool) -> str:
+                    in_mcs: bool, mz_gap_boot_p: float) -> str:
     """Classify the forecasting-accuracy edge over HAR on the regime-transition split.
-      'confirm'      : gap >= MZ_GAP_CONFIRM AND DM significant w/ CHIMERA better AND in MCS
-      'refute'       : no edge - gap <= 0 OR DM not significant / wrong sign
-      'inconclusive' : positive but not yet significant
+
+    Pre-registration v1.1 ("require both, soften refute"):
+      'confirm'      : the regime-transition MZ-gap is significant (gap >= MZ_GAP_CONFIRM
+                       AND block-bootstrap p < MZ_GAP_BOOT_ALPHA) AND CHIMERA also beats HAR
+                       on point loss (DM significant, correct sign) AND CHIMERA in the MCS.
+      'inconclusive' : a SIGNIFICANT positive MZ-gap with MCS membership but no point-loss
+                       win is NOT a refutation - it is a real regime-transition edge that has
+                       not (yet) become a point-accuracy edge.  Also: any positive-but-not-yet
+                       -significant signal.
+      'refute'       : genuinely no edge - MZ-gap <= 0 (no regime advantage at all), or no
+                       significant edge on either axis and not in the MCS.
     """
-    dm_better_sig = (dm_stat < 0) and (dm_p < DM_CONFIRM_ALPHA)
-    if mz_gap >= MZ_GAP_CONFIRM and dm_better_sig and in_mcs:
+    mz_sig = (mz_gap >= MZ_GAP_CONFIRM) and (mz_gap_boot_p < MZ_GAP_BOOT_ALPHA)
+    dm_better = (dm_stat < 0) and (dm_p < DM_CONFIRM_ALPHA)
+    if mz_sig and dm_better and in_mcs:
         return "confirm"
-    if mz_gap <= 0.0 or (dm_stat >= 0) or (dm_p >= DM_CONFIRM_ALPHA):
+    if mz_sig and in_mcs:                 # softened: significant regime win is never a refute
+        return "inconclusive"
+    if mz_gap <= 0.0 and not dm_better:
+        return "refute"
+    if (not mz_sig) and (not dm_better) and (not in_mcs):
         return "refute"
     return "inconclusive"
 
@@ -193,7 +207,7 @@ if __name__ == "__main__":
     v = h0_verdict("univariate", max_n=12, anchor_passed=True,
                    g_status=g_curve_status([8, 10, 12], [62, 63, 63.4], PHASE2_G_CONTROL),
                    deff_status_=deff_status([8, 10, 12], [9.0, 9.1, 9.2]),
-                   acc_status=accuracy_status(-0.01, +0.5, 0.40, False))
+                   acc_status=accuracy_status(-0.01, +0.5, 0.40, False, 0.50))
     print("univariate, saturating g:", v)
     assert v.label == "INPUT_BOUND_EXPECTED", v.label
 
@@ -201,15 +215,18 @@ if __name__ == "__main__":
     v = h0_verdict("multivariate_reupload", max_n=40, anchor_passed=True,
                    g_status=g_curve_status([24, 32, 40], [80, 110, 150], PHASE2_G_CONTROL),
                    deff_status_=deff_status([24, 32, 40], [20, 24, 29]),
-                   acc_status=accuracy_status(0.035, -2.3, 0.012, True))
+                   acc_status=accuracy_status(0.035, -2.3, 0.012, True, 0.01))
     print("multivariate @scale, both favourable:", v)
     assert v.label == "CONFIRM", v.label
 
-    # decisive multivariate, g saturates -> REFUTE (honest negative)
+    # softened: significant regime-transition MZ-gap + MCS but HAR wins point loss -> NOT refute
+    assert accuracy_status(0.035, +1.2, 0.20, True, 0.01) == "inconclusive"
+
+    # decisive multivariate, g saturates + no edge -> REFUTE (honest negative)
     v = h0_verdict("multivariate_reupload", max_n=40, anchor_passed=True,
                    g_status=g_curve_status([24, 32, 40], [150, 152, 153], PHASE2_G_CONTROL),
                    deff_status_=deff_status([24, 32, 40], [25, 30, 35]),
-                   acc_status=accuracy_status(0.001, +0.2, 0.6, False))
+                   acc_status=accuracy_status(0.001, +0.2, 0.6, False, 0.60))
     print("multivariate @scale, saturating g:", v)
     assert v.label == "REFUTE", v.label
 

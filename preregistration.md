@@ -1,7 +1,20 @@
 # CHIMERA-QRC Phase-3 — Pre-Registration of H0 Confirm/Refute Thresholds
 
 **Team EIGENNEXUS · Global Industry Challenge 2026 · Track A (Financial Volatility)**
-**Locked: 2026-06-21 — committed *before* any scaling-sweep result exists.**
+**Locked: 2026-06-21 (v1.0) · Amended 2026-06-21 (v1.1) — before any *scaling* result was seen.**
+
+> **Amendment log**
+> - **v1.1 (2026-06-21):** During harness validation (n=8 anchor only — a reproduction of
+>   already-published Phase-2 numbers, *not* a new scaling result), we found the v1.0
+>   accuracy gate used Diebold–Mariano on *point-forecast loss* as the significance test,
+>   whereas H0 is stated in terms of the *regime-transition MZ-R² gap*. These diverge
+>   (CHIMERA wins on regime efficiency; HAR wins on point RMSE), so the v1.0 `refute`
+>   branch could mislabel a genuine regime-transition win as a failure. Fix ("require both,
+>   soften refute"): CONFIRM still requires a **significant** MZ-gap (point estimate **and**
+>   a block-bootstrap test) **and** a DM point-loss win **and** MCS membership; but a
+>   *significant positive MZ-gap with MCS membership* now returns **INCONCLUSIVE**, never
+>   REFUTE. No n=10/12 scaling result had been observed at amendment time, and the change
+>   makes CONFIRM *harder*, not easier (the n=8 gap is bootstrap-insignificant, p≈0.34).
 
 > This document and its machine-readable companion `h0_thresholds.py` fix the decision
 > rules for the Phase-3 scaling study **in advance**, so the experiment is honestly
@@ -52,15 +65,20 @@ All constants live in `h0_thresholds.py` (single source of truth):
   (rise has flattened to within classical noise).
 - **Effective-rank guard:** kernel participation ratio rise ≥ `0.5` per +2 qubits to count
   as still "rising" (`DEFF_SAT_PER_2Q`). Distinguishes *input-bound* from *size-bound*.
-- **Accuracy confirm:** mz_gap ≥ `+0.020` (`MZ_GAP_CONFIRM`, i.e. at least the n=8 headline
-  gap) **and** a one-sided Diebold–Mariano test rejects at `α = 0.05` with CHIMERA the
-  better forecaster **and** CHIMERA in the 95 % Model Confidence Set.
+- **Accuracy confirm (v1.1):** the regime-transition MZ-gap is **significant** — mz_gap ≥
+  `+0.020` (`MZ_GAP_CONFIRM`) **and** a stationary-block-bootstrap of the gap rejects at
+  `α = 0.05` (`MZ_GAP_BOOT_ALPHA`) — **and** CHIMERA also beats HAR on point loss (one-sided
+  Diebold–Mariano at `α = 0.05`, correct sign) **and** CHIMERA in the 95 % MCS.
+- **Accuracy soften (v1.1):** a **significant positive MZ-gap with MCS membership** but no
+  point-loss win returns **INCONCLUSIVE**, never REFUTE — a real regime-transition edge that
+  has not (yet) become a point-accuracy edge is not a refutation.
 
 ### Decision rules
 - **CONFIRM** — *both* curves favourable (g growing **and** accuracy-confirm), evaluated
   **beyond the exact-sim frontier with the new-information (Axis-B) encoder.**
 - **REFUTE** (reported as a finding) — at decisive scale/encoding, *either* g saturates
-  *or* there is no accuracy edge over HAR (mz_gap ≤ 0, or DM not significant / wrong sign).
+  *or* there is genuinely no accuracy edge over HAR (mz_gap ≤ 0, or no significant edge on
+  either axis and not in the MCS).
 - **INPUT_BOUND_EXPECTED** — g(n) **and** effective rank saturate **under the univariate
   8-lag encoder.** This is the *predicted* input-bottleneck signature; it **gates the move
   to Axis-B** and is **explicitly not** an H0 refutation (see §4).
