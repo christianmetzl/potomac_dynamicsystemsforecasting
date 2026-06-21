@@ -32,6 +32,7 @@ import pandas as pd
 from numpy.linalg import eigh, inv, norm
 
 import volatility_data as vd
+import multivariate_data as mvd
 from vol_fair_benchmark import (
     LAGS, SEEDS, rmse, qlike, mz_r2, dm_test, model_confidence_set,
     ridge_readout, esn_features,
@@ -106,12 +107,14 @@ def geom_diff(KA, KB, reg=1e-3):
 # --------------------------- the two H0 curves ---------------------------
 def compute_g(n, Q, tr, y):
     """g(n): geometric difference of the matched ESN kernel from the CHIMERA-1scale
-    kernel, on an evenly-spaced N=KERNEL_N train subsample (mirrors kernel_analysis.py)."""
+    kernel, on an evenly-spaced N=KERNEL_N train subsample (mirrors kernel_analysis.py).
+    Both maps receive the SAME width-n input (first n columns of Q)."""
     idx = np.linspace(0, len(tr) - 1, min(KERNEL_N, len(tr))).astype(int)
     trk = np.array(tr)[idx]
-    FQ = chimera_features_n(Q[trk], TAU_1SCALE, 0, n)     # quantum, n-dependent feat dim
-    F108 = esn_features(Q[trk], 108, 0)                   # matched classical
-    F108b = esn_features(Q[trk], 108, 1)                  # classical-classical control
+    Qn = Q[trk][:, :n]                                    # identical inputs at width n
+    FQ = chimera_features_n(Qn, TAU_1SCALE, 0, n)         # quantum, n-dependent feat dim
+    F108 = esn_features(Qn, 108, 0)                       # matched classical
+    F108b = esn_features(Qn, 108, 1)                      # classical-classical control
     KQ, K108, K108b = lin_kernel(FQ), lin_kernel(F108), lin_kernel(F108b)
     return {
         "g": geom_diff(K108, KQ),                # g(ESN-108 -> CHIMERA)  [anchor ~62 @ n=8]
@@ -139,10 +142,15 @@ def _mz_gap_bootstrap(yT_rv, var_chim, var_har, B=2000, block=20, seed=0):
     return float((gaps <= 0).mean()), float(gaps.mean()), float(gaps.std())
 
 
-def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xlag, Xhar):
+def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xraw, Xhar):
     """mz_gap(n): MZ-R2(CHIMERA-3scale ensemble) - MZ-R2(HAR) on the crisis split, with
-    DM(CHIMERA vs HAR) on point loss, a block-bootstrap MZ-gap test, and MCS membership."""
-    LIN = np.hstack([Xlag, Xhar])
+    DM(CHIMERA vs HAR) on point loss, a block-bootstrap MZ-gap test, and MCS membership.
+    Fair-comparison: the linear readout LIN gets the raw (unscaled-log) version of EXACTLY
+    the width-n inputs the reservoir encodes, plus HAR - so any reservoir gain is genuine
+    nonlinearity beyond linear use of the same inputs."""
+    Xn = Xraw[:, :n]
+    Qcn = Qc[:, :n]
+    LIN = np.hstack([Xn, Xhar])
     yT_log, yT_rv = y_logrv[te], y_rv[te]
 
     har_pred, _ = ridge_readout(Xhar[tr], y_logrv[tr], Xhar[te])
@@ -150,8 +158,8 @@ def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xlag, Xhar):
     def reservoir_pred(kind):
         sp = []
         for sd in SEEDS:
-            F = (esn_features(Qc, 108, sd) if kind == "esn"
-                 else chimera_features_n(Qc, TAU_3SCALE, sd, n))
+            F = (esn_features(Qcn, 108, sd) if kind == "esn"
+                 else chimera_features_n(Qcn, TAU_3SCALE, sd, n))
             D = np.hstack([F, LIN])
             pr, _ = ridge_readout(D[tr], y_logrv[tr], D[te])
             sp.append(pr)
@@ -182,33 +190,47 @@ def compute_mz_gap(n, Qc, tr, te, y_logrv, y_rv, Xlag, Xhar):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ns", type=int, nargs="+", default=[8, 10, 12])
+    ap.add_argument("--encoding", choices=["univariate", "multivariate"], default="univariate")
     ap.add_argument("--out", default="scaling_sweep_results.json")
     ap.add_argument("--no-plot", action="store_true")
     args = ap.parse_args()
+    # keep multivariate outputs separate from the univariate baseline
+    if args.encoding == "multivariate" and args.out == "scaling_sweep_results.json":
+        args.out = "scaling_sweep_results_multivariate.json"
 
-    df = vd.load_spx_rv()
-    data = vd.build_supervised(df, horizon=1, lags=LAGS)
-    Xlag, Xhar = data["X_lags"], data["X_har"]
+    if args.encoding == "multivariate":
+        data = mvd.build_panel_supervised(horizon=1)
+        Xraw = data["X_panel"]                                  # ordered multivariate panel
+        Xhar = data["X_har"]
+        enc_desc = f"multivariate realized-measure panel ({data['n_features']} feats; " \
+                   f"first 8 == univariate rv5 lags, then new measures)"
+    else:
+        df = vd.load_spx_rv()
+        data = vd.build_supervised(df, horizon=1, lags=LAGS)
+        Xraw = data["X_lags"]                                   # 8 univariate log-RV lags
+        Xhar = data["X_har"]
+        enc_desc = "univariate 8-lag log-RV encoder"
     y_logrv, y_rv = data["y_logrv"], data["y_rv"]
     dts = pd.to_datetime(data["dates"])
 
     # headline split (for g): 70/30 chronological
     tr_h, te_h = vd.make_splits(len(y_logrv), train_frac=0.70)
-    lo, hi = Xlag[tr_h].min(0), Xlag[tr_h].max(0); rng = np.where(hi - lo == 0, 1, hi - lo)
-    Q_h = np.clip((Xlag - lo) / rng, 0.0, 1.0)
+    lo, hi = Xraw[tr_h].min(0), Xraw[tr_h].max(0); rng = np.where(hi - lo == 0, 1, hi - lo)
+    Q_h = np.clip((Xraw - lo) / rng, 0.0, 1.0)
 
     # crisis split (for mz_gap): GFC 2008 in the test set
     tr_c = np.where(dts < CRISIS_TRAIN_END)[0]
     te_c = np.where((dts >= CRISIS_TRAIN_END) & (dts < CRISIS_TEST_END))[0]
-    loc, hic = Xlag[tr_c].min(0), Xlag[tr_c].max(0); rngc = np.where(hic - loc == 0, 1, hic - loc)
-    Q_c = np.clip((Xlag - loc) / rngc, 0.0, 1.0)
+    loc, hic = Xraw[tr_c].min(0), Xraw[tr_c].max(0); rngc = np.where(hic - loc == 0, 1, hic - loc)
+    Q_c = np.clip((Xraw - loc) / rngc, 0.0, 1.0)
 
     print("=" * 92)
-    print("CHIMERA-QRC Phase-3  Axis-A SCALING SWEEP  (univariate 8-lag encoder)")
+    print(f"CHIMERA-QRC Phase-3  SCALING SWEEP  encoding={args.encoding}")
+    print(f"  input: {enc_desc}")
     print(f"  g(n): headline split, kernel N={KERNEL_N}, 1-scale tau={TAU_1SCALE}")
     print(f"  mz_gap(n): crisis split {dts[tr_c[0]].date()}..{dts[te_c[-1]].date()} "
           f"(train n={len(tr_c)}, test n={len(te_c)}), 3-scale tau={TAU_3SCALE}, seeds={SEEDS}")
-    print("  verdict via PRE-REGISTERED h0_thresholds.py (encoding='univariate')")
+    print(f"  verdict via PRE-REGISTERED h0_thresholds.py (encoding='{args.encoding}')")
     print("=" * 92)
 
     rows = []
@@ -216,7 +238,7 @@ def main():
     for n in args.ns:
         t0 = time.time()
         g = compute_g(n, Q_h, tr_h, y_logrv)
-        mz = compute_mz_gap(n, Q_c, tr_c, te_c, y_logrv, y_rv, Xlag, Xhar)
+        mz = compute_mz_gap(n, Q_c, tr_c, te_c, y_logrv, y_rv, Xraw, Xhar)
         row = {"n": n, **g, **mz, "secs": round(time.time() - t0, 1)}
         rows.append(row)
         print(f"\n[n={n:2d}]  g={g['g']:6.2f} (control {g['g_control']:4.2f})  "
@@ -244,12 +266,12 @@ def main():
     d_stat = H0.deff_status(ns, deffs)
     acc_stat = H0.accuracy_status(last["mz_gap"], last["dm_stat"], last["dm_p"],
                                   last["chimera_in_mcs"], last["mz_gap_boot_p"])
-    verdict = H0.h0_verdict("univariate", max(ns),
+    verdict = H0.h0_verdict(args.encoding, max(ns),
                             anchor_passed if anchor_passed is not None else False,
                             g_stat, d_stat, acc_stat)
 
     print("\n" + "=" * 92)
-    print("PRE-REGISTERED VERDICT (univariate Axis-A sweep)")
+    print(f"PRE-REGISTERED VERDICT (encoding={args.encoding})")
     print("-" * 92)
     if anchor_msg:
         print(f"  anchor gate : {'PASS' if anchor_passed else 'FAIL'}  |  {anchor_msg}")
@@ -263,7 +285,7 @@ def main():
     print(f"[total {time.time() - t_start:.0f}s]")
 
     summary = {
-        "encoding": "univariate", "ns": ns, "g_control": g_control,
+        "encoding": args.encoding, "ns": ns, "g_control": g_control,
         "anchor_passed": anchor_passed, "g_status": g_stat, "deff_status": d_stat,
         "accuracy_status": acc_stat, "verdict": verdict.label,
         "verdict_rationale": verdict.rationale, "rows": rows,
@@ -274,12 +296,12 @@ def main():
 
     if not args.no_plot and len(rows) >= 1:
         try:
-            _plot(rows, g_control, verdict)
+            _plot(rows, g_control, verdict, args.encoding)
         except Exception as e:
             print(f"(plot skipped: {e})")
 
 
-def _plot(rows, g_control, verdict):
+def _plot(rows, g_control, verdict, encoding="univariate"):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -296,11 +318,12 @@ def _plot(rows, g_control, verdict):
     ax[1].plot(ns, [r["mz_gap"] for r in rows], "o-", lw=2, c="C2")
     ax[1].set_xlabel("qubit count n"); ax[1].set_ylabel("MZ-R²(CHIMERA) − MZ-R²(HAR)")
     ax[1].set_title("H0 curve 2: regime-transition accuracy gap"); ax[1].grid(alpha=.3)
-    fig.suptitle(f"CHIMERA-QRC Axis-A sweep (univariate)  —  verdict: {verdict.label}",
+    fig.suptitle(f"CHIMERA-QRC scaling sweep ({encoding})  —  verdict: {verdict.label}",
                  fontsize=11)
     fig.tight_layout()
-    fig.savefig("figures/fig_scaling_sweep.png", dpi=130)
-    print("saved figures/fig_scaling_sweep.png")
+    out = f"figures/fig_scaling_sweep_{encoding}.png"
+    fig.savefig(out, dpi=130)
+    print(f"saved {out}")
 
 
 if __name__ == "__main__":

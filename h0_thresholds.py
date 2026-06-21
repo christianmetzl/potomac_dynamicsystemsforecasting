@@ -50,7 +50,11 @@ MZ_GAP_BOOT_ALPHA     = 0.05  # block-bootstrap of the MZ-gap: one-sided sig. th
 DM_CONFIRM_ALPHA      = 0.05  # one-sided DM (point loss): CHIMERA strictly better than HAR at 5%
 DEFF_SAT_PER_2Q       = 0.5   # effective-rank rise < 0.5 per +2 qubits  =>  "saturated"
 
-VALID_ENCODINGS = ("univariate", "multivariate_reupload")
+# Encodings where added qubits carry NEW information (Axis-B family); the decisive
+# CONFIRM/REFUTE verdict only applies here. v1.2: "multivariate" (one new measure per
+# added qubit) joins "multivariate_reupload" - both are new-information encoders.
+NEW_INFO_ENCODINGS = ("multivariate", "multivariate_reupload")
+VALID_ENCODINGS = ("univariate",) + NEW_INFO_ENCODINGS
 
 
 # =====================================================================================
@@ -157,7 +161,7 @@ def h0_verdict(encoding: str, max_n: int, anchor_passed: bool,
         return Verdict("HARNESS_FAIL",
                        "n=8 anchor not reproduced within tolerance; no swept point is trustworthy.")
 
-    decisive = (encoding == "multivariate_reupload") and (max_n >= EXACT_SIM_FRONTIER_N)
+    decisive = (encoding in NEW_INFO_ENCODINGS) and (max_n >= EXACT_SIM_FRONTIER_N)
 
     # Confirmation requires BOTH curves favourable, and only counts at decisive scale.
     if g_status == "growing" and acc_status == "confirm":

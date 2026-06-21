@@ -4,6 +4,12 @@
 **Locked: 2026-06-21 (v1.0) · Amended 2026-06-21 (v1.1) — before any *scaling* result was seen.**
 
 > **Amendment log**
+> - **v1.2 (2026-06-21):** Clarification (not a criteria change). The "new-information
+>   (Axis-B) encoder" family that makes the CONFIRM/REFUTE verdict decisive now explicitly
+>   includes plain **`multivariate`** encoding (one new realized-measure per added qubit),
+>   not only **`multivariate_reupload`**. Both carry new information per added qubit; the
+>   univariate input-bound guard is unchanged. Implemented as `NEW_INFO_ENCODINGS` in
+>   `h0_thresholds.py`.
 > - **v1.1 (2026-06-21):** During harness validation (n=8 anchor only — a reproduction of
 >   already-published Phase-2 numbers, *not* a new scaling result), we found the v1.0
 >   accuracy gate used Diebold–Mariano on *point-forecast loss* as the significance test,
