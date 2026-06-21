@@ -17,3 +17,7 @@ env/
 Thumbs.db
 .idea/
 .vscode/
+
+# scaling sweep run artifacts (regenerable)
+scaling_sweep_run.log
+scaling_sweep_results.json

@@ -36,7 +36,10 @@ from vol_fair_benchmark import (
     LAGS, SEEDS, rmse, qlike, mz_r2, dm_test, model_confidence_set,
     ridge_readout, esn_features,
 )
-from multiscale_chimera import MultiScaleCHIMERA
+from qrc_engine import (
+    build_ising_hamiltonian, generate_coupling_matrix,
+    apply_single_qubit_gate, Ry, measure_full_features,
+)
 import h0_thresholds as H0
 
 # Phase-2 configurations (fixed; only n is swept)
@@ -48,13 +51,39 @@ KERNEL_N = 800                  # train subsample for stable/fast kernel ops (as
 
 
 # --------------------------- model & kernel helpers ---------------------------
+# Eigendecomposition cache keyed by (n, coupling-seed): U(tau)=V e^{-i lambda tau} V^dag is
+# EXACT (matches expm to ~1e-13) and one eigh serves every tau / seed sharing a coupling.
+_EIG_CACHE: dict = {}
+
+def _eig(n_qubits, jseed):
+    key = (n_qubits, jseed)
+    if key not in _EIG_CACHE:
+        J = generate_coupling_matrix(n_qubits, 0.5, seed=jseed)   # matches Phase-2 (conn=0.5)
+        H = build_ising_hamiltonian(n_qubits, J, hx=1.0)
+        _EIG_CACHE[key] = np.linalg.eigh(H)
+    return _EIG_CACHE[key]
+
+def _reservoir_features(Q, n_qubits, jseed, tau):
+    """One delay-embedding QRC reservoir's features (no feedback), exactly mirroring
+    DelayEmbeddingQRC._step_features but with a cached eigh-based U."""
+    w, V = _eig(n_qubits, jseed)
+    U = (V * np.exp(-1j * w * tau)) @ V.conj().T
+    fdim = n_qubits + n_qubits * (n_qubits - 1) // 2
+    F = np.empty((len(Q), fdim))
+    for i, emb in enumerate(Q):
+        psi = np.zeros(2 ** n_qubits, dtype=complex); psi[0] = 1.0
+        for q in range(min(len(emb), n_qubits)):
+            psi = apply_single_qubit_gate(psi, Ry(np.pi * np.clip(emb[q], 0, 1)), q, n_qubits)
+        psi = U @ psi
+        F[i] = measure_full_features(psi, n_qubits)
+    return F
+
 def chimera_features_n(Q, taus, seed, n_qubits):
-    """Identical to vol_fair_benchmark.chimera_features, but with n_qubits parametrized.
-    Same MultiScaleCHIMERA model -> the n=8 row reproduces the Phase-2 features exactly."""
-    ch = MultiScaleCHIMERA(n_qubits=n_qubits, taus=taus, hamiltonian='ising',
-                           hx=1.0, connectivity=0.5, seed=seed)
-    ch._reset_feedback()
-    return np.array([ch._all_features(w) for w in Q])
+    """Same model as vol_fair_benchmark.chimera_features / MultiScaleCHIMERA (n_qubits
+    parametrized): a tau-bank where reservoir i uses coupling seed+i and tau=taus[i],
+    features concatenated. Eigh-cached -> the n=8 row still reproduces the Phase-2 anchors."""
+    return np.hstack([_reservoir_features(Q, n_qubits, seed + i, taus[i])
+                      for i in range(len(taus))])
 
 
 def _standardize(F):
