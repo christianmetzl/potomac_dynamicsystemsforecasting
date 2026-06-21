@@ -24,7 +24,7 @@ Two decisive outcomes:
     reservoir variant could be MPS-simulated to the real scale frontier (unblocks Axis-A
     classically).
 
-Emits entanglement_distinctness.json + figures/fig_entanglement_distinctness.png.
+Emits entanglement_distinctness.json + figures/fig_entanglement_distinctness_n{n}.png.
 
 Team EIGENNEXUS | GIC 2026 - Phase 3.
 """
@@ -159,8 +159,9 @@ def _plot(rows, g_control, S_max, corr, n):
                  fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     import os; os.makedirs("figures", exist_ok=True)
-    fig.savefig("figures/fig_entanglement_distinctness.png", dpi=130)
-    print("saved figures/fig_entanglement_distinctness.png")
+    out = f"figures/fig_entanglement_distinctness_n{n}.png"   # n-specific: never clobber another n
+    fig.savefig(out, dpi=130)
+    print(f"saved {out}")
 
 
 if __name__ == "__main__":
