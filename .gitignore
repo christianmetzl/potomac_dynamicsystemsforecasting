@@ -22,3 +22,5 @@ Thumbs.db
 scaling_sweep_run.log
 scaling_sweep_results*.json
 mps_bond_scaling.json
+entanglement_distinctness.json
+entdist_*.json
