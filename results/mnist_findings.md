@@ -42,9 +42,9 @@ same readout.)
   and is consistent with the QRC literature: on a generic vision task a well-tuned
   classical reservoir is strong. Our *differentiated* advantage is on the financial
   regime-transition task (see `scaling_axisB_findings.md`), where CHIMERA
-  significantly beats both HAR and the matched ESN at n=10. MNIST validates that the
-  quantum reservoir has **sufficient expressivity** (its stated purpose), not that
-  it dominates classical RC on images.
+  is competitive with strong classical baselines (see `axisB_rigorous_findings.md`).
+  MNIST validates that the quantum reservoir has **sufficient expressivity** (its stated
+  purpose), not that it dominates classical RC on images.
 
 ## Noise
 

@@ -20,6 +20,7 @@ HAR's linear long-memory form is near-optimal on daily RV, and a plain LSTM on a
 shift. Reporting this is exactly the rubric's "be honest about limitations."
 
 This completes the brief's named Track-A baseline set. Full roster now benchmarked:
-**HAR, GARCH(1,1), GJR-GARCH, AR(3), persistence, ESN (matched + 4×), and LSTM** —
-against which CHIMERA's significant beat of HAR *and* ESN at n=10 (informed
-encoding, crisis window; see `scaling_axisB_findings.md`) stands out.
+**HAR, HAR-X, GARCH(1,1), GJR-GARCH, AR(3), persistence, ESN (matched + 4×, recurrent),
+RFF kernel, and LSTM**. The decisive, adversarially-controlled comparison against these
+(see `axisB_rigorous_findings.md`) finds **no quantum advantage at simulable scale** — the
+honest, pre-registered result.

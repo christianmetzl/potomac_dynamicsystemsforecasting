@@ -21,7 +21,7 @@ isolates reservoir dynamics, not encoding richness.)*
 1. **Bond dimension is full at every n: χ_eff = 2^(n/2).** Every Schmidt value across
    the balanced cut exceeds 10⁻⁵, so the state has *full* Schmidt rank — an **exact**
    matrix-product-state representation gets **zero compression** and costs χ = 2^(n/2)
-   (16 → 256 as n: 8 → 16). For our **all-to-all** random-coupling Ising reservoir this
+   (16 → 256 as n: 8 → 16). For our **random ≈50%-connected** (connectivity=0.5) Ising reservoir this
    is the expected, and desirable, behaviour: it is the classical-intractability the
    quantum-advantage hypothesis requires.
 
@@ -33,7 +33,7 @@ isolates reservoir dynamics, not encoding richness.)*
 
 3. **Frontier reached: n=16 exactly** (~40 min on one CPU), covering the brief's 5–20q
    range. Beyond ~16 needs GPU statevector, a truncating MPS/TEBD (which, per finding 1,
-   would lose fidelity for this all-to-all Hamiltonian), or hardware.
+   would lose fidelity for this non-local random-graph Hamiltonian), or hardware.
 
 4. **g(n) declines under the fixed univariate encoder** (120 → ~22) — the same input
    bottleneck seen in `scaling_sweep`: with idle qubits, kernel distinctness does not

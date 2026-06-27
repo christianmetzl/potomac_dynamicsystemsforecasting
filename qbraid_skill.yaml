@@ -43,12 +43,16 @@ actions:
     cmd: "python3 cli.py run prereg"
     expect: "prints H0/H1/H4 statements + decision constants"
   - id: axisB
-    desc: "Axis-B: informed encoding vs idle qubits (the headline Phase-3 result)"
+    desc: "Axis-B mechanism: informed encoding restores kernel distinctness/rank vs idle qubits"
     cmd: "python3 cli.py run axisB"
+    expect: "informed qubits restore g (52->158) and D_eff (1.5->3.1) vs idle qubits"
+  - id: axisB_rig
+    desc: "Axis-B HARDENED (the decisive, honest test): HAR-X + recurrent-ESN + RFF, HAC-DM, Holm"
+    cmd: "python3 cli.py run axisB_rig"
     expect: >
-      n=10 informed CHIMERA beats HAR on RMSE (DM p~0.004) and the matched ESN
-      (DM p~0.018); H4 CONFIRMED (D_eff grows with n); H0 REFUTED as strictly
-      pre-registered (g non-monotonic).
+      HAR-X (rich features, linear) is best/co-best at every n; CHIMERA never beats it and is
+      n.s. vs ESN/RFF after Holm. NO quantum advantage at simulable scale -> H0 REFUTED
+      (pre-registered). CHIMERA is competitive + lower seed variance than the ESN.
   - id: scaling
     desc: "Scaling sweep g(n)/MZ-gap(n)/rank(n) + depolarizing/amplitude-damping noise"
     cmd: "python3 cli.py run scaling"

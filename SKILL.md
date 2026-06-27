@@ -38,7 +38,8 @@ seeded MNIST subset), so it runs **offline**. The core engine is pure NumPy.
 | `kernel` | quantum kernel distinctness | g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control |
 | `crisis` | regime-transition tracking | CHIMERA-3scale MZ R² 0.591 > HAR 0.559 |
 | `prereg` | pre-registered H0/H1/H4 thresholds | printed, fixed before running |
-| **`axisB`** | **informed encoding (the Phase-3 win)** | **n=10 beats HAR (DM p≈0.004) & ESN (p≈0.018); H4 confirmed; H0 refuted-as-stated** |
+| `axisB` | encoding-density mechanism | informed qubits restore g (52→158), D_eff (1.5→3.1) vs idle |
+| **`axisB_rig`** | **decisive honest test (HAR-X, recurrent-ESN, RFF; HAC-DM; Holm)** | **HAR-X best/co-best; CHIMERA n.s. → no quantum advantage at simulable scale; H0 refuted** |
 | `scaling` | fixed-encoder bottleneck + noise | g/rank saturate (motivates Axis B) |
 | `mnist` | common cross-team benchmark | accuracy 0.63→0.86 (n=5→12); CHIMERA ≫ linear, ≈ ESN |
 | `mnist_noise` | noise robustness | invariant to depolarizing; robust to amplitude damping |

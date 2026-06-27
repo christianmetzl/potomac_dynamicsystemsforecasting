@@ -42,48 +42,56 @@ run training, and reproduce every headline number end-to-end.
 We pre-register the falsifiable thresholds in `preregistration.py` (transcribed from the
 Phase-2 paper §7) **before** running, and report outcomes against them — including negatives.
 
-### 1. The Phase-3 win — informed encoding (Axis B), crisis window
-`python3 cli.py run axisB` → `results/scaling_axisB_findings.md`
+### 1. The decisive test — and an honest negative (Axis B, hardened)
+`python3 cli.py run axisB_rig` → `results/axisB_rigorous_findings.md`
 
-At **n=10**, encoding *leverage + downside-semivariance asymmetry* on the 2 extra qubits
-(vs leaving them idle):
+We compare the quantum reservoir to the strongest *fair* baselines — **HAR-X** (the same
+leverage/semivariance/jump features used **linearly**, no reservoir), a **true recurrent ESN**,
+and an **RFF kernel** — all sharing identical inputs, with **8 seeds, HAC-corrected
+Diebold–Mariano, two windows (crisis + calm), and Holm correction**:
 
-| | CHIMERA (n=10, informed) | HAR | matched ESN (same inputs) |
-|---|---|---|---|
-| RMSE (log-RV) | **0.6123** | 0.6290 | — |
-| MZ R² | **0.630** | 0.559 | 0.333 |
-| Diebold–Mariano | **beats HAR, p=0.004** | — | **beats ESN, p=0.018** |
+| RMSE(log-RV) | HAR-X | recurrent ESN | RFF | CHIMERA | best |
+|---|---|---|---|---|---|
+| crisis n=10 | 0.6034 | **0.5996** | 0.6047 | 0.6074 | ESN |
+| crisis n=12 | **0.5906** | 0.6023 | 0.5964 | 0.6031 | HAR-X |
+| calm n=10 | **0.6244** | 0.6445 | 0.6264 | 0.6291 | HAR-X |
 
-The quantum reservoir **significantly beats both the econometric gold standard (HAR) and the
-classical reservoir (ESN) given identical inputs** — the gain is quantum-specific. **H4
-confirmed** (effective rank grows with qubits under informed encoding). Honest limit: the win
-is **non-monotonic** (peaks at n=10, fades by n=12), so the strictly pre-registered **H0
-remains refuted** (g is not monotone). It is the *quality* of added information that matters.
+**HAR-X is best or co-best everywhere; CHIMERA never beats it, and after Holm correction no
+comparison is significant.** An earlier draft reported "CHIMERA beats HAR (p=0.004)" — our own
+adversarial review found that was an artifact of comparing against a *feature-poor* HAR; the
+gain came from the encoded realized measures (a known SHAR/HARQ effect), **not** from quantum
+nonlinearity. **By our pre-registered criteria, H0 is refuted — we report this honestly.**
+What survives for the quantum reservoir: it is *competitive* (within ~1% RMSE), **more stable
+than the ESN** (lower seed variance), and beats the recurrent ESN on the calm window (raw
+p=0.018). The encoding-density *mechanism* is real (informed qubits restore g 52→158, D_eff
+1.5→3.1 vs idle), but distinctness is **necessary, not sufficient** for advantage.
 
 ### 2. The input-bottleneck mechanism
 `python3 cli.py run scaling` → `results/scaling_sweep_findings.md`
 
 With a *fixed* univariate-lag encoder, adding qubits does **not** help — g(n) and effective
 rank saturate (idle qubits carry no new information). This pre-registered negative is the
-empirical case *for* Axis B.
+empirical case *for* the informed encoding tested in §1.
 
 ### 3. Common MNIST benchmark (cross-team expressivity)
 `python3 cli.py run mnist` → `results/mnist_findings.md`
 
 Accuracy grows with qubits (0.63 → 0.86 for n = 5 → 12); CHIMERA beats the linear-PCA
-baseline at every n (real nonlinear lift) and tracks a matched ESN within ~1% — i.e. the
-quantum reservoir has **sufficient expressivity**, the benchmark's stated purpose. Noise:
-the classifier is **invariant to depolarizing** noise (a uniform Bloch contraction that
-feature-standardization removes exactly) and **robust to amplitude damping** (<0.5% at 30%).
+baseline at every n (real nonlinear lift) and a matched ESN **ties or slightly exceeds** it
+(within ~1% for n≥8; 2.9% at n=5) — i.e. the quantum reservoir has **sufficient expressivity**
+(the benchmark's stated purpose), not dominance. Noise: the classifier is **invariant to
+depolarizing** noise (a uniform Bloch contraction that feature-standardization removes exactly)
+and **robust to amplitude damping** (<0.5% at 30%).
 
 ### 4. Scaling frontier + quantum-complexity metric
 `python3 cli.py run tensor` → `results/tensor_findings.md`
 
 A sparse-exact backend (`expm_multiply`, no dense propagator; matches the dense engine to
-2.4×10⁻¹⁴) pushes past the dense n=12 wall toward n≈16. We measure the **entanglement /
-bond dimension** of the all-to-all reservoir across a balanced cut: χ_eff grows toward its
-2^(n/2) ceiling — i.e. classical MPS cost (~χ²) heads for the wall, the precondition the
-quantum-advantage hypothesis needs.
+2.4×10⁻¹⁴) reaches **n=16 exactly**. We measure the **entanglement / bond dimension** of the
+random ≈50%-connected reservoir across a balanced cut: χ_eff is **full at every n
+(= 2^(n/2): 16→256)** — an exact MPS gets zero compression — so classical simulation cost
+explodes with n. The reservoir is genuinely hard to simulate classically (a *necessary*
+precondition for any beyond-frontier advantage; not observed at the simulable scale here).
 
 ### 5. Phase-2 results (reproduced)
 `python3 cli.py run phase2` — kernel geometry g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control; crisis
