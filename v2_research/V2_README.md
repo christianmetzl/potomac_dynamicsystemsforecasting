@@ -73,6 +73,17 @@ ahead (e.g. JPM: CHIMERA MZ 0.206 vs HAR-X 0.046; XOM: RFF 0.411 vs 0.310) — b
 headline (RMSE/DM) shows no quantum advantage. *Caveat:* 2013-2018 daily GK proxy, no
 GFC-scale crisis.
 
+**Verify with high-quality data (recommended).** To remove both caveats — proper intraday
+5-min realized variance, liquid index ETFs, and a long *crisis-inclusive* window (2004→, incl.
+2008 GFC + 2020 COVID) — run `fetch_massive_panel.py` with a Massive.com/Polygon API key
+**where that API is reachable** (this sandbox blocks it by network policy), then re-run:
+```bash
+MASSIVE_API_KEY=...  python3 v2_research/fetch_massive_panel.py --mode rv5 --start 2004-01-01
+python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_hq.npz
+```
+The experiment code is unchanged; only the data improves. (Fetcher provided ready-to-run; not
+executed here because `api.polygon.io`/`massive.com` return 000 under the sandbox policy.)
+
 ## What V2 rules out, and what it doesn't
 Ruled out (at ≤16 simulable qubits): longer horizons (A), alignment-tuning (B1),
 residual hybridization (B2), and **cross-asset high-dimensional spillovers (C)** all fail to

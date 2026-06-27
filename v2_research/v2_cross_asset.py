@@ -18,6 +18,7 @@ Setup: forecast each target asset's next-day log-RV from the lag-1 log-RV of the
 used LINEARLY) is the bar; CHIMERA / recurrent-ESN / RFF all NEST it; HAC-DM, multi-seed,
 Holm across targets. We report whatever it shows. No V1 file is modified.
 """
+import argparse
 import os
 import sys
 import time
@@ -52,7 +53,8 @@ def _gk_logrv(o, h, l, c):
 def build_panel():
     if os.path.exists(CACHE):
         d = np.load(CACHE, allow_pickle=True)
-        return pd.DataFrame(d["logrv"], index=pd.to_datetime(d["dates"]), columns=list(d["cols"]))
+        return pd.DataFrame(d["logrv"], index=pd.to_datetime(d["dates"]),
+                            columns=[str(c) for c in d["cols"]])
     print("(cross-asset cache miss -> fetching S&P-500 OHLCV once...)")
     raw = os.path.join(os.path.dirname(CACHE), "_all_stocks_5yr.csv")
     if not os.path.exists(raw):
@@ -76,14 +78,51 @@ def build_panel():
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--panel", default=None,
+                    help="npz in v2_research/ (e.g. cross_asset_panel_hq.npz from "
+                         "fetch_massive_panel.py); default = built-in S&P-500 daily GK 2013-2018")
+    ap.add_argument("--train-end", default=None, help="YYYY-MM-DD train/test cutoff")
+    ap.add_argument("--targets", nargs="+", default=None)
+    args = ap.parse_args()
     t0 = time.time()
-    P = build_panel()  # (T, N) log-RV panel
+
+    if args.panel:
+        dd = np.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), args.panel),
+                     allow_pickle=True)
+        P = pd.DataFrame(dd["logrv"], index=pd.to_datetime(dd["dates"]),
+                         columns=[str(c) for c in dd["cols"]])
+        src = f"external panel {args.panel}"
+    else:
+        P = build_panel()
+        src = "built-in S&P-500 daily Garman-Klass 2013-2018"
+
+    # locals shadow the module defaults so the body below is panel-agnostic
+    BASKET = list(P.columns)
+    N = len(BASKET)
+    TARGETS = (args.targets
+               or [t for t in ("AAPL", "JPM", "XOM", "SPY", "QQQ", "TLT") if t in BASKET]
+               or BASKET[:3])
+    if args.train_end:
+        TRAIN_END = pd.Timestamp(args.train_end)
+    else:
+        TRAIN_END = (pd.Timestamp("2019-01-01") if P.index.max() > pd.Timestamp("2019-06-01")
+                     else pd.Timestamp("2017-01-01"))
+    SEEDS = (0, 1, 2, 3, 4, 5)
     dates = P.index
+    # dense statevector engine up to 12 qubits; sparse-exact backend beyond (to ~16)
+    if N <= 12:
+        chimera_fn = lambda Q, sd: ss.chimera_features_n(Q, N, (2.0,), sd)
+    else:
+        from tensor_backend import chimera_features_sparse
+        chimera_fn = lambda Q, sd: chimera_features_sparse(Q, N, 2.0, sd)
+
     print("#" * 92)
     print("V2 CROSS-ASSET (exploratory): quantum nonlinear spillovers vs linear HAR-X-cross")
+    print(f"  source={src}")
     print(f"  basket={BASKET}  n={N} qubits  targets={TARGETS}  seeds={SEEDS}")
     print(f"  panel {P.shape[0]} days {dates.min().date()}..{dates.max().date()}  "
-          f"(daily Garman-Klass proxy; calm-ish window, no GFC)")
+          f"train<{TRAIN_END.date()}")
     print("#" * 92)
 
     # cross-asset predictor = lag-1 log-RV of every basket asset (the spillover state)
@@ -123,7 +162,7 @@ def main():
 
         per = {"ESN": [], "RFF": [], "CHIMERA": []}
         for sd in SEEDS:
-            for nm, F in (("CHIMERA", ss.chimera_features_n(Xc_s, N, (2.0,), sd)),
+            for nm, F in (("CHIMERA", chimera_fn(Xc_s, sd)),
                           ("ESN", esn_recurrent_features(Xc_s, ss.feat_dim(N), sd)),
                           ("RFF", rff_features(Xc_s, ss.feat_dim(N), sd, gamma))):
                 D = np.hstack([F, LINX])
