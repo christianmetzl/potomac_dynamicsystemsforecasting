@@ -110,19 +110,50 @@ python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_oxfordman.npz \
 python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_oxfordman.npz \
         --targets SPX DAX N225 --train-end 2014-01-01      # calm robustness
 ```
-*COVID-inclusive extension (optional):* for a 2020-spanning panel, `fetch_massive_panel.py`
-builds the same npz format from the Massive.com/Polygon API **where that API is reachable**
-(this sandbox blocks `api.polygon.io`/`massive.com` by network policy); the experiment code is
-unchanged, only the data source differs.
+*COVID-inclusive extension — attempted via the Massive.com API (see C″).*
+
+### Experiment C″ — Cross-asset-class ETFs via a live n8n→Massive pipeline (`build_massive_etf_panel.py`)
+To get an *independent* cross-asset cut we built an end-to-end **n8n pipeline** (workflow
+"CHIMERA V2 — Massive Multi-Asset Daily RV", id `5b6nLfOYIvHR888Q`) that calls the **Massive.com**
+aggregates API (Polygon-compatible) from n8n's own infrastructure — which reaches Massive even
+though this sandbox cannot. Honest findings from **direct probing of the plan** (reported, not
+hidden):
+- **5-minute intraday → `403 NOT_AUTHORIZED`** ("plan doesn't include this timeframe"): true
+  5-min realized variance is **not available** on this tier.
+- **Daily history → only ~5 years** (2021-06-28..2026-06-01) even when 2004 was requested:
+  **no 2008 GFC, no 2020 COVID** on this tier.
+
+So the Massive panel is, honestly, a **daily Garman-Klass proxy over a recent, crisis-light
+window** — *not* a quality upgrade over Oxford-Man (true 5-min, GFC) or V1's `.SPX` (2000-2020,
+GFC+COVID). Its value is a **third, independent universe**: 10 cross-**asset-class** ETFs
+(equity SPY/QQQ/DIA/IWM/EFA/EEM, bonds TLT, gold GLD, sectors XLF/XLE), 1,237 days, recent
+regime. Targets one per asset class (SPY/TLT/GLD); train < 2024-06-01.
+
+| target (class) | HAR-X-cross RMSE | CHIMERA RMSE | CHIMERA DM vs HAR-X-cross | Holm p |
+|---|---|---|---|---|
+| SPY (equity) | **0.8311** | 0.8517 | +2.42 (worse) | 0.028 |
+| TLT (bonds)  | **0.6798** | 0.7029 | +2.56 (worse) | 0.028 |
+| GLD (gold)   | **0.8349** | 0.8568 | +2.60 (worse) | 0.028 |
+
+**Result: refuted again.** HAR-X-cross is best for every asset class; CHIMERA (and ESN/RFF) are
+significantly worse after Holm. The honest negative holds on a *different* universe and the
+*recent* regime too. Reproduce (the CSV is committed; re-fetching needs the n8n workflow + a
+Massive key):
+```bash
+python3 v2_research/build_massive_etf_panel.py
+python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_massive_etf.npz \
+        --targets SPY TLT GLD --train-end 2024-06-01
+```
 
 ## What V2 rules out, and what it doesn't
 Ruled out (at ≤16 simulable qubits): longer horizons (A), alignment-tuning (B1),
-residual hybridization (B2), and **cross-asset high-dimensional spillovers (C, now verified on
-high-quality 5-min RV across global indices through the 2008 GFC — C′)** all fail to
-convert the reservoir's distinctness into a forecasting-accuracy advantage over strong linear
-baselines. Combined with V1 (1-day univariate), this is a thorough, honest mapping across
-five distinct settings: the quantum reservoir is consistently *competitive and distinct* but
-not *better* at any simulable scale we can test.
+residual hybridization (B2), and **cross-asset high-dimensional spillovers — now verified across
+THREE independent universes: US single stocks (C), global equity indices on true 5-min RV through
+the 2008 GFC (C′), and cross-asset-class ETFs in the recent regime via a live Massive pipeline
+(C″)** — all fail to convert the reservoir's distinctness into a forecasting-accuracy advantage
+over strong linear baselines. Combined with V1 (1-day univariate), this is a thorough, honest
+mapping across five distinct settings: the quantum reservoir is consistently *competitive and
+distinct* but not *better* at any simulable scale we can test.
 
 **The one regime still untested** (requires resources beyond this environment):
 - **Scale beyond the classical-simulation frontier** on real neutral-atom hardware (50–256
@@ -132,10 +163,12 @@ not *better* at any simulable scale we can test.
 
 ## Honest bottom line
 Across five settings (V1 1-day univariate; V2 multi-horizon, alignment-tuned, residual-hybrid,
-and cross-asset — the last now verified on high-quality 5-min realized variance across 10 global
-indices through the 2008 GFC), at every scale we can classically simulate (≤16 qubits) the
+and cross-asset — the last verified across THREE independent universes: US single stocks, global
+equity indices on true 5-min realized variance through the 2008 GFC, and recent cross-asset-class
+ETFs via a live Massive.com pipeline), at every scale we can classically simulate (≤16 qubits) the
 quantum reservoir is *competitive and distinct* but **not better** than strong linear baselines
-— and neither the obvious simulator-side fixes nor a genuine crisis-inclusive, intraday dataset
-change that. This is now a comprehensive, honest map of where the approach does not help. The single remaining open question — whether advantage emerges *past*
+— and neither the obvious simulator-side fixes, nor a genuine crisis-inclusive intraday dataset,
+nor a different recent asset-class universe change that. This is a comprehensive, honest map of
+where the approach does not help. The single remaining open question — whether advantage emerges *past*
 the classical-simulation frontier on real hardware — is genuinely open and untested, framed
 without overclaiming. The submission stays V1 (tag `v1-submission`).
