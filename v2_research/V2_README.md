@@ -73,20 +73,52 @@ ahead (e.g. JPM: CHIMERA MZ 0.206 vs HAR-X 0.046; XOM: RFF 0.411 vs 0.310) — b
 headline (RMSE/DM) shows no quantum advantage. *Caveat:* 2013-2018 daily GK proxy, no
 GFC-scale crisis.
 
-**Verify with high-quality data (recommended).** To remove both caveats — proper intraday
-5-min realized variance, liquid index ETFs, and a long *crisis-inclusive* window (2004→, incl.
-2008 GFC + 2020 COVID) — run `fetch_massive_panel.py` with a Massive.com/Polygon API key
-**where that API is reachable** (this sandbox blocks it by network policy), then re-run:
+### Experiment C′ — Cross-asset, VERIFIED on high-quality data (`fetch_oxfordman_panel.py`)
+The original C run had two caveats (daily GK proxy; calm 2013-2018). We removed **both** by
+re-running the *identical* experiment on the **Oxford-Man Institute Realized Library** — the
+standard academic realized-measures dataset (Heber-Lunde-Shephard-Sheppard): **true 5-minute
+realized variance** for **10 liquid global equity indices** across regions (SPX, DJI, NDX, RUT,
+FTSE, DAX, CAC, STOXX50E, N225, HSI), **2000-01 → 2016-09, including the 2008 GFC** (SPX 5-min
+RV peaks near ~140% annualised around Lehman). 3,436 common trading days; 6 seeds; HAC-DM; Holm
+across targets (SPX/DAX/N225, one per region). Provenance is honest: the Institute discontinued
+hosting in 2022, so we pull a widely-mirrored copy of the library spreadsheet (vintage
+2016-09-28) from a public GitHub mirror — this covers the GFC but **not** 2020 COVID.
+
+**Crisis-inclusive split** (train < 2007-01-01 → test 2007-2016, spanning the GFC):
+
+| target | HAR-X-cross RMSE | CHIMERA RMSE | CHIMERA DM vs HAR-X-cross | Holm p |
+|---|---|---|---|---|
+| SPX  | **0.6667** | 0.6995 | +4.43 (worse) | 0.000 |
+| DAX  | **0.5290** | 0.5418 | +2.94 (worse) | 0.003 |
+| N225 | **0.5766** | 0.5877 | +3.63 (worse) | 0.001 |
+
+**Result: refuted — more decisively than before.** On proper 5-min RV over a genuine crisis,
+HAR-X-cross is best for every region and CHIMERA (and ESN/RFF) are **significantly worse** — the
+nonlinear maps overfit precisely where it matters. The MZ nuance recurs (CHIMERA MZ edges the
+linear bar for DAX 0.425 vs 0.412 and N225 0.431 vs 0.418) but on the RMSE loss the DM test
+scores, the linear baseline wins clearly.
+
+**Robustness — calm split** (train < 2014-01-01 → test 2014-2016): HAR-X-cross still best;
+CHIMERA **never** significantly differs (all Holm p > 0.05; DM slightly positive = marginally
+worse). So the negative is not a crisis artifact — it holds in both regimes.
+
+Reproduce (no API key needed; data is a public mirror, fetched once and cached to a small npz):
 ```bash
-MASSIVE_API_KEY=...  python3 v2_research/fetch_massive_panel.py --mode rv5 --start 2004-01-01
-python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_hq.npz
+python3 v2_research/fetch_oxfordman_panel.py
+python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_oxfordman.npz \
+        --targets SPX DAX N225 --train-end 2007-01-01      # crisis-inclusive (headline)
+python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_oxfordman.npz \
+        --targets SPX DAX N225 --train-end 2014-01-01      # calm robustness
 ```
-The experiment code is unchanged; only the data improves. (Fetcher provided ready-to-run; not
-executed here because `api.polygon.io`/`massive.com` return 000 under the sandbox policy.)
+*COVID-inclusive extension (optional):* for a 2020-spanning panel, `fetch_massive_panel.py`
+builds the same npz format from the Massive.com/Polygon API **where that API is reachable**
+(this sandbox blocks `api.polygon.io`/`massive.com` by network policy); the experiment code is
+unchanged, only the data source differs.
 
 ## What V2 rules out, and what it doesn't
 Ruled out (at ≤16 simulable qubits): longer horizons (A), alignment-tuning (B1),
-residual hybridization (B2), and **cross-asset high-dimensional spillovers (C)** all fail to
+residual hybridization (B2), and **cross-asset high-dimensional spillovers (C, now verified on
+high-quality 5-min RV across global indices through the 2008 GFC — C′)** all fail to
 convert the reservoir's distinctness into a forecasting-accuracy advantage over strong linear
 baselines. Combined with V1 (1-day univariate), this is a thorough, honest mapping across
 five distinct settings: the quantum reservoir is consistently *competitive and distinct* but
@@ -100,9 +132,10 @@ not *better* at any simulable scale we can test.
 
 ## Honest bottom line
 Across five settings (V1 1-day univariate; V2 multi-horizon, alignment-tuned, residual-hybrid,
-and cross-asset), at every scale we can classically simulate (≤16 qubits) the quantum reservoir
-is *competitive and distinct* but **not better** than strong linear baselines — and the obvious
-simulator-side fixes don't change that. This is now a comprehensive, honest map of where the
-approach does not help. The single remaining open question — whether advantage emerges *past*
+and cross-asset — the last now verified on high-quality 5-min realized variance across 10 global
+indices through the 2008 GFC), at every scale we can classically simulate (≤16 qubits) the
+quantum reservoir is *competitive and distinct* but **not better** than strong linear baselines
+— and neither the obvious simulator-side fixes nor a genuine crisis-inclusive, intraday dataset
+change that. This is now a comprehensive, honest map of where the approach does not help. The single remaining open question — whether advantage emerges *past*
 the classical-simulation frontier on real hardware — is genuinely open and untested, framed
 without overclaiming. The submission stays V1 (tag `v1-submission`).

@@ -200,8 +200,15 @@ def main():
         print("\nVERDICT: no significant CHIMERA advantage over HAR-X-cross (Holm). "
               "Honest negative persists in the cross-asset setting too.")
 
-    np.save(os.path.join(os.path.dirname(__file__), "v2_cross_asset_results.npy"),
-            dict(rows=rows, family_raw=fam, family_holm=adj, basket=BASKET, targets=TARGETS),
+    # name the artifact per data source / split so distinct runs don't clobber each other
+    if args.panel:
+        tag = "_" + os.path.splitext(os.path.basename(args.panel))[0].replace("cross_asset_panel", "").strip("_")
+        tag = (tag + f"_tr{TRAIN_END.date()}").replace("__", "_")
+    else:
+        tag = ""
+    np.save(os.path.join(os.path.dirname(__file__), f"v2_cross_asset_results{tag}.npy"),
+            dict(rows=rows, family_raw=fam, family_holm=adj, basket=BASKET, targets=TARGETS,
+                 source=src, train_end=str(TRAIN_END.date())),
             allow_pickle=True)
     print(f"[{time.time()-t0:.1f}s]")
 
