@@ -261,6 +261,36 @@ def run_noise_sweep(ns, Xtr, ytr, Xte, yte, settings, seeds, tau=2.0):
     return rows
 
 
+def make_noise_curve_figure(noise_rows, path="figures/fig_mnist_noise.png"):
+    """Accuracy vs noise RATE, one line per (n, channel) - the robustness curve."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception as e:
+        print(f"(noise figure skipped: {e})")
+        return
+    if not noise_rows:
+        return
+    from collections import defaultdict
+    series = defaultdict(list)
+    for r in noise_rows:
+        series[(r["n"], r["channel"])].append((r["rate"], r["acc"]))
+    fig, ax = plt.subplots(figsize=(6, 4))
+    for (n, ch), pts in sorted(series.items()):
+        if ch == "noiseless":
+            continue
+        pts = sorted(pts)
+        ax.plot([p[0] for p in pts], [p[1] for p in pts], "o-", label=f"n={n} {ch}")
+    ax.set_title("MNIST accuracy vs noise rate (CHIMERA-QRC)")
+    ax.set_xlabel("noise rate"); ax.set_ylabel("test accuracy")
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fig.savefig(path, dpi=130)
+    print(f"\nsaved noise figure -> {path}")
+
+
 def make_figure(acc_rows, noise_rows, path="figures/fig_mnist.png"):
     try:
         import matplotlib
@@ -302,9 +332,38 @@ def main():
     ap.add_argument("--ns", type=int, nargs="+", default=None)
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--no-noise", action="store_true")
+    ap.add_argument("--noise-only", action="store_true",
+                    help="skip accuracy sweep; run only the noise-rate robustness curve")
     ap.add_argument("--ntrain", type=int, default=DEFAULT_NTRAIN)
     ap.add_argument("--ntest", type=int, default=DEFAULT_NTEST)
     args = ap.parse_args()
+
+    if args.noise_only:
+        ns = args.ns or [5, 8]
+        seeds = (0, 1)
+        ntr, nte = 1500, 500   # smaller subset keeps the density-matrix sweep tractable
+        t_all = time.time()
+        print("#" * 78)
+        print("CHIMERA-QRC MNIST - NOISE-RATE ROBUSTNESS CURVE")
+        print(f"qubit counts: {ns}   seeds: {seeds}   subset {ntr}/{nte}")
+        print("#" * 78)
+        Xtr, ytr, Xte, yte = load_mnist(ntr, nte)
+        rates = [0.0, 0.05, 0.1, 0.2, 0.3]
+        settings = ([(None, 0.0)]
+                    + [("depolarizing", r) for r in rates if r > 0]
+                    + [("amplitude_damping", r) for r in rates if r > 0])
+        # tag the noiseless point as rate 0.0 for both channels in the figure
+        noise_rows = run_noise_sweep(ns, Xtr, ytr, Xte, yte, settings, seeds)
+        # duplicate the noiseless accuracy as the rate=0 anchor for each channel
+        base = {r["n"]: r["acc"] for r in noise_rows if r["channel"] == "noiseless"}
+        for n, acc in base.items():
+            for ch in ("depolarizing", "amplitude_damping"):
+                noise_rows.append(dict(n=n, channel=ch, rate=0.0, acc=acc, sec=0.0))
+        make_noise_curve_figure(noise_rows)
+        np.save("mnist_noise_results.npy", dict(noise=noise_rows, n_train=ntr, n_test=nte),
+                allow_pickle=True)
+        print(f"\nsaved mnist_noise_results.npy   [total {time.time()-t_all:.1f}s]")
+        return
 
     if args.quick:
         ns = args.ns or [5, 8]
