@@ -20,3 +20,6 @@ Thumbs.db
 
 # MNIST raw download (subset cache is committed instead)
 data/_mnist_raw.npz
+
+# submission zip (rebuilt from committed files via package_submission.sh)
+EIGENNEXUS_Challenge_Phase3.zip
