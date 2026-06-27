@@ -1,0 +1,86 @@
+# qBraid Skill manifest - CHIMERA-QRC (Team EIGENNEXUS, GIC 2026 Phase 3)
+# A structured, agent-executable description of how to reproduce every result.
+# Pair with cli.py: `python3 cli.py run <action>`. This file is the machine-readable
+# index; SKILL.md is the human/agent narrative.
+name: chimera-qrc
+team: EIGENNEXUS
+track: A  # Financial Volatility
+title: "CHIMERA-QRC: Regime-Aware Quantum Reservoir Computing for S&P 500 Realized Volatility"
+entrypoint: "python3 cli.py"
+environment:
+  python: ">=3.10"
+  install: "pip install -r requirements.txt"
+  offline_capable: true   # all data bundled (Oxford-Man RV, SPY, MNIST subset)
+  notes: >
+    Pure-NumPy quantum reservoir engine (no Qiskit/PennyLane required for the core;
+    PennyLane only for the explicit-circuit SDK demo). Runs headless on qBraid.
+
+reservoir_config:   # the knobs an agent can vary
+  n_qubits: {type: int, default: 8, range: [3, 16], note: "dense exact <=12; sparse/TN backend reaches ~16"}
+  tau: {type: float, default: 2.0, note: "evolution time; multi-scale uses a tau-bank"}
+  hamiltonian: {enum: [ising, heisenberg], default: ising}
+  connectivity: {type: float, default: 0.5}
+  encoder: {enum: [univariate_lags, rich_realized_measures, data_reuploading], default: univariate_lags}
+  noise: {enum: [none, depolarizing, amplitude_damping], default: none}
+  noise_rate: {type: float, default: 0.0}
+  seeds: {default: [0, 1, 2]}
+
+actions:
+  - id: tests
+    desc: "Engine sanity tests (23 checks)"
+    cmd: "python3 cli.py run tests"
+    expect: "23 passed, 0 failed"
+  - id: kernel
+    desc: "Kernel geometry distinctness"
+    cmd: "python3 cli.py run kernel"
+    expect: "g(ESN-108 -> CHIMERA) ~ 62 vs ~4 classical control"
+  - id: crisis
+    desc: "Crisis-window regime-transition tracking"
+    cmd: "python3 cli.py run crisis"
+    expect: "CHIMERA-3scale MZ R^2 = 0.591 > HAR 0.559 >> ESN"
+  - id: prereg
+    desc: "Pre-registered H0/H1/H4 confirm-refute thresholds (committed before running)"
+    cmd: "python3 cli.py run prereg"
+    expect: "prints H0/H1/H4 statements + decision constants"
+  - id: axisB
+    desc: "Axis-B: informed encoding vs idle qubits (the headline Phase-3 result)"
+    cmd: "python3 cli.py run axisB"
+    expect: >
+      n=10 informed CHIMERA beats HAR on RMSE (DM p~0.004) and the matched ESN
+      (DM p~0.018); H4 CONFIRMED (D_eff grows with n); H0 REFUTED as strictly
+      pre-registered (g non-monotonic).
+  - id: scaling
+    desc: "Scaling sweep g(n)/MZ-gap(n)/rank(n) + depolarizing/amplitude-damping noise"
+    cmd: "python3 cli.py run scaling"
+    expect: "fixed-univariate-encoder bottleneck: g/rank saturate (pre-Axis-B)"
+  - id: mnist
+    desc: "Common cross-team MNIST benchmark (accuracy vs qubit count)"
+    cmd: "python3 cli.py run mnist"
+    expect: "accuracy grows with n (0.63->0.86, n=5->12); CHIMERA >> linear, ~= ESN"
+  - id: mnist_noise
+    desc: "MNIST noise-rate robustness curve (depolarizing + amplitude damping)"
+    cmd: "python3 cli.py run mnist_noise"
+    expect: "QRC invariant to depolarizing (standardization absorbs uniform contraction); robust to amplitude damping"
+  - id: tensor
+    desc: "Sparse/TN frontier beyond n=12 + bond-dimension complexity metric"
+    cmd: "python3 cli.py run tensor"
+    expect: "g(n) and effective bond dimension chi_eff(n) up to n~16; chi grows toward classical wall"
+  - id: baselines
+    desc: "Classical baselines (HAR, GARCH, GJR, AR(3), persistence)"
+    cmd: "python3 cli.py run baselines"
+    expect: "HAR is the strong bar; GARCH-family and AR below it"
+  - id: lstm
+    desc: "LSTM baseline (Track A, brief-named)"
+    cmd: "python3 cli.py run lstm"
+    expect: "LSTM does NOT beat HAR (DM > 0) - honest expected outcome"
+
+groups:
+  headline: [prereg, axisB, mnist, tensor]
+  phase2: [tests, calm, crisis, kernel, sdk]
+  reproduce: [tests, calm, crisis, kernel, sdk, baselines, lstm, prereg, scaling, axisB, mnist, tensor]
+
+hardware_plan:
+  primary: "simulator-first (statevector dense <=12q; sparse/TN to ~16q)"
+  qpu_validation: "gate-Trotter circuit (sdk_demo.py, ~380 native gates) on IonQ/IQM/IBM via qBraid"
+  error_mitigation: [ZNE (Mitiq), measurement mitigation (mthree)]
+  note: "QCi Dirac-3 is for the separate optimization challenge, not this QRC track."
