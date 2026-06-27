@@ -41,7 +41,7 @@ ACTIONS = {
     # ---- Phase-3 deliverables ----
     "prereg":       (["preregistration.py"], "Print pre-registered H0/H1/H4 thresholds", False),
     "scaling":      (["scaling_sweep.py"], "Scaling sweep: g(n), MZ-gap(n), rank(n) + noise", True),
-    "axisB":        (["scaling_sweep_axisB.py"], "Axis-B: informed encoding vs idle qubits (n=10 beat)", True),
+    "axisB":        (["scaling_sweep_axisB.py"], "Axis-B mechanism: informed encoding restores g/D_eff vs idle qubits (forecasting claim superseded by axisB_rig)", True),
     "mnist":        (["mnist_benchmark.py"], "MNIST common cross-team benchmark (accuracy vs n)", True),
     "mnist_noise":  (["mnist_benchmark.py", "--noise-only"], "MNIST noise-rate robustness curve", False),
     "tensor":       (["tensor_backend.py"], "Sparse/TN frontier + bond-dimension complexity metric", True),

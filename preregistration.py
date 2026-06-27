@@ -130,12 +130,35 @@ ALL = [H0, H1, H2, H3, H4]
 # ---------------------------------------------------------------------------
 # Evaluators (pure functions; return structured verdicts)
 # ---------------------------------------------------------------------------
+def _rankdata(a):
+    """Tie-averaged ranks (like scipy.stats.rankdata, 'average'), no SciPy dependency."""
+    a = np.asarray(a, float)
+    order = np.argsort(a, kind="mergesort")
+    ranks = np.empty(len(a), float)
+    ranks[order] = np.arange(1, len(a) + 1)
+    # average ranks within tie groups
+    i = 0
+    sa = a[order]
+    while i < len(a):
+        j = i
+        while j + 1 < len(a) and sa[j + 1] == sa[i]:
+            j += 1
+        if j > i:
+            avg = (ranks[order[i]] + ranks[order[j]]) / 2.0
+            for k in range(i, j + 1):
+                ranks[order[k]] = avg
+        i = j + 1
+    return ranks
+
+
 def _spearman(x, y):
-    """Spearman rank correlation without a SciPy dependency."""
+    """Spearman rank correlation (tie-aware) without a SciPy dependency.
+    Returns NaN for <3 points or when either variable has zero rank variance
+    (e.g. a perfectly flat/saturated curve), so a flat curve never reports rho=1."""
     x = np.asarray(x, float); y = np.asarray(y, float)
     if len(x) < 3:
         return float("nan")
-    rx = np.argsort(np.argsort(x)); ry = np.argsort(np.argsort(y))
+    rx = _rankdata(x); ry = _rankdata(y)
     rx = rx - rx.mean(); ry = ry - ry.mean()
     denom = np.sqrt((rx ** 2).sum() * (ry ** 2).sum())
     return float((rx * ry).sum() / denom) if denom > 0 else float("nan")

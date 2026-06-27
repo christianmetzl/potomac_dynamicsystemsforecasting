@@ -256,9 +256,12 @@ def main():
     if args.check:
         return
     rows = run_highn_sweep(args.ns, subsample=args.subsample)
-    make_figure(rows)
-    np.save("tensor_backend_results.npy", dict(rows=rows), allow_pickle=True)
-    print("\nsaved tensor_backend_results.npy")
+    if not args.quick:           # --quick must not clobber committed full-run artifacts
+        make_figure(rows)
+        np.save("tensor_backend_results.npy", dict(rows=rows), allow_pickle=True)
+        print("\nsaved tensor_backend_results.npy")
+    else:
+        print("\n[--quick] skipped writing figure/results (committed full-run artifacts preserved)")
 
 
 if __name__ == "__main__":

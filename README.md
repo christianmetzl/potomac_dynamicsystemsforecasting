@@ -94,8 +94,11 @@ explodes with n. The reservoir is genuinely hard to simulate classically (a *nec
 precondition for any beyond-frontier advantage; not observed at the simulable scale here).
 
 ### 5. Phase-2 results (reproduced)
-`python3 cli.py run phase2` — kernel geometry g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control; crisis
-MZ R² 0.591 > HAR 0.559; explicit PennyLane circuit matches the engine to ≈ 5×10⁻¹⁶.
+`python3 cli.py run phase2` (+ `crisis`) — kernel geometry g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control;
+explicit PennyLane circuit matches the engine to ≈ 5×10⁻¹⁶. CHIMERA-3scale tracks the crisis
+regime on forecast efficiency (MZ R² 0.591 vs **plain** HAR 0.559) — *but note this is vs
+feature-poor HAR; the decisive HAR-X test (§1) shows no significant advantage*, so this is a
+regime-tracking property, not a win.
 
 ### Classical baselines (brief-named)
 HAR, GARCH(1,1), GJR-GARCH, AR(3), persistence (`cli.py run baselines`), ESN (matched + 4×),

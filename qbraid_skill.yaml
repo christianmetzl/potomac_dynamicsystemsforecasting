@@ -35,9 +35,11 @@ actions:
     cmd: "python3 cli.py run kernel"
     expect: "g(ESN-108 -> CHIMERA) ~ 62 vs ~4 classical control"
   - id: crisis
-    desc: "Crisis-window regime-transition tracking"
+    desc: "Crisis-window regime tracking (Phase-2; vs PLAIN HAR only)"
     cmd: "python3 cli.py run crisis"
-    expect: "CHIMERA-3scale MZ R^2 = 0.591 > HAR 0.559 >> ESN"
+    expect: >
+      CHIMERA-3scale MZ R^2 0.591 vs plain HAR 0.559 - a regime-tracking property, NOT a
+      forecasting win: the decisive HAR-X test (axisB_rig) shows no significant advantage.
   - id: prereg
     desc: "Pre-registered H0/H1/H4 confirm-refute thresholds (committed before running)"
     cmd: "python3 cli.py run prereg"
@@ -83,9 +85,9 @@ actions:
     expect: "LSTM does NOT beat HAR (DM > 0) - honest expected outcome"
 
 groups:
-  headline: [prereg, axisB, mnist, tensor]
+  headline: [prereg, scaling, axisB_rig, mnist, tensor]
   phase2: [tests, calm, crisis, kernel, sdk]
-  reproduce: [tests, calm, crisis, kernel, sdk, baselines, lstm, prereg, scaling, axisB, mnist, tensor]
+  reproduce: [tests, calm, crisis, kernel, sdk, qsubmit, baselines, lstm, prereg, scaling, axisB, axisB_rig, mnist, tensor]
 
 hardware_plan:
   primary: "simulator-first (statevector dense <=12q; sparse/TN to ~16q)"

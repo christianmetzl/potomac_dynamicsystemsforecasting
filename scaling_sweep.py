@@ -406,12 +406,14 @@ def main():
     else:
         print("(need >=2 common n values for adjudication; widen --ns)")
 
-    make_figure(kernel_rows, fc_rows)
-
-    out = dict(ns=ns, kernel=kernel_rows, forecast=fc_rows, noise=noise_rows,
-               har=har, prereg=dict(DM_ALPHA=prereg.DM_ALPHA))
-    np.save("scaling_sweep_results.npy", out, allow_pickle=True)
-    print(f"\nsaved scaling_sweep_results.npy")
+    if not args.quick:           # --quick must not clobber committed full-run artifacts
+        make_figure(kernel_rows, fc_rows)
+        out = dict(ns=ns, kernel=kernel_rows, forecast=fc_rows, noise=noise_rows,
+                   har=har, prereg=dict(DM_ALPHA=prereg.DM_ALPHA))
+        np.save("scaling_sweep_results.npy", out, allow_pickle=True)
+        print(f"\nsaved scaling_sweep_results.npy")
+    else:
+        print("\n[--quick] skipped writing figure/results (committed full-run artifacts preserved)")
     print(f"[total wall-clock {time.time() - t_all:.1f}s]")
 
 

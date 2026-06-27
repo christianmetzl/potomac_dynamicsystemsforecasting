@@ -391,11 +391,14 @@ def main():
         settings = [(None, 0.0), ("depolarizing", 0.02), ("amplitude_damping", 0.02)]
         noise_rows = run_noise_sweep(noise_ns, Xtr, ytr, Xte, yte, settings, seeds[:2])
 
-    make_figure(acc_rows, noise_rows)
-    out = dict(ns=ns, accuracy=acc_rows, noise=noise_rows,
-               n_train=len(ytr), n_test=len(yte))
-    np.save("mnist_results.npy", out, allow_pickle=True)
-    print(f"\nsaved mnist_results.npy")
+    if not args.quick:           # --quick must not clobber committed full-run artifacts
+        make_figure(acc_rows, noise_rows)
+        out = dict(ns=ns, accuracy=acc_rows, noise=noise_rows,
+                   n_train=len(ytr), n_test=len(yte))
+        np.save("mnist_results.npy", out, allow_pickle=True)
+        print(f"\nsaved mnist_results.npy")
+    else:
+        print("\n[--quick] skipped writing figure/results (committed full-run artifacts preserved)")
     print(f"[total wall-clock {time.time() - t_all:.1f}s]")
 
 

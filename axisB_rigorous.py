@@ -255,9 +255,12 @@ def main():
         sig = "  *sig@0.05" if adj[k] < 0.05 else ""
         print(f"  {k:<34} raw p={fam_all[k]:.3f}   Holm p={adj[k]:.3f}{sig}")
 
-    np.save("axisB_rigorous_results.npy",
-            dict(family_raw=fam_all, family_holm=adj, summary=summary_all), allow_pickle=True)
-    print(f"\nsaved axisB_rigorous_results.npy   [{time.time()-t0:.1f}s]")
+    if not args.quick:           # --quick must not clobber the committed full 8-seed artifact
+        np.save("axisB_rigorous_results.npy",
+                dict(family_raw=fam_all, family_holm=adj, summary=summary_all), allow_pickle=True)
+        print(f"\nsaved axisB_rigorous_results.npy   [{time.time()-t0:.1f}s]")
+    else:
+        print(f"\n[--quick] skipped writing results (committed full-run artifact preserved) [{time.time()-t0:.1f}s]")
 
 
 if __name__ == "__main__":

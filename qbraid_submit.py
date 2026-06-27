@@ -204,10 +204,13 @@ def main():
         print(f"  ZNE→0 = {z['zne_extrapolated']:.4f}   noiseless exact = {z['noiseless_exact']:.4f}"
               f"   {'(ZNE closer ✓)' if z['zne_improves'] else '(no improvement)'}")
 
-    np.save("qbraid_submit_results.npy",
-            dict(n=n, layers=layers, two_qubit_gates=nzz*layers, observables=n+n*(n-1)//2,
-                 shot_study=rows, cross_check=xcheck), allow_pickle=True)
-    print(f"\nsaved qbraid_submit_results.npy   [{time.time()-t0:.1f}s]")
+    if not args.quick:           # --quick must not clobber the committed full-run artifact
+        np.save("qbraid_submit_results.npy",
+                dict(n=n, layers=layers, two_qubit_gates=nzz*layers, observables=n+n*(n-1)//2,
+                     shot_study=rows, cross_check=xcheck), allow_pickle=True)
+        print(f"\nsaved qbraid_submit_results.npy   [{time.time()-t0:.1f}s]")
+    else:
+        print(f"\n[--quick] skipped writing results (committed full-run artifact preserved) [{time.time()-t0:.1f}s]")
     print("To run on real hardware: python3 qbraid_submit.py --device <qBraid backend> (needs credits).")
 
 

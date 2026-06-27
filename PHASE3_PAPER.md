@@ -52,7 +52,7 @@ The central, falsifiable mechanism is **expressivity scaling**, which we measure
 the geometric difference (Huang et al. 2021). The quantum kernel is poorly reproducible by a
 matched classical reservoir: against the name-matched ESN-108 reference,
 **g(ESN→CHIMERA) ≈ 62 vs ≈4 control** (`cli.py run kernel`); against per-n *feature-matched*
-ESNs the gap is larger still (g ≈ 120–158 at n=8). (g is reported at a fixed ridge
+ESNs the gap is larger still (g ≈ 125 at n=8, rising to ≈158 at n=10). (g is reported at a fixed ridge
 regularization; the qualitative ~15–40× separation over the classical–classical control, not
 the exact value, is the claim.) Crucially, at ≤12–16 qubits the map remains classically
 simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
@@ -142,8 +142,10 @@ n+C(n,2) observables):
 |---|---|---|---|---|---|
 | 8 | 220 | 160 | 36 | 2k–8k (ε≈.011–.022) | <1 s/state |
 | 10 | 480 | 200 | 55 | 2k–8k | ~sec |
-| 12 | 760 | 240 | 78 | 2k–8k | ≈58 s build |
-| 16 (sparse) | — | — | 136 | — | ≈40 min/point |
+| 12 | 760 | 240 | 78 | 2k–8k | ~1 min build |
+| 16 (sparse) | — | — | 136 | — | ~40 min/point |
+
+*(wall-clock is hardware-dependent — measured on a single CPU here; it is an engineering, not a scientific, quantity.)*
 
 **QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / IBM** via qBraid — the
 random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, easing NISQ

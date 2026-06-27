@@ -184,11 +184,14 @@ def main():
             rho = v.get("g_spearman_rho", v.get("d_eff_spearman_rho"))
             print(f"  [{v['hypothesis']}] {v['verdict']}  (rho={rho})")
 
-    _figure(uni, rich, args.scheme)
-    np.save("scaling_sweep_axisB_results.npy",
-            dict(ns=ns, univariate=uni, rich=rich, scheme=args.scheme,
-                 mz_har=mz_har, rmse_har=rmse_har), allow_pickle=True)
-    print(f"\nsaved scaling_sweep_axisB_results.npy")
+    if not args.quick:           # --quick must not clobber committed full-run artifacts
+        _figure(uni, rich, args.scheme)
+        np.save("scaling_sweep_axisB_results.npy",
+                dict(ns=ns, univariate=uni, rich=rich, scheme=args.scheme,
+                     mz_har=mz_har, rmse_har=rmse_har), allow_pickle=True)
+        print(f"\nsaved scaling_sweep_axisB_results.npy")
+    else:
+        print("\n[--quick] skipped writing figure/results (committed full-run artifacts preserved)")
     print(f"[total wall-clock {time.time() - t_all:.1f}s]")
 
 
