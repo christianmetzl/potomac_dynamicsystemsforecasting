@@ -23,3 +23,6 @@ data/_mnist_raw.npz
 
 # submission zip (rebuilt from committed files via package_submission.sh)
 EIGENNEXUS_Challenge_Phase3.zip
+
+# V2 cross-asset raw download (small cached panel cross_asset_panel.npz is committed instead)
+v2_research/_all_stocks_5yr.csv

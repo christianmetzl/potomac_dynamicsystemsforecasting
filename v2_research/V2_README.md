@@ -50,19 +50,48 @@ n=10, crisis window. HAR-X bar: RMSE 0.6034, MZ 0.618.
 - **B2 residual hybrid** (let HAR-X do the linear bulk, quantum model the residual) does not beat
   HAR-X either; the quantum residual adds noise, not signal, at this scale.
 
-## What V2 rules out, and what it doesn't
-Ruled out (at ≤16 simulable qubits, S&P-500 RV): longer horizons, alignment-tuning, and
-residual hybridization do **not** convert the reservoir's distinctness into accuracy. Combined
-with V1, this is a thorough, honest mapping of where the quantum approach does **not** help.
+## Experiment C — Cross-asset spillovers (`v2_cross_asset.py`)
+*Hypothesis (highest-value lead):* the high-dimensional, many-interacting-series setting is
+where a high-dimensional quantum feature map is most likely to matter. Data: S&P-500 daily
+OHLCV 2013-2018 (public; plotly/datasets mirror), Garman-Klass realized variance for a
+10-stock cross-sector basket. Forecast each target's next-day log-RV from the lag-1 log-RV of
+the FULL basket (cross-asset state → 10 qubits). Bar = HAR-X-cross (same cross-asset info,
+linear). 6 seeds, HAC-DM, Holm across targets.
 
-**Not yet tested (require resources we don't have offline):**
-- **Cross-asset / high-dimensional joint volatility** — needs a multi-index realized-measure
-  panel; the bundled Oxford-Man CSV is `.SPX`-only. (Highest-value untested lead.)
-- **Scale beyond the classical-simulation frontier** on real neutral-atom hardware — the one
-  regime where "hard to copy" could become a real edge (needs qBraid QPU credits).
+| target | HAR-X-cross RMSE | CHIMERA RMSE | CHIMERA DM vs HAR-X-cross | Holm p |
+|---|---|---|---|---|
+| AAPL | **0.8649** | 0.9083 | +2.79 (worse) | 0.017 |
+| JPM  | **0.7578** | 0.7669 | +0.67 (worse) | 0.506 |
+| XOM  | **0.7473** | 0.7629 | +1.58 (worse) | 0.230 |
+
+**Result: refuted.** HAR-X-cross is best for every target; CHIMERA never wins (significantly
+*worse* for AAPL after Holm; n.s. for JPM/XOM). Daily single-stock RV is very noisy
+(MZ R² ≈ 0.03–0.32), so the nonlinear reservoirs (ESN, CHIMERA) tend to overfit the noise.
+*Honest nuance:* on the **MZ** (forecast-efficiency) metric the nonlinear maps sometimes edge
+ahead (e.g. JPM: CHIMERA MZ 0.206 vs HAR-X 0.046; XOM: RFF 0.411 vs 0.310) — but on the
+**RMSE loss** that the DM test evaluates, the linear baseline wins. We report both; the
+headline (RMSE/DM) shows no quantum advantage. *Caveat:* 2013-2018 daily GK proxy, no
+GFC-scale crisis.
+
+## What V2 rules out, and what it doesn't
+Ruled out (at ≤16 simulable qubits): longer horizons (A), alignment-tuning (B1),
+residual hybridization (B2), and **cross-asset high-dimensional spillovers (C)** all fail to
+convert the reservoir's distinctness into a forecasting-accuracy advantage over strong linear
+baselines. Combined with V1 (1-day univariate), this is a thorough, honest mapping across
+five distinct settings: the quantum reservoir is consistently *competitive and distinct* but
+not *better* at any simulable scale we can test.
+
+**The one regime still untested** (requires resources beyond this environment):
+- **Scale beyond the classical-simulation frontier** on real neutral-atom hardware (50–256
+  qubits) — the only regime where "hard to copy" could become a genuine edge, since there a
+  classical ESN/RFF can no longer replicate the feature map. Needs qBraid QPU credits;
+  `qbraid_submit.py` is the ready, one-flag submission path.
 
 ## Honest bottom line
-V2 reinforces V1: at the scale we can simulate, the quantum reservoir is *competitive and
-distinct* but not *better*, and the obvious simulator-side fixes don't change that. The open
-question — whether advantage emerges past the classical frontier — remains genuinely open and
-untested, framed without overclaiming. The submission stays V1.
+Across five settings (V1 1-day univariate; V2 multi-horizon, alignment-tuned, residual-hybrid,
+and cross-asset), at every scale we can classically simulate (≤16 qubits) the quantum reservoir
+is *competitive and distinct* but **not better** than strong linear baselines — and the obvious
+simulator-side fixes don't change that. This is now a comprehensive, honest map of where the
+approach does not help. The single remaining open question — whether advantage emerges *past*
+the classical-simulation frontier on real hardware — is genuinely open and untested, framed
+without overclaiming. The submission stays V1 (tag `v1-submission`).
