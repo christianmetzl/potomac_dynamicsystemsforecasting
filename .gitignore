@@ -17,3 +17,6 @@ env/
 Thumbs.db
 .idea/
 .vscode/
+
+# MNIST raw download (subset cache is committed instead)
+data/_mnist_raw.npz
