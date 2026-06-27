@@ -163,8 +163,8 @@ separate optimization challenge's device.)*
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
-linear) is the best model on this task. (ii) Results are on the S&P 500 RV series over two
-windows; broader assets/periods untested. (iii) Noise is studied on MNIST with single-qubit
+linear) is the best model on this task. (ii) The S&P 500 RV sample ends Feb-2020 — the 2008 GFC
+is in-sample, the 2020 COVID shock just outside it; broader assets/periods untested. (iii) Noise is studied on MNIST with single-qubit
 channels at the readout; full noisy-circuit and shot-noise simulation is deferred to the QPU
 runs. (iv) g is regularization-dependent (we report the qualitative gap, not a tuned value).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).

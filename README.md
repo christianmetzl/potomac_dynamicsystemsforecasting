@@ -132,9 +132,11 @@ figures/  results/                      generated figures + findings write-ups
 
 ## Data provenance (all public; no proprietary data)
 
-- **Oxford-Man Realized Library `.SPX` 5-min realized variance**, 2000–2020 incl. the 2008 GFC
-  (Heber, Lunde, Shephard & Sheppard 2009; redistributed via the R packages `highfrequency`
-  and `bvhar`). Bundled in `data/oxfordman_spx_full.csv`.
+- **Oxford-Man Realized Library `.SPX` 5-min realized variance**, 2000-01 → 2020-02 incl. the
+  2008 GFC (Heber, Lunde, Shephard & Sheppard 2009; redistributed via the R packages
+  `highfrequency` and `bvhar`). Bundled in `data/oxfordman_spx_full.csv`. *Note: the sample ends
+  2020-02-21, just before the COVID shock; the 2020 COVID regime is tested separately in V2
+  (`v2_research/`, daily-proxy panel) — same no-advantage result.*
 - **SPY daily OHLCV 2022–2026** — public end-of-day data (Stooq/Yahoo), retrieved via
   Massive.com/Polygon; Garman–Klass proxy. Bundled in `data/massive_spy_daily.csv`.
 - **MNIST** — fetched once from the public Keras `.npz` mirror; a seeded subset is cached in

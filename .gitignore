@@ -28,3 +28,5 @@ EIGENNEXUS_Challenge_Phase3.zip
 v2_research/_all_stocks_5yr.csv
 # V2 Oxford-Man raw download (16MB xlsx; small cached cross_asset_panel_oxfordman.npz committed instead)
 v2_research/_oxfordman_full.xlsx
+# V2 COVID-panel raw per-index downloads (small cached cross_asset_panel_covid.npz committed instead)
+v2_research/_covid_*.csv

@@ -124,8 +124,9 @@ hidden):
   **no 2008 GFC, no 2020 COVID** on this tier.
 
 So the Massive panel is, honestly, a **daily Garman-Klass proxy over a recent, crisis-light
-window** — *not* a quality upgrade over Oxford-Man (true 5-min, GFC) or V1's `.SPX` (2000-2020,
-GFC+COVID). Its value is a **third, independent universe**: 10 cross-**asset-class** ETFs
+window** — *not* a quality upgrade over Oxford-Man (true 5-min, GFC) or V1's `.SPX` (2000-01..
+2020-02, GFC in-sample; COVID just outside — see C‴). Its value is a **third, independent
+universe**: 10 cross-**asset-class** ETFs
 (equity SPY/QQQ/DIA/IWM/EFA/EEM, bonds TLT, gold GLD, sectors XLF/XLE), 1,237 days, recent
 regime. Targets one per asset class (SPY/TLT/GLD); train < 2024-06-01.
 
@@ -145,15 +146,45 @@ python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_massive_etf.npz 
         --targets SPY TLT GLD --train-end 2024-06-01
 ```
 
+### Experiment C‴ — the COVID-2020 regime (the one crisis no other panel reaches) (`fetch_covid_panel.py`)
+*Why:* V1's `.SPX` ends 2020-02-21 (COVID's eve), the Oxford-Man mirror ends 2016, and the
+Massive tier starts 2021 — so the **March-2020 COVID shock was untested**. This panel closes that
+gap: daily OHLC for **8 global equity indices** (SPX, DAX, CAC, FTSE, OMXS, N225, KOSPI, HSI),
+**2006-10 → 2022-06, containing both the 2008 GFC and the 2020 COVID crash** (public mirror
+`andymogul/SpilloverVolPrediction`). *Honest quality note:* this is a **daily Garman-Klass
+proxy**, not true 5-min RV (GK understates the spike — SPX reads ~81% annualised in Mar-2020 vs
+higher true intraday RV); its sole purpose is to add the COVID regime, not to upgrade quality.
+COVID-era test: train < 2020-01-01 → **test = 2020–2022 (the COVID crash + recovery)**, targets
+SPX/DAX/N225, 6 seeds, HAC-DM, Holm.
+
+| target | HAR-X-cross RMSE | CHIMERA RMSE | CHIMERA DM vs HAR-X-cross | Holm p |
+|---|---|---|---|---|
+| SPX  | **0.8877** | 0.8898 | +0.40 | 1.000 |
+| DAX  | **0.8076** | 0.8092 | +0.39 | 1.000 |
+| N225 | **0.7782** | 0.7836 | +1.22 | 0.671 |
+
+**Result: no quantum advantage in the COVID regime either** (all Holm p ≫ 0.05). *Honest nuance,
+reported:* unlike the GFC test (where CHIMERA was significantly *worse*), in the COVID era CHIMERA
+is statistically **tied** with HAR-X-cross — neither better nor worse — and the nonlinear maps
+(ESN/RFF) even edge slightly ahead on SPX/DAX (not significant). So the headline (no advantage)
+holds through COVID; the "significantly worse in crises" pattern is GFC-specific, not universal.
+Reproduce:
+```bash
+python3 v2_research/fetch_covid_panel.py
+python3 v2_research/v2_cross_asset.py --panel cross_asset_panel_covid.npz \
+        --targets SPX DAX N225 --train-end 2020-01-01
+```
+
 ## What V2 rules out, and what it doesn't
 Ruled out (at ≤16 simulable qubits): longer horizons (A), alignment-tuning (B1),
 residual hybridization (B2), and **cross-asset high-dimensional spillovers — now verified across
-THREE independent universes: US single stocks (C), global equity indices on true 5-min RV through
-the 2008 GFC (C′), and cross-asset-class ETFs in the recent regime via a live Massive pipeline
-(C″)** — all fail to convert the reservoir's distinctness into a forecasting-accuracy advantage
-over strong linear baselines. Combined with V1 (1-day univariate), this is a thorough, honest
-mapping across five distinct settings: the quantum reservoir is consistently *competitive and
-distinct* but not *better* at any simulable scale we can test.
+FOUR independent universes: US single stocks (C), global equity indices on true 5-min RV through
+the 2008 GFC (C′), cross-asset-class ETFs in the recent regime via a live Massive pipeline (C″),
+and 8 global indices through the 2020 COVID crash (C‴)** — all fail to convert the reservoir's
+distinctness into a forecasting-accuracy advantage over strong linear baselines. Both major
+crises of the century (2008 GFC, 2020 COVID) are now covered. Combined with V1 (1-day univariate),
+this is a thorough, honest mapping across five distinct settings: the quantum reservoir is
+consistently *competitive and distinct* but not *better* at any simulable scale we can test.
 
 **The one regime still untested** (requires resources beyond this environment):
 - **Scale beyond the classical-simulation frontier** on real neutral-atom hardware (50–256
@@ -163,12 +194,13 @@ distinct* but not *better* at any simulable scale we can test.
 
 ## Honest bottom line
 Across five settings (V1 1-day univariate; V2 multi-horizon, alignment-tuned, residual-hybrid,
-and cross-asset — the last verified across THREE independent universes: US single stocks, global
-equity indices on true 5-min realized variance through the 2008 GFC, and recent cross-asset-class
-ETFs via a live Massive.com pipeline), at every scale we can classically simulate (≤16 qubits) the
-quantum reservoir is *competitive and distinct* but **not better** than strong linear baselines
+and cross-asset — the last verified across FOUR independent universes: US single stocks, global
+equity indices on true 5-min realized variance through the 2008 GFC, recent cross-asset-class
+ETFs via a live Massive.com pipeline, and 8 global indices through the 2020 COVID crash — so both
+major crises of the century are covered), at every scale we can classically simulate (≤16 qubits)
+the quantum reservoir is *competitive and distinct* but **not better** than strong linear baselines
 — and neither the obvious simulator-side fixes, nor a genuine crisis-inclusive intraday dataset,
-nor a different recent asset-class universe change that. This is a comprehensive, honest map of
-where the approach does not help. The single remaining open question — whether advantage emerges *past*
+nor a different asset-class universe, nor the COVID shock change that. This is a comprehensive,
+honest map of where the approach does not help. The single remaining open question — whether advantage emerges *past*
 the classical-simulation frontier on real hardware — is genuinely open and untested, framed
 without overclaiming. The submission stays V1 (tag `v1-submission`).
