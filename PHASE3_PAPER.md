@@ -31,6 +31,8 @@ BOCPD; and dissipation-as-feature (calibrated amplitude damping). For Phase 3 we
 (§5.4). The engine is pure NumPy; an explicit PennyLane circuit reproduces it to ≈5×10⁻¹⁶
 and compiles to a shallow ≈380-gate native circuit (20 Trotter layers).
 
+![**Figure 1.** CHIMERA-QRC pipeline: lagged log-RV (and, in Axis B, realized-measure) inputs are angle-encoded `RY(π·x)` onto qubits, evolved under a fixed Ising Hamiltonian `U=exp(−iHτ)`, and read out as single/pairwise Pauli-Z expectations into a ridge head fused with the HAR linear set; a BOCPD detector selects the Hamiltonian for regime adaptivity.](figures/fig_architecture.png)
+
 ## 3. Theoretical and analytical justification
 The exploited quantum resources map to RV's structure: (a) **Hilbert-space dimensionality** —
 n qubits give 2ⁿ amplitudes and O(n²) measured Pauli features at O(n²) parameter cost;
@@ -80,7 +82,11 @@ share). At **n=10**, vs leaving those qubits idle, on the crisis window (GFC in 
 CHIMERA **significantly beats both HAR and the matched ESN given identical inputs** — the
 gain is quantum-specific (the ESN with the same features cannot beat HAR). Kernel distinctness
 and rank jump vs idle qubits (g 52→158, D_eff 1.5→3.1). **H4 (effective-rank scaling) is
-CONFIRMED** (D_eff grows 1.81→3.10→3.14 with n under informed encoding). *Honest limit:* the
+CONFIRMED** (D_eff grows 1.81→3.10→3.14 with n under informed encoding).
+
+![**Figure 2.** Axis-B (3 seeds). Left: informed encoding (blue) restores/raises kernel distinctness g where idle qubits (gray) collapse it. Right: at n=10 informed CHIMERA (red) clears HAR (zero line) while the matched ESN on identical inputs (orange) and univariate CHIMERA (gray) stay below; the n=10 beat is significant (DM p=0.004), and fades by n=12 — honest non-monotonicity.](figures/fig_scaling_axisB.png)
+
+*Honest limit:* the
 advantage is **non-monotonic** (peaks at n=10, fades by n=12: g 158→88, MZ no longer beats
 HAR), so the strictly pre-registered **H0 remains REFUTED** — it is the *quality* of added
 information that matters, not raw qubit count. This is the first significant beat-HAR-on-RMSE
