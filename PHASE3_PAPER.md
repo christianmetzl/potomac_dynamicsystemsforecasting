@@ -98,11 +98,16 @@ literature (Antoncich et al. 2026).
 
 **5.4 Scaling frontier + quantum-complexity metric.** A sparse-exact backend
 (`expm_multiply`, no dense propagator; verified to match the dense engine to **2.4×10⁻¹⁴**)
-extends the study past the dense n=12 wall toward **n≈16**. For our **all-to-all** random-
-coupling reservoir we measure the entanglement / **bond dimension** χ_eff across a balanced
-cut: χ_eff grows toward its 2^(n/2) ceiling, so a classical MPS would need cost ~χ² that
-heads for the wall — the classical-intractability precondition the advantage hypothesis needs.
-[χ_eff(n) curve in `figures/fig_tensor_complexity.png` / `results/tensor_findings.md`.]
+extends the study past the dense n=12 wall to **n=16 exactly** (the brief's upper range;
+≈40 min/point on one CPU). For our **all-to-all** random-coupling reservoir we measure the
+**bond dimension** χ_eff across a balanced cut: it is **full at every n, χ_eff = 2^(n/2)**
+(16, 32, 64, 128, 256 for n = 8…16) — an exact MPS gets **zero compression** — while the
+entanglement entropy grows (S ≈ 1.7 → 3.2 nats), so even an approximate MPS needs χ~e^S that
+grows with n. Either way classical MPS cost rises with n: the reservoir is **genuinely hard
+to simulate classically**, the precondition the advantage hypothesis needs. (Kernel
+distinctness g under the *fixed* univariate encoder declines with n here — the same input
+bottleneck as §5.1; the hardness result is encoder-independent, the distinctness result needs
+§5.2's informed encoding.) See `figures/fig_tensor_complexity.png` / `results/tensor_findings.md`.
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: dense statevector ≤12 qubits (n=12 propagator build ≈ 7 min),
