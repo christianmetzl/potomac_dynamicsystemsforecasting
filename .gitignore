@@ -10,6 +10,8 @@ env/
 # Run artifacts
 *.npy
 *.log
+# ...but DO ship the committed judge re-run / full-run provenance logs in results/
+!results/*.log
 /tmp/
 
 # OS / editor

@@ -1,0 +1,39 @@
+####################################################################################
+CHIMERA-QRC AXIS-B SWEEP  (univariate vs rich encoder, matched qubits)
+qubit counts: [8, 10, 12]   seeds: (0, 1, 2)   rich scheme: rich
+####################################################################################
+rich pool: N=5030 rows, P=19 features
+priority order: ['logrv_l1', 'logrv_l2', 'logrv_l3', 'logrv_l4', 'logrv_l5', 'logrv_l10', 'logrv_l15', 'logrv_l22', 'ret_l1', 'downshare_l1', 'jumpshare_l1', 'o2c2_l1', 'ret2_l1', 'logrsv_l1', 'logbv_l1', 'logmedrv_l1', 'downshare_w', 'jumpshare_w', 'logrk_l1']
+
+HAR baseline (crisis): RMSE=0.6290  MZ_R2=0.559
+
+====================================================================================
+  n   enc  #f   g(E||C)  D_eff  qMZgap  qDMvH  eMZgap C-vs-E DM_p
+------------------------------------------------------------------------------------
+  8 univa   8    125.33   1.81  -0.012  0.013  -0.249       0.006
+  8  rich   8    125.33   1.81  -0.012  0.013  -0.249       0.006
+------------------------------------------------------------------------------------
+ 10 univa   8     52.12   1.53  -0.059  0.009  -0.419       0.000
+ 10  rich  10    157.74   3.10  +0.071  0.004  -0.226       0.018
+------------------------------------------------------------------------------------
+ 12 univa   8     31.30   1.52  -0.121  0.000  -0.366       0.001
+ 12  rich  12     88.45   3.14  -0.085  0.074  -0.297       0.101
+------------------------------------------------------------------------------------
+
+====================================================================================
+AXIS-B HEAD-TO-HEAD
+  dg = rich g - univariate g (informed vs idle qubits)
+  dMZ = rich MZ-gap - univariate MZ-gap
+  quantum edge = rich CHIMERA MZ-gap - rich ESN MZ-gap (same rich inputs)
+====================================================================================
+  n= 8: dg=   +0.00  dMZ=+0.000  rich qMZ-gap=-0.012(DMvH p=0.013)  quantum-edge-vs-ESN=+0.237(DM p=0.006)
+  n=10: dg= +105.62  dMZ=+0.130  rich qMZ-gap=+0.071(DMvH p=0.004)  quantum-edge-vs-ESN=+0.297(DM p=0.018)
+  n=12: dg=  +57.14  dMZ=+0.036  rich qMZ-gap=-0.085(DMvH p=0.074)  quantum-edge-vs-ESN=+0.213(DM p=0.101)
+
+PRE-REGISTERED ADJUDICATION (rich encoder):
+  [H0] REFUTED  (rho=-0.5)
+  [H4] CONFIRMED  (rho=1.0)
+saved figure -> figures/fig_scaling_axisB.png
+
+saved scaling_sweep_axisB_results.npy
+[total wall-clock 530.7s]

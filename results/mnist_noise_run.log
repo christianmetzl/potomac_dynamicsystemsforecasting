@@ -1,0 +1,31 @@
+##############################################################################
+CHIMERA-QRC MNIST - NOISE-RATE ROBUSTNESS CURVE
+qubit counts: [5, 8]   seeds: (0, 1)   subset 1500/500
+##############################################################################
+
+==============================================================================
+MNIST NOISE SWEEP  (exact density-matrix channels; n capped at 10)
+==============================================================================
+  n             channel   rate  CHIMERA acc    sec
+  5           noiseless  0.000       0.6270    0.8
+  5        depolarizing  0.050       0.6270    4.9
+  5        depolarizing  0.100       0.6270    4.9
+  5        depolarizing  0.200       0.6270    4.7
+  5        depolarizing  0.300       0.6270    4.9
+  5   amplitude_damping  0.050       0.6260    3.0
+  5   amplitude_damping  0.100       0.6250    3.0
+  5   amplitude_damping  0.200       0.6250    3.0
+  5   amplitude_damping  0.300       0.6260    3.0
+  8           noiseless  0.000       0.7790    2.3
+  8        depolarizing  0.050       0.7790  116.7
+  8        depolarizing  0.100       0.7790  121.9
+  8        depolarizing  0.200       0.7790  120.4
+  8        depolarizing  0.300       0.7790  121.6
+  8   amplitude_damping  0.050       0.7790   65.2
+  8   amplitude_damping  0.100       0.7790   65.8
+  8   amplitude_damping  0.200       0.7790   64.6
+  8   amplitude_damping  0.300       0.7800   65.0
+
+saved noise figure -> figures/fig_mnist_noise.png
+
+saved mnist_noise_results.npy   [total 776.6s]

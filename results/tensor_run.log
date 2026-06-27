@@ -1,0 +1,20 @@
+####################################################################################
+CHIMERA-QRC TENSOR / SPARSE BACKEND - scaling frontier + complexity metric
+####################################################################################
+Sparse-vs-dense equivalence check (should be ~1e-10):
+  n=6: max|sparse - dense| = 2.77e-14  OK
+  n=8: max|sparse - dense| = 2.43e-14  OK
+
+====================================================================================
+HIGH-N SWEEP (sparse exact)  N_sub=600  cut=balanced bipartition
+====================================================================================
+  n  enc  #feat   g(E||C)   g_ctrl   D_eff  rank   S_ent  chi_eff  chi_max    sec
+  8    8     36     120.5     13.5    1.81    36   1.744     16.0       16    0.8
+ 10    8     55      42.5      7.8    1.53    52   2.226     32.0       32    4.7
+ 12    8     78      26.5      4.8    1.53    52   2.546     64.0       64   53.3
+ 14    8    105      22.1      4.8    1.48    57   3.226    128.0      128  329.4
+ 16    8    136      22.5      2.8    1.64    53   2.524    255.9      256 2375.2
+
+saved figure -> figures/fig_tensor_complexity.png
+
+saved tensor_backend_results.npy

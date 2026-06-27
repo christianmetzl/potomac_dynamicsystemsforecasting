@@ -1,0 +1,62 @@
+############################################################################################
+CHIMERA-QRC AXIS-B (RIGOROUS): HAR-X + recurrent-ESN + RFF controls, HAC-DM, per-seed, Holm
+seeds=(0, 1, 2, 3, 4, 5, 6, 7)  ns=[8, 10, 12]  focal n=10
+############################################################################################
+
+============================================================================================
+WINDOW: crisis 2007-2012 (GFC in test)    (HAR plain: RMSE=0.6290  MZ=0.559)
+============================================================================================
+
+ n=8   model         RMSE   ±seed    QLIKE   MZ_R2  DM vs HAR-X   p(HAC)
+        HAR-X       0.6255       -  -8.1192   0.565             
+        ESN         0.6386  0.0088  -8.1014   0.523        +2.21    0.027
+        RFF         0.6302  0.0031  -8.1168   0.552        +1.75    0.081
+        CHIMERA     0.6379  0.0042  -8.1043   0.549        +2.63    0.009
+        CHIMERA vs ESN: DM(HAC)=-0.23  p=0.816
+        CHIMERA vs RFF: DM(HAC)=+1.97  p=0.049
+
+ n=10   model         RMSE   ±seed    QLIKE   MZ_R2  DM vs HAR-X   p(HAC)
+        HAR-X       0.6034       -  -8.1335   0.618             
+        ESN         0.5996  0.0042  -8.1357   0.660        -0.74    0.461
+        RFF         0.6047  0.0050  -8.1285   0.606        +0.38    0.706
+        CHIMERA     0.6074  0.0046  -8.1265   0.657        +1.17    0.240
+        CHIMERA vs ESN: DM(HAC)=+1.68  p=0.094
+        CHIMERA vs RFF: DM(HAC)=+0.94  p=0.348
+
+ n=12   model         RMSE   ±seed    QLIKE   MZ_R2  DM vs HAR-X   p(HAC)
+        HAR-X       0.5906       -  -8.1375   0.496             
+        ESN         0.6023  0.0148  -8.1122   0.646        +1.40    0.162
+        RFF         0.5964  0.0060  -8.1287   0.574        +1.38    0.167
+        CHIMERA     0.6031  0.0094  -8.1187   0.620        +1.97    0.050
+        CHIMERA vs ESN: DM(HAC)=+0.10  p=0.919
+        CHIMERA vs RFF: DM(HAC)=+1.67  p=0.095
+
+============================================================================================
+WINDOW: calm 2014-2020 (robustness)    (HAR plain: RMSE=0.6454  MZ=0.205)
+============================================================================================
+
+ n=10   model         RMSE   ±seed    QLIKE   MZ_R2  DM vs HAR-X   p(HAC)
+        HAR-X       0.6244       -  -9.3461   0.230             
+        ESN         0.6445  0.0121  -9.3572   0.269        +2.15    0.031
+        RFF         0.6264  0.0041  -9.3545   0.235        +0.54    0.589
+        CHIMERA     0.6291  0.0079  -9.3587   0.249        +0.96    0.335
+        CHIMERA vs ESN: DM(HAC)=-2.37  p=0.018
+        CHIMERA vs RFF: DM(HAC)=+1.30  p=0.194
+
+============================================================================================
+MULTIPLE-COMPARISON CONTROL (Holm-adjusted p across the full family)
+============================================================================================
+  calm 2014-2020 (robustness):n10:CHIMERAvsESN raw p=0.018   Holm p=0.199
+  calm 2014-2020 (robustness):n10:CHIMERAvsHARX raw p=0.335   Holm p=1.000
+  calm 2014-2020 (robustness):n10:CHIMERAvsRFF raw p=0.194   Holm p=1.000
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsESN raw p=0.094   Holm p=0.749
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsHARX raw p=0.240   Holm p=1.000
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsRFF raw p=0.348   Holm p=1.000
+  crisis 2007-2012 (GFC in test):n12:CHIMERAvsESN raw p=0.919   Holm p=1.000
+  crisis 2007-2012 (GFC in test):n12:CHIMERAvsHARX raw p=0.050   Holm p=0.485
+  crisis 2007-2012 (GFC in test):n12:CHIMERAvsRFF raw p=0.095   Holm p=0.749
+  crisis 2007-2012 (GFC in test):n8:CHIMERAvsESN raw p=0.816   Holm p=1.000
+  crisis 2007-2012 (GFC in test):n8:CHIMERAvsHARX raw p=0.009   Holm p=0.103
+  crisis 2007-2012 (GFC in test):n8:CHIMERAvsRFF raw p=0.049   Holm p=0.485
+
+saved axisB_rigorous_results.npy   [798.0s]

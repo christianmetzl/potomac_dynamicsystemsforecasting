@@ -128,9 +128,10 @@ no dense propagator; matches the dense engine to **2.4×10⁻¹⁴**) reaches **
 the random ≈50%-connected reservoir we measure the **bond dimension** χ_eff across a balanced
 cut: it is **full at every n, χ_eff = 2^(n/2)** (16→256 for n=8→16) — an exact MPS gets **zero
 compression** — with entanglement entropy S ≈ 1.7–3.2 nats (peaking near n=14; S is noisier
-than the rank). The reservoir is therefore **genuinely hard to simulate classically** — the
-precondition any beyond-frontier advantage would need, even though no advantage appears at the
-simulable scale we can test.
+than the rank). The reservoir therefore admits **no low-bond-dimension (MPS/TEBD) shortcut** —
+exact cost stays exponential (full entanglement is *necessary, not sufficient* for true classical
+hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
+appears at the simulable scale we can test.
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/tensor-network to ≈16, GPU for

@@ -22,8 +22,8 @@ isolates reservoir dynamics, not encoding richness.)*
    the balanced cut exceeds 10⁻⁵, so the state has *full* Schmidt rank — an **exact**
    matrix-product-state representation gets **zero compression** and costs χ = 2^(n/2)
    (16 → 256 as n: 8 → 16). For our **random ≈50%-connected** (connectivity=0.5) Ising reservoir this
-   is the expected, and desirable, behaviour: it is the classical-intractability the
-   quantum-advantage hypothesis requires.
+   is the expected, and desirable, behaviour: it is the **no-MPS-shortcut** precondition
+   (necessary, not sufficient for true classical hardness) the quantum-advantage hypothesis requires.
 
 2. **Entanglement entropy grows with n** (S ≈ 1.74 → 3.23 nats, n=8 → 14), so even an
    *approximate* MPS at fixed fidelity needs a bond dimension ~e^S that **grows with n**.
@@ -42,7 +42,9 @@ isolates reservoir dynamics, not encoding richness.)*
 
 ## Takeaway
 
-The reservoir is **genuinely hard to simulate classically** (full Schmidt rank, growing
-entanglement) — a clean, honest complexity statement using bond dimension as the metric,
-exactly as the Phase-3 plan specified. Distinctness and accuracy gains, however, require
+The reservoir admits **no low-bond-dimension (MPS) shortcut** (full Schmidt rank, growing
+entanglement) — so exact classical cost stays exponential in n. This is a *necessary, not
+sufficient* condition for classical hardness: we claim (and verify) the absence of an MPS
+shortcut, not a complexity-theoretic hardness result — a clean, honest statement using bond
+dimension as the metric, exactly as the Phase-3 plan specified. Distinctness and accuracy gains, however, require
 *informed* encoding, not merely more qubits.

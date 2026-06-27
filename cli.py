@@ -64,9 +64,13 @@ def _run_one(name, quick):
     if name not in ACTIONS:
         print(f"!! unknown action: {name}"); return 1
     script_args, desc, supports_quick = ACTIONS[name]
-    cmd = [PY] + script_args + (["--quick"] if (quick and supports_quick) else [])
+    use_quick = quick and supports_quick
+    cmd = [PY] + script_args + (["--quick"] if use_quick else [])
     print("\n" + "=" * 84)
     print(f">>> action '{name}': {desc}")
+    if use_quick:
+        print("    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed")
+        print("     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]")
     print(f"    $ {' '.join(cmd)}")
     print("=" * 84, flush=True)
     t0 = time.time()

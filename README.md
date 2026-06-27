@@ -89,9 +89,10 @@ and **robust to amplitude damping** (<0.5% at 30%).
 A sparse-exact backend (`expm_multiply`, no dense propagator; matches the dense engine to
 2.4×10⁻¹⁴) reaches **n=16 exactly**. We measure the **entanglement / bond dimension** of the
 random ≈50%-connected reservoir across a balanced cut: χ_eff is **full at every n
-(= 2^(n/2): 16→256)** — an exact MPS gets zero compression — so classical simulation cost
-explodes with n. The reservoir is genuinely hard to simulate classically (a *necessary*
-precondition for any beyond-frontier advantage; not observed at the simulable scale here).
+(= 2^(n/2): 16→256)** — an exact MPS gets zero compression — so there is **no low-bond-dimension
+shortcut** and exact simulation cost stays exponential in n. (Full entanglement is a *necessary,
+not sufficient* condition for true classical hardness — the precondition any beyond-frontier
+advantage would need; no advantage is observed at the simulable scale here.)
 
 ### 5. Phase-2 results (reproduced)
 `python3 cli.py run phase2` (+ `crisis`) — kernel geometry g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control;

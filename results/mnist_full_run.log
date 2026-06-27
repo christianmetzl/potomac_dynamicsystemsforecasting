@@ -1,0 +1,31 @@
+##############################################################################
+CHIMERA-QRC COMMON BENCHMARK - MNIST digit classification
+qubit counts: [5, 8, 10, 12]   seeds: (0, 1, 2)   dense frontier n<=12
+##############################################################################
+data: train=4000  test=1000  (10 classes)
+
+==============================================================================
+MNIST ACCURACY vs QUBIT COUNT  (PCA(n) -> n qubits -> linear readout)
+train=4000  test=1000  seeds=(0, 1, 2)
+==============================================================================
+  n  #qfeat   CHIMERA   +-sd      ESN  Linear(PCA)    sec
+  5      15    0.6323 0.0220   0.6610       0.5930    3.6
+  8      36    0.7983 0.0053   0.7970       0.7270    8.1
+ 10      55    0.8310 0.0118   0.8407       0.7620   21.4
+ 12      78    0.8587 0.0045   0.8667       0.7640  411.2
+
+==============================================================================
+MNIST NOISE SWEEP  (exact density-matrix channels; n capped at 10)
+==============================================================================
+  n             channel   rate  CHIMERA acc    sec
+  5           noiseless  0.000       0.6205    1.8
+  5        depolarizing  0.020       0.6205   11.9
+  5   amplitude_damping  0.020       0.6205    7.4
+  8           noiseless  0.000       0.8015    4.8
+  8        depolarizing  0.020       0.8015  295.9
+  8   amplitude_damping  0.020       0.8015  155.7
+
+saved figure -> figures/fig_mnist.png
+
+saved mnist_results.npy
+[total wall-clock 923.4s]

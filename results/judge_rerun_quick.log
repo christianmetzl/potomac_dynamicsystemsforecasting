@@ -1,0 +1,421 @@
+
+====================================================================================
+>>> action 'tests': Engine sanity tests (23 checks)
+    $ /usr/local/bin/python3 tests.py
+====================================================================================
+============================================================
+  CHIMERA-QRC Unit Tests
+============================================================
+
+  Pauli Algebra:
+  ✅ Pauli σ² = I and commutation
+  ✅ Pauli traceless
+  ✅ Pauli Hermitian
+
+  Rotation Gates:
+  ✅ R_Y(0) = I
+  ✅ R_Y(π)|0⟩ = |1⟩
+  ✅ R_Y(π/2)|0⟩ → ⟨Z⟩ = 0
+  ✅ R_Z(θ) unitary
+
+  Tensor Products:
+  ✅ I⊗I = I₄
+  ✅ Z⊗I on |00⟩
+  ✅ I⊗Z on |01⟩
+
+  Hamiltonians:
+  ✅ Ising & Heisenberg Hermitian
+  ✅ Time evolution unitary
+
+  Measurements:
+  ✅ ⟨Z⟩ = +1 for |000⟩
+  ✅ ⟨Z₀⟩ = -1 for |100⟩
+  ✅ Bell state correlations
+
+  Noise Channels:
+  ✅ Amplitude damping trace-preserving
+  ✅ Amplitude damping NON-unital
+  ✅ Depolarizing IS unital
+  ✅ Full damping → |0⟩
+
+  QRC Integration:
+  ✅ Feature dimension formula
+  ✅ Deterministic with same seed
+  ✅ Different inputs → different features
+  ✅ Multi-scale feature concatenation
+
+============================================================
+  Results: 23 passed, 0 failed
+============================================================
+--- action 'tests' finished rc=0 in 5.0s
+
+====================================================================================
+>>> action 'calm': Calm-window Table 1 + Model Confidence Set
+    $ /usr/local/bin/python3 vol_fair_benchmark.py
+====================================================================================
+====================================================================================
+CHIMERA-QRC Track A headline benchmark - S&P 500 realized variance (Oxford-Man rv5)
+train 2000-02-04..2014-02-18 (n=3520, incl. GFC) | test 2014-02-19..2020-02-21 (n=1509)
+====================================================================================
+  built ESN-108          feat_dim=108  seeds RMSE(logRV)=[0.7233, 0.6803, 0.6651]
+  built ESN-400          feat_dim=400  seeds RMSE(logRV)=[0.7031, 0.6926, 0.7020]
+  built CHIMERA-1scale   feat_dim=36   seeds RMSE(logRV)=[0.6574, 0.6563, 0.6583]
+  built CHIMERA-3scale   feat_dim=108  seeds RMSE(logRV)=[0.6795, 0.6649, 0.6770]
+
+------------------------------------------------------------------------------------
+Model             RMSE(logRV)   ±seed     QLIKE   MZ R2  DMvsHAR      p
+------------------------------------------------------------------------------------
+HAR-RV                 0.6454  0.0000   -9.3346   0.205     0.00  1.000
+ESN-108                0.6845  0.0246   -9.3147   0.188     5.31  0.000
+ESN-400                0.6962  0.0047   -9.2988   0.169     6.61  0.000
+CHIMERA-1scale         0.6553  0.0008   -9.3289   0.207     2.25  0.025
+CHIMERA-3scale         0.6585  0.0064   -9.3169   0.178     2.37  0.018
+------------------------------------------------------------------------------------
+Decisive tests (DM on seed-ensemble, squared-error of log-RV):
+  CHIMERA-3scale vs ESN-108 (matched, quantum-vs-classical): DM=-3.92  p=0.000  -> CHIMERA better
+  CHIMERA-3scale vs CHIMERA-1scale (multi vs single, QR2>QR1): DM=0.83  p=0.408  -> n.s.
+
+Model Confidence Set (95%): {HAR-RV, ESN-108, CHIMERA-1scale, CHIMERA-3scale}
+  MCS p-values: ESN-400=0.000, ESN-108=0.072, HAR-RV=1.000, CHIMERA-1scale=1.000, CHIMERA-3scale=1.000
+
+saved vol_fair_results.npy
+--- action 'calm' finished rc=0 in 41.3s
+
+====================================================================================
+>>> action 'crisis': Crisis split (GFC in test): RMSE/QLIKE/MZ + MCS
+    $ /usr/local/bin/python3 vol_crisis_benchmark.py
+====================================================================================
+====================================================================================
+CHIMERA-QRC Track A - CRISIS-INCLUSIVE split (GFC 2008 in test)
+train 2000-02-04..2006-12-29 (n=1726) | test 2007-01-03..2012-12-31 (n=1510, peak vol day 2008-10-10)
+====================================================================================
+
+Model             RMSE(logRV)   ±seed     QLIKE   MZ R2  DMvsHAR      p
+------------------------------------------------------------------------------------
+HAR-RV                 0.6290  0.0000   -8.1185   0.559     0.00  1.000
+ESN-108                0.7139  0.0504   -7.9844   0.089     5.32  0.000
+ESN-400                0.7170  0.0137   -7.9923   0.226     6.58  0.000
+CHIMERA-1scale         0.6392  0.0050   -8.1046   0.547     2.47  0.014
+CHIMERA-3scale         0.6541  0.0049   -8.0882   0.591     3.55  0.000
+------------------------------------------------------------------------------------
+CHIMERA-3scale vs ESN-108 (matched): DM=-3.97 p=0.000
+CHIMERA-3scale vs CHIMERA-1scale (multi vs single): DM=2.96 p=0.003
+
+Model Confidence Set (95%): {HAR-RV, ESN-108, CHIMERA-1scale, CHIMERA-3scale}
+  MCS p: ESN-400=0.011, ESN-108=0.056, HAR-RV=1.000, CHIMERA-1scale=1.000, CHIMERA-3scale=1.000
+--- action 'crisis' finished rc=0 in 34.8s
+
+====================================================================================
+>>> action 'kernel': Kernel geometry: g(ESN->CHIMERA)~62 vs ~4 control
+    $ /usr/local/bin/python3 kernel_analysis.py
+====================================================================================
+======================================================================
+Kernel geometry on Oxford-Man S&P500 RV  (N_train_subsample=800)
+======================================================================
+feature map       #feat    D_eff   rank  KTA(logRV)
+CHIMERA-1scale       36     1.80     36      0.2475
+ESN-108             108     3.37     70      0.5886
+ESN-400             400     3.45     81      0.5795
+
+geometric difference  g(A || B)  [large => A cannot reproduce B]
+  g(ESN-108 || CHIMERA) = 63.567
+  g(ESN-400 || CHIMERA) = 55.568
+  g(ESN-108 || ESN-108') = 3.746   <- classical-vs-classical CONTROL
+  g(CHIMERA || ESN-108) = 171.284
+
+KTA-per-feature (efficiency): CHIMERA 6.874  vs  ESN-108 5.450  (x1e-3)
+[done in 1.6s]
+--- action 'kernel' finished rc=0 in 2.5s
+
+====================================================================================
+>>> action 'sdk': Explicit PennyLane circuit (engine match ~5e-16)
+    $ /usr/local/bin/python3 sdk_demo.py
+====================================================================================
+================================================================
+CHIMERA reservoir reproduced as an explicit PennyLane circuit
+================================================================
+feature dim = 36  (n + n(n-1)/2 = 8+28)
+engine (NumPy)  vs  PennyLane exact-evolution : max|Δ| = 3.89e-16
+PennyLane exact vs Trotter(20 layers)         : max|Δ| = 4.04e-02
+PennyLane exact vs Trotter(40 layers)         : max|Δ| = 1.94e-02
+Trotter(20) native-gate count ≈ 380  (11 ZZ + 8 RX per layer × 20)
+=> the reservoir is a genuine quantum circuit; it runs on a real SDK and
+   compiles to a shallow native-gate circuit for gate-model hardware.
+--- action 'sdk' finished rc=0 in 9.6s
+
+====================================================================================
+>>> action 'qsubmit': qBraid submission path: shot-budget + ZNE + classical cross-check (sim; --device for QPU)
+    $ /usr/local/bin/python3 qbraid_submit.py --quick
+====================================================================================
+######################################################################
+CHIMERA-QRC qBraid submission  n=8  layers=8  device=local simulator
+  gate-Trotter circuit: 11 ZZ + 8 RX per layer  -> 88 two-qubit + 64 one-qubit gates; 36 Z-basis observables
+######################################################################
+
+CLASSICAL CROSS-CHECK  max|circuit(QubitUnitary) − NumPy engine| = 3.89e-16   (PASS)  -> the circuit IS the reservoir
+
+SHOT-BUDGET (feature error vs shots; ε≈1/√S):
+    shots S  mean|Δ feat|  max|Δ feat|
+/usr/local/lib/python3.11/dist-packages/pennylane/devices/device_api.py:207: PennyLaneDeprecationWarning: Setting shots on device is deprecated. Please use the `set_shots` transform on the respective QNode instead.
+  warnings.warn(
+        256        0.0472       0.1511
+       1024        0.0252       0.0869
+       4096        0.0114       0.0491
+gate-model approximation: max|Trotter(8) − exact| = 0.112 (decreases with more layers; cf. sdk_demo.py)
+
+ZNE DEMO (depolarizing sweep, linear extrapolation):
+  noisy(scale [1, 2, 3]) = [0.0348, 0.0289, 0.024]
+  ZNE→0 = 0.0400   noiseless exact = 0.0419   (ZNE closer ✓)
+
+saved qbraid_submit_results.npy   [8.0s]
+To run on real hardware: python3 qbraid_submit.py --device <qBraid backend> (needs credits).
+--- action 'qsubmit' finished rc=0 in 9.9s
+
+====================================================================================
+>>> action 'baselines': HAR/GARCH/GJR/AR(3)/persistence baselines
+    $ /usr/local/bin/python3 har_garch_baselines.py
+====================================================================================
+Traceback (most recent call last):
+  File "/home/user/potomac_dynamicsystemsforecasting/har_garch_baselines.py", line 24, in <module>
+    import statsmodels.api as sm
+ModuleNotFoundError: No module named 'statsmodels'
+--- action 'baselines' finished rc=1 in 0.3s
+
+====================================================================================
+>>> action 'lstm': LSTM baseline (Track A, brief-named)
+    $ /usr/local/bin/python3 lstm_baseline.py --quick
+====================================================================================
+==============================================================================
+LSTM baseline (pure NumPy) - S&P 500 log-RV, crisis split (GFC in test)
+train 2000-02-04..2006-12-29 (n=1726) | test 2007-01-03..2012-12-31 (n=1510) | window=22
+==============================================================================
+  seed 0: val_mse(std)=0.3022  test RMSE(logRV)=0.6415
+
+------------------------------------------------------------------------------
+Model           RMSE(logRV)     QLIKE   MZ R2  DM vs HAR      p
+------------------------------------------------------------------------------
+HAR-RV               0.6290   -8.1185   0.559       0.00  1.000
+LSTM                 0.6415   -8.0982   0.480       2.48  0.013
+------------------------------------------------------------------------------
+(DM<0 & p<0.05 => model beats HAR. On daily 5-min RV, HAR is a very strong bar.)
+
+saved lstm_results.npy   [1.3s]
+--- action 'lstm' finished rc=0 in 2.3s
+
+====================================================================================
+>>> action 'prereg': Print pre-registered H0/H1/H4 thresholds
+    $ /usr/local/bin/python3 preregistration.py
+====================================================================================
+==============================================================================
+CHIMERA-QRC Phase-3 PRE-REGISTRATION  (committed before running)
+Source: EIGENNEXUS Phase-2 submission, Section 7
+==============================================================================
+
+[H0] The measured parameter-efficiency gap becomes a forecasting-accuracy gap at scale. Beyond the classical-simulation frontier, H0 is CONFIRMED if the geometric difference g keeps growing with qubit count AND the regime-transition Mincer-Zarnowitz gap over HAR turns positive and significant out-of-sample; REFUTED if g saturates or that gap stays <= 0.
+   CONFIRM if: g(n) trends strictly upward over the tested range (Spearman rho_s > 0) AND g(n_max) - g(n_min) exceeds the classical-classical control g AND MZ_R2(CHIMERA, n) - MZ_R2(HAR) > 0 for some n with DM p < 0.05 in CHIMERA's favour on the crisis/transition window.
+   REFUTE  if: g(n) flat or saturating (Spearman rho_s <= 0, or its rise is within the classical control band) OR the MZ gap over HAR stays <= 0 across the tested range.
+
+[H1] Scale 12 -> 50 -> 128 -> 256 qubits, tracking RMSE/QLIKE vs HAR. REFUTED if the gap does not narrow monotonically.
+   CONFIRM if: The CHIMERA-minus-HAR RMSE (and QLIKE) gap is non-increasing in n (monotone narrowing) across the tested range.
+   REFUTE  if: The gap vs HAR fails to narrow monotonically with n.
+
+[H2] Hardware vs noiseless-simulation feature maps at matched size, with noise and shot-budget sweeps. REFUTED if hardware adds no accuracy and noise only degrades (never helps).
+   CONFIRM if: At matched size, a noise/shot setting matches or improves on noiseless.
+   REFUTE  if: Hardware/noise never matches noiseless and only degrades accuracy.
+
+[H3] Hard targets - multi-step, crisis-transition and jump RV. REFUTED if quantum never beats HAR where HAR is weak.
+   CONFIRM if: CHIMERA beats HAR on at least one hard-target regime (e.g. transition MZ).
+   REFUTE  if: CHIMERA never beats HAR on any hard target.
+
+[H4] Effective feature-rank and encoding-density scaling, with qubits scaled in lockstep with input richness so added qubits encode NEW information rather than reprocessing the same eight lags. REFUTED if rank saturates with qubits.
+   CONFIRM if: Effective dimension D_eff(n) (and numerical rank) of the CHIMERA kernel increases with n when input richness scales with n (data re-uploading / multivariate panel).
+   REFUTE  if: D_eff(n) / rank saturates as n grows.
+
+Decision constants:
+   DM_ALPHA=0.05  SPEARMAN_MIN=0.0  GROWTH_OVER_CONTROL=True
+--- action 'prereg' finished rc=0 in 0.2s
+
+====================================================================================
+>>> action 'scaling': Scaling sweep: g(n), MZ-gap(n), rank(n) + noise
+    $ /usr/local/bin/python3 scaling_sweep.py --quick
+====================================================================================
+##############################################################################
+CHIMERA-QRC PHASE-3 SCALING SWEEP
+qubit counts: [8, 10, 12]   seeds: (0,)   dense frontier: n<=12
+Pre-registered thresholds loaded from preregistration.py (committed first).
+##############################################################################
+
+==============================================================================
+KERNEL GEOMETRY SWEEP  (calm 70% train, N_sub=300, seed=0)
+==============================================================================
+  n  #feat #lags_enc  g(ESN||CHIM)  g_control   D_eff  rank      KTA    sec
+  8     36         8         75.33      10.09    1.85    36   0.2423    4.6
+ 10     55         8         29.27       5.47    1.53    51   0.5194    7.9
+ 12     78         8         21.15       3.91    1.51    49   0.5847  103.4
+
+==============================================================================
+FORECAST SWEEP  (crisis split: train ..2006, test 2007-2012, GFC in test)
+HAR baseline:  RMSE(logRV)=0.6290  QLIKE=-8.1185  MZ_R2=0.559
+==============================================================================
+  n  #feat #lags_enc     RMSE    dRMSE    QLIKE   MZ_R2  MZ-gap   DM_p    sec
+  8     36         8   0.6414  +0.0124  -8.1044   0.527  -0.032  0.004    2.4
+ 10     55         8   0.6686  +0.0396  -8.0761   0.396  -0.162  0.000    5.7
+ 12     78         8   0.6559  +0.0269  -8.0904   0.425  -0.134  0.000   87.3
+
+==============================================================================
+PRE-REGISTERED ADJUDICATION
+==============================================================================
+All computed n: [8, 10, 12]
+Fixed-input (pure qubit-scaling) regime used for H0/H4 verdict: [8, 10, 12]
+  (n < 8 also varies #encoded lags -> reported but not used for the pure-scaling claim)
+
+[H0] verdict = REFUTED
+    g_spearman_rho: -1.0
+    g_rise: -54.18492117197174
+    control_g: 5.470242105457513
+    g_grows_over_control: False
+    mz_gap_positive_significant_at: []
+    mz_ok: False
+    note: Input-bottleneck caveat: until the multivariate / data-re-uploading encoder (Axis B) lands, qubits beyond the number of encoded lags carry NO new input, so g(n) and the MZ gap may saturate at n ~ #lags. A flat curve here is expected pre-Axis-B and is NOT yet a refutation of H0 at richer encodings.
+
+[H1] verdict = REFUTED
+    rmse_gap_monotone_narrowing: False
+    rmse_gap: [0.012448852183223669, 0.039617048417720735, 0.02689168053572588]
+
+[H4] verdict = REFUTED/SATURATED
+    d_eff_spearman_rho: -1.0
+    d_eff_rise: -0.3351099921618028
+    note: With a FIXED univariate-lag encoder, saturation is expected (the input bottleneck). H4 is properly tested only once input richness scales with n (Axis B).
+
+saved figure -> figures/fig_scaling_sweep.png
+
+saved scaling_sweep_results.npy
+[total wall-clock 212.2s]
+--- action 'scaling' finished rc=0 in 213.7s
+
+====================================================================================
+>>> action 'axisB': Axis-B: informed encoding vs idle qubits (n=10 beat)
+    $ /usr/local/bin/python3 scaling_sweep_axisB.py --quick
+====================================================================================
+####################################################################################
+CHIMERA-QRC AXIS-B SWEEP  (univariate vs rich encoder, matched qubits)
+qubit counts: [8, 10, 12]   seeds: (0,)   rich scheme: rich
+####################################################################################
+rich pool: N=5029 rows, P=19 features
+priority order: ['logrv_l1', 'logrv_l2', 'logrv_l3', 'logrv_l4', 'logrv_l5', 'logrv_l10', 'logrv_l15', 'logrv_l22', 'ret_l1', 'downshare_l1', 'jumpshare_l1', 'o2c2_l1', 'ret2_l1', 'logrsv_l1', 'logbv_l1', 'logmedrv_l1', 'downshare_w', 'jumpshare_w', 'logrk_l1']
+
+HAR baseline (crisis): RMSE=0.6290  MZ_R2=0.559
+
+====================================================================================
+  n   enc  #f   g(E||C)  D_eff  qMZgap  qDMvH  eMZgap C-vs-E DM_p
+------------------------------------------------------------------------------------
+  8 univa   8     75.33   1.85  -0.032  0.004  -0.317       0.000
+  8  rich   8     75.33   1.85  -0.032  0.004  -0.317       0.000
+------------------------------------------------------------------------------------
+ 10 univa   8     29.27   1.53  -0.162  0.000  -0.461       0.015
+ 10  rich  10     80.20   3.25  +0.031  0.413  -0.096       0.434
+------------------------------------------------------------------------------------
+ 12 univa   8     21.15   1.51  -0.134  0.000  -0.426       0.000
+ 12  rich  12     43.61   3.15  -0.185  0.085  -0.132       0.228
+------------------------------------------------------------------------------------
+
+====================================================================================
+AXIS-B HEAD-TO-HEAD
+  dg = rich g - univariate g (informed vs idle qubits)
+  dMZ = rich MZ-gap - univariate MZ-gap
+  quantum edge = rich CHIMERA MZ-gap - rich ESN MZ-gap (same rich inputs)
+====================================================================================
+  n= 8: dg=   +0.00  dMZ=+0.000  rich qMZ-gap=-0.032(DMvH p=0.004)  quantum-edge-vs-ESN=+0.285(DM p=0.000)
+  n=10: dg=  +50.93  dMZ=+0.193  rich qMZ-gap=+0.031(DMvH p=0.413)  quantum-edge-vs-ESN=+0.127(DM p=0.434)
+  n=12: dg=  +22.46  dMZ=-0.051  rich qMZ-gap=-0.185(DMvH p=0.085)  quantum-edge-vs-ESN=-0.053(DM p=0.228)
+
+PRE-REGISTERED ADJUDICATION (rich encoder):
+  [H0] REFUTED  (rho=-0.5)
+  [H4] CONFIRMED  (rho=0.5)
+saved figure -> figures/fig_scaling_axisB.png
+
+saved scaling_sweep_axisB_results.npy
+[total wall-clock 309.5s]
+--- action 'axisB' finished rc=0 in 310.5s
+
+====================================================================================
+>>> action 'axisB_rig': Axis-B HARDENED: HAR-X + recurrent-ESN + RFF, HAC-DM, Holm
+    $ /usr/local/bin/python3 axisB_rigorous.py --quick
+====================================================================================
+############################################################################################
+CHIMERA-QRC AXIS-B (RIGOROUS): HAR-X + recurrent-ESN + RFF controls, HAC-DM, per-seed, Holm
+seeds=(0, 1, 2)  ns=[10]  focal n=10
+############################################################################################
+
+============================================================================================
+WINDOW: crisis 2007-2012 (GFC in test)    (HAR plain: RMSE=0.6290  MZ=0.559)
+============================================================================================
+
+ n=10   model         RMSE   ±seed    QLIKE   MZ_R2  DM vs HAR-X   p(HAC)
+        HAR-X       0.6034       -  -8.1335   0.618             
+        ESN         0.6012  0.0023  -8.1365   0.684        -0.34    0.736
+        RFF         0.6082  0.0078  -8.1259   0.575        +1.15    0.250
+        CHIMERA     0.6125  0.0002  -8.1186   0.636        +2.25    0.025
+        CHIMERA vs ESN: DM(HAC)=+1.68  p=0.094
+        CHIMERA vs RFF: DM(HAC)=+1.05  p=0.292
+
+============================================================================================
+MULTIPLE-COMPARISON CONTROL (Holm-adjusted p across the full family)
+============================================================================================
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsESN raw p=0.094   Holm p=0.187
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsHARX raw p=0.025   Holm p=0.074
+  crisis 2007-2012 (GFC in test):n10:CHIMERAvsRFF raw p=0.292   Holm p=0.292
+
+saved axisB_rigorous_results.npy   [20.2s]
+--- action 'axisB_rig' finished rc=0 in 21.2s
+
+====================================================================================
+>>> action 'mnist': MNIST common cross-team benchmark (accuracy vs n)
+    $ /usr/local/bin/python3 mnist_benchmark.py --quick
+====================================================================================
+##############################################################################
+CHIMERA-QRC COMMON BENCHMARK - MNIST digit classification
+qubit counts: [5, 8]   seeds: (0,)   dense frontier n<=12
+##############################################################################
+data: train=1500  test=500  (10 classes)
+
+==============================================================================
+MNIST ACCURACY vs QUBIT COUNT  (PCA(n) -> n qubits -> linear readout)
+train=1500  test=500  seeds=(0,)
+==============================================================================
+  n  #qfeat   CHIMERA   +-sd      ESN  Linear(PCA)    sec
+  5      15    0.6020 0.0000   0.6620       0.5760    0.7
+  8      36    0.7720 0.0000   0.7560       0.6780    1.4
+
+saved figure -> figures/fig_mnist.png
+
+saved mnist_results.npy
+[total wall-clock 2.5s]
+--- action 'mnist' finished rc=0 in 2.9s
+
+====================================================================================
+>>> action 'tensor': Sparse/TN frontier + bond-dimension complexity metric
+    $ /usr/local/bin/python3 tensor_backend.py --quick
+====================================================================================
+####################################################################################
+CHIMERA-QRC TENSOR / SPARSE BACKEND - scaling frontier + complexity metric
+####################################################################################
+Sparse-vs-dense equivalence check (should be ~1e-10):
+  n=6: max|sparse - dense| = 2.77e-14  OK
+  n=8: max|sparse - dense| = 2.43e-14  OK
+
+====================================================================================
+HIGH-N SWEEP (sparse exact)  N_sub=300  cut=balanced bipartition
+====================================================================================
+  n  enc  #feat   g(E||C)   g_ctrl   D_eff  rank   S_ent  chi_eff  chi_max    sec
+  8    8     36      75.3     10.1    1.85    36   1.722     16.0       16    0.4
+ 10    8     55      29.3      5.5    1.53    51   2.206     32.0       32    2.6
+
+saved figure -> figures/fig_tensor_complexity.png
+
+saved tensor_backend_results.npy
+--- action 'tensor' finished rc=0 in 4.9s
+
+####################################################################################
+SUMMARY: tests=OK, calm=OK, crisis=OK, kernel=OK, sdk=OK, qsubmit=OK, baselines=FAIL(1), lstm=OK, prereg=OK, scaling=OK, axisB=OK, axisB_rig=OK, mnist=OK, tensor=OK
+####################################################################################
