@@ -44,6 +44,7 @@ seeded MNIST subset), so it runs **offline**. The core engine is pure NumPy.
 | `mnist` | common cross-team benchmark | accuracy 0.63→0.86 (n=5→12); CHIMERA ≫ linear, ≈ ESN |
 | `mnist_noise` | noise robustness | invariant to depolarizing; robust to amplitude damping |
 | `tensor` | scaling frontier + complexity | g(n) and bond dimension χ_eff(n) to n≈16 |
+| `qsubmit` | executable qBraid submission path | exact-circuit↔engine 3.9e-16; shot ε≈1/√S; ZNE recovers; `--device` for QPU |
 | `baselines`, `lstm` | classical bars | HAR strong; GARCH/AR/LSTM below it |
 
 ## Configuring the reservoir programmatically

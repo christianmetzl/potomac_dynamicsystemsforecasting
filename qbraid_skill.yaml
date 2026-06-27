@@ -69,6 +69,10 @@ actions:
     desc: "Sparse/TN frontier beyond n=12 + bond-dimension complexity metric"
     cmd: "python3 cli.py run tensor"
     expect: "g(n) and effective bond dimension chi_eff(n) up to n~16; chi grows toward classical wall"
+  - id: qsubmit
+    desc: "Executable qBraid submission path (shot budget + ZNE + classical cross-check)"
+    cmd: "python3 cli.py run qsubmit   # add --device <backend> for real QPU"
+    expect: "exact-circuit vs engine = 3.9e-16; shot error ~1/sqrt(S); ZNE recovers toward noiseless"
   - id: baselines
     desc: "Classical baselines (HAR, GARCH, GJR, AR(3), persistence)"
     cmd: "python3 cli.py run baselines"

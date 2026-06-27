@@ -34,6 +34,7 @@ ACTIONS = {
     "crisis":       (["vol_crisis_benchmark.py"], "Crisis split (GFC in test): RMSE/QLIKE/MZ + MCS", False),
     "kernel":       (["kernel_analysis.py"], "Kernel geometry: g(ESN->CHIMERA)~62 vs ~4 control", False),
     "sdk":          (["sdk_demo.py"], "Explicit PennyLane circuit (engine match ~5e-16)", False),
+    "qsubmit":      (["qbraid_submit.py"], "qBraid submission path: shot-budget + ZNE + classical cross-check (sim; --device for QPU)", True),
     "gk":           (["gk_validation.py"], "Independent 2022-2026 SPY (Garman-Klass) check", False),
     "baselines":    (["har_garch_baselines.py"], "HAR/GARCH/GJR/AR(3)/persistence baselines", False),
     "lstm":         (["lstm_baseline.py"], "LSTM baseline (Track A, brief-named)", True),
@@ -53,7 +54,7 @@ GROUPS = {
     "headline": ["prereg", "scaling", "axisB_rig", "mnist", "tensor"],   # Phase-3 story (axisB_rig = honest test)
     "phase2":   ["tests", "calm", "crisis", "kernel", "sdk"],            # Phase-2 reproduction
     "all":      list(ACTIONS.keys()),
-    "reproduce": ["tests", "calm", "crisis", "kernel", "sdk",
+    "reproduce": ["tests", "calm", "crisis", "kernel", "sdk", "qsubmit",
                   "baselines", "lstm", "prereg", "scaling", "axisB", "axisB_rig",
                   "mnist", "tensor"],
 }

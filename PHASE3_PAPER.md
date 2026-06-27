@@ -147,10 +147,17 @@ n+C(n,2) observables):
 
 **QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / IBM** via qBraid — the
 random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, easing NISQ
-mapping (trapped-ion all-to-all natively supports the arbitrary couplings) — with **ZNE (Mitiq)
-+ measurement mitigation (mthree)** and a classical cross-check for every run. We characterize
-all four challenge axes: reservoir size (§5.1/5.5), encoding density (§5.2/5.3), shot budget
-(above), and noise (§5.4). *(QCi Dirac-3 is the separate optimization challenge's device.)*
+mapping (trapped-ion all-to-all natively supports the arbitrary couplings) — with **ZNE +
+measurement mitigation** and a classical cross-check for every run. The submission path is
+**executable now** (`qbraid_submit.py`, `cli.py run qsubmit`): on a simulator it (i) reproduces
+the engine to **3.9×10⁻¹⁶** via the exact circuit (the classical cross-check we run for every
+hardware execution), (ii) characterizes the **shot budget** — mean feature error 0.046 / 0.013
+/ 0.0066 at S = 256 / 4k / 16k shots, the ε≈1/√S law, with the gate-Trotter(20) approximation
+adding ≈0.04 — and (iii) demonstrates **zero-noise extrapolation** recovering toward the
+noiseless value under a depolarizing sweep. It is one flag (`--device`) from a real backend,
+pending qBraid credit allocation. We thus characterize all four challenge axes: reservoir size
+(§5.1/5.5), encoding density (§5.2/5.3), shot budget, and noise (§5.4). *(QCi Dirac-3 is the
+separate optimization challenge's device.)*
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,

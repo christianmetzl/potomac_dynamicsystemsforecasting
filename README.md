@@ -139,11 +139,13 @@ figures/  results/                      generated figures + findings write-ups
 
 ## Hardware plan (Phase 3)
 
-Simulator-first: dense statevector ≤12 qubits, sparse/TN to ~16. QPU validation uses the
-gate-Trotter circuit (`sdk_demo.py`, ~380 native gates) on **IonQ / IQM / IBM** via qBraid,
-with ZNE (Mitiq) + measurement mitigation (mthree) and a classical cross-check for every
-hardware run. *(QCi Dirac-3 is the separate optimization challenge's device, not this QRC
-track.)*
+Simulator-first: dense statevector ≤12 qubits, sparse/TN to ~16. The QPU submission path is
+**executable now** — `python3 cli.py run qsubmit` (`qbraid_submit.py`) runs the gate-Trotter
+circuit (≈380 native gates) on a simulator with a **shot-budget curve** (mean feature error
+0.046→0.0066 at 256→16k shots), a **ZNE** demonstration, and the **classical cross-check**
+(exact circuit vs engine = 3.9×10⁻¹⁶); it is one flag (`--device`) from a real **IonQ / IQM /
+IBM** backend via qBraid (pending credit allocation). *(QCi Dirac-3 is the separate
+optimization challenge's device, not this QRC track.)*
 
 ## AI collaboration disclosure
 
