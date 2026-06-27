@@ -14,15 +14,15 @@ Two capabilities:
    g(n) / effective-rank curves continue past the dense frontier (covering the
    brief's 5/10/15-qubit examples).
 
-2. BOND DIMENSION AS A COMPLEXITY METRIC.  For the FULLY-CONNECTED random-coupling
-   Ising reservoir, an MPS/TEBD simulation would need a bond dimension chi set by
-   the state's entanglement. Rather than claim an MPS compression that does not help
-   for an all-to-all Hamiltonian, we MEASURE it honestly: across a balanced
+2. BOND DIMENSION AS A COMPLEXITY METRIC.  For the densely-coupled (~50% random-graph,
+   connectivity=0.5) Ising reservoir, an MPS/TEBD simulation would need a bond dimension
+   chi set by the state's entanglement. Rather than claim an MPS compression that does not
+   help for a non-local random-graph Hamiltonian, we MEASURE it honestly: across a balanced
    bipartition we SVD the exact evolved statevector to obtain the Schmidt spectrum,
    the entanglement entropy S, and the effective bond dimension chi_eff (Schmidt
-   rank above a tolerance). We report chi_eff(n) and S(n): if chi_eff grows toward
-   2^(n/2) (the max), classical MPS simulation cost ~ chi^2 explodes - precisely the
-   classical-intractability precondition the quantum-advantage hypothesis needs.
+   rank above a tolerance). We report chi_eff(n) and S(n): chi_eff is FULL (= 2^(n/2))
+   at every n tested, so classical MPS simulation gets no compression (cost ~ chi^2
+   explodes) - precisely the classical-intractability precondition the advantage needs.
 
 Correctness: a built-in equivalence check confirms the sparse path reproduces the
 dense engine's features to ~1e-10 at small n.
@@ -219,7 +219,7 @@ def make_figure(rows, path="figures/fig_tensor_complexity.png"):
     fig, ax = plt.subplots(1, 2, figsize=(11, 4))
     ax[0].plot(ns, [r["chi_eff"] for r in rows], "o-", label="chi_eff (entanglement)")
     ax[0].plot(ns, [r["chi_max"] for r in rows], "k--", label="chi_max = 2^(n/2)")
-    ax[0].set_yscale("log"); ax[0].set_title("Bond dimension vs qubits (all-to-all Ising)")
+    ax[0].set_yscale("log"); ax[0].set_title("Bond dimension vs qubits (~50% random-graph Ising)")
     ax[0].set_xlabel("qubits n"); ax[0].set_ylabel("effective bond dimension chi")
     ax[0].legend(fontsize=8)
     ax[1].plot(ns, [r["g_quantum"] for r in rows], "o-", label="g(ESN||CHIMERA)")
@@ -236,10 +236,15 @@ def make_figure(rows, path="figures/fig_tensor_complexity.png"):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ns", type=int, nargs="+", default=[8, 10, 12, 14])
+    ap.add_argument("--ns", type=int, nargs="+", default=None)
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--quick", action="store_true", help="fast smoke: n=8,10; small subsample")
     ap.add_argument("--subsample", type=int, default=600)
     args = ap.parse_args()
+    if args.ns is None:
+        args.ns = [8, 10] if args.quick else [8, 10, 12, 14]
+    if args.quick:
+        args.subsample = min(args.subsample, 300)
 
     print("#" * 84)
     print("CHIMERA-QRC TENSOR / SPARSE BACKEND - scaling frontier + complexity metric")

@@ -26,9 +26,9 @@ Fair controls (rubric: "beating ESN is what justifies QRC"):
   - Linear(PCA)   : ridge directly on the PCA features (no reservoir) -> isolates the
                     reservoir's nonlinear lift.
 
-Data: real MNIST (mnist_784) fetched ONCE via scikit-learn and cached to
-data/mnist_subset.npz, after which the benchmark runs offline with numpy only
-(consistent with the repo's bundled-data, offline-capable doctrine).
+Data: real MNIST fetched ONCE from the public Keras .npz mirror (numpy-only; no
+scikit-learn/openml dependency) and cached to data/mnist_subset.npz, after which
+the benchmark runs fully offline (consistent with the repo's bundled-data doctrine).
 
 Usage:
   python3 mnist_benchmark.py                 # default sweep (n=5,8,10) + noise

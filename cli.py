@@ -43,17 +43,18 @@ ACTIONS = {
     "axisB":        (["scaling_sweep_axisB.py"], "Axis-B: informed encoding vs idle qubits (n=10 beat)", True),
     "mnist":        (["mnist_benchmark.py"], "MNIST common cross-team benchmark (accuracy vs n)", True),
     "mnist_noise":  (["mnist_benchmark.py", "--noise-only"], "MNIST noise-rate robustness curve", False),
-    "tensor":       (["tensor_backend.py"], "Sparse/TN frontier + bond-dimension complexity metric", False),
+    "tensor":       (["tensor_backend.py"], "Sparse/TN frontier + bond-dimension complexity metric", True),
+    "axisB_rig":    (["axisB_rigorous.py"], "Axis-B HARDENED: HAR-X + recurrent-ESN + RFF, HAC-DM, Holm", True),
     "tensor_check": (["tensor_backend.py", "--check"], "Verify sparse backend matches dense engine", False),
 }
 
 # curated bundles
 GROUPS = {
-    "headline": ["prereg", "axisB", "mnist", "tensor"],           # Phase-3 story
-    "phase2":   ["tests", "calm", "crisis", "kernel", "sdk"],      # Phase-2 reproduction
+    "headline": ["prereg", "scaling", "axisB_rig", "mnist", "tensor"],   # Phase-3 story (axisB_rig = honest test)
+    "phase2":   ["tests", "calm", "crisis", "kernel", "sdk"],            # Phase-2 reproduction
     "all":      list(ACTIONS.keys()),
     "reproduce": ["tests", "calm", "crisis", "kernel", "sdk",
-                  "baselines", "lstm", "prereg", "scaling", "axisB",
+                  "baselines", "lstm", "prereg", "scaling", "axisB", "axisB_rig",
                   "mnist", "tensor"],
 }
 

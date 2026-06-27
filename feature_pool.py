@@ -40,23 +40,26 @@ LAGS = (1, 2, 3, 4, 5, 10, 15, 22)   # the 8 core log-RV lags (paper baseline)
 
 
 def _load_raw_spx():
-    """Load the full .SPX row set with all realized-measure columns we need."""
+    """Load the .SPX realized-measure columns, ALIGNED to the canonical supervised
+    panel (volatility_data.load_spx_rv) so Axis-B shares the exact same rows/dates as
+    every other experiment (eliminates the prior 1-row offset)."""
+    base = vd.load_spx_rv()                      # canonical rv/close/ret; index == build_supervised
     path = vd._find(vd.OXFORDMAN_CSV)
     df = pd.read_csv(path, index_col=0)
     d = df[df["Symbol"] == ".SPX"].copy()
     d.index = pd.to_datetime([str(s).split("+")[0] for s in d.index])
     d = d.sort_index()
-    num = lambda c: pd.to_numeric(d[c], errors="coerce") if c in d.columns else np.nan
-    out = pd.DataFrame(index=d.index)
-    out["rv"] = num("rv5")
-    out["close"] = num("close_price")
-    out["rsv"] = num("rsv")
-    out["bv"] = num("bv")
-    out["medrv"] = num("medrv")
-    out["rk"] = num("rk_parzen")
-    out["o2c"] = num("open_to_close")
-    # keep rows with a valid rv & close (matches load_spx_rv's core mask)
-    out = out[(out["rv"] > 0) & (out["close"] > 0)]
+    d = d[~d.index.duplicated()]
+    num = lambda c: (pd.to_numeric(d[c], errors="coerce") if c in d.columns
+                     else pd.Series(np.nan, index=d.index))
+    extra = pd.DataFrame({"rsv": num("rsv"), "bv": num("bv"), "medrv": num("medrv"),
+                          "rk": num("rk_parzen"), "o2c": num("open_to_close")})
+    extra = extra.reindex(base.index)            # align extras to the canonical rows
+    out = pd.DataFrame(index=base.index)
+    out["rv"] = base["rv"].values
+    out["close"] = base["close"].values
+    for c in ("rsv", "bv", "medrv", "rk", "o2c"):
+        out[c] = extra[c].values
     return out
 
 

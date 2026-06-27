@@ -156,6 +156,9 @@ def evaluate_H0(ns, g_quantum, mz_gap, dm_p, control_g):
     dmp = np.asarray(dm_p, float)
 
     rho = _spearman(ns, g)
+    if len(ns) < 3 or np.isnan(rho):
+        return {"hypothesis": "H0", "verdict": "NOT-EVALUABLE",
+                "reason": "trend test needs >=3 qubit counts (got %d)" % len(ns)}
     g_rise = float(g[-1] - g[0]) if len(g) else float("nan")
     g_grows = (rho > SPEARMAN_MIN) and (g_rise > control_g if GROWTH_OVER_CONTROL else g_rise > 0)
 
@@ -191,6 +194,9 @@ def evaluate_H4(ns, d_eff):
     """H4: does effective feature-rank grow with qubits?"""
     ns = np.asarray(ns, float); d = np.asarray(d_eff, float)
     rho = _spearman(ns, d)
+    if len(ns) < 3 or np.isnan(rho):
+        return {"hypothesis": "H4", "verdict": "NOT-EVALUABLE",
+                "reason": "trend test needs >=3 qubit counts (got %d)" % len(ns)}
     grows = rho > SPEARMAN_MIN and d[-1] > d[0]
     return {
         "hypothesis": "H4",

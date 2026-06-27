@@ -87,7 +87,7 @@ def main():
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--scheme", choices=["rich", "reupload"], default="rich")
     args = ap.parse_args()
-    ns = args.ns or ([8, 10] if args.quick else [8, 10, 12])
+    ns = args.ns or [8, 10, 12]   # >=3 points so the quick verdict matches the full run
     seeds = (0,) if args.quick else SEEDS
     kern_sub = 300 if args.quick else ss.KERNEL_SUBSAMPLE
 

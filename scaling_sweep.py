@@ -341,7 +341,7 @@ def main():
     args = ap.parse_args()
 
     if args.quick:
-        ns = args.ns or [5, 8]
+        ns = args.ns or [8, 10, 12]   # >=3 fixed-input points so the H0/H4 verdict matches the full run
         seeds = (0,)
         do_noise = False
         kern_sub = 300
