@@ -47,6 +47,9 @@ ACTIONS = {
     "tensor":       (["tensor_backend.py"], "Sparse/TN frontier + bond-dimension complexity metric", True),
     "axisB_rig":    (["axisB_rigorous.py"], "Axis-B HARDENED: HAR-X + recurrent-ESN + RFF, HAC-DM, Holm", True),
     "canonical":    (["canonical_har_baselines.py"], "Named realized-vol models (SHAR/HAR-CJ/HARQ/HEAVY) vs HAR-X & CHIMERA; MSE+QLIKE DM", True),
+    "economics":    (["vol_timing_backtest.py"], "Volatility-timing backtest: Sharpe/drawdown/turnover + CE fee (economic significance)", True),
+    "noise_circuit":(["noisy_circuit_study.py"], "Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)", True),
+    "qpu_dryrun":   (["qbraid_submit.py", "--dry-run"], "QPU readiness: print gate/shot/cost plan + validate device wiring (no credits needed)", False),
     "tensor_check": (["tensor_backend.py", "--check"], "Verify sparse backend matches dense engine", False),
 }
 

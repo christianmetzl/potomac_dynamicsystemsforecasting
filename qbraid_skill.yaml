@@ -61,6 +61,24 @@ actions:
     expect: >
       No named canonical model beats HAR-X (so HAR-X is a fair strong stand-in, not a strawman);
       CHIMERA ties the best on RMSE with only a raw, non-Holm-significant QLIKE/MZ efficiency edge.
+  - id: economics
+    desc: "Volatility-timing backtest (Fleming-Kirby-Ostdiek): Sharpe/drawdown/turnover + CE fee"
+    cmd: "python3 cli.py run economics"
+    expect: >
+      Vol-timing nearly halves crisis max-drawdown (-61%->-32%); but plain HAR captures it and
+      neither rich features nor CHIMERA add economic value (negative CE fees) -> no economic
+      quantum advantage, consistent with the statistical negative.
+  - id: noise_circuit
+    desc: "Per-Trotter-layer vs readout-only noise on the gate-Trotter circuit (density-matrix sim)"
+    cmd: "python3 cli.py run noise_circuit"
+    expect: >
+      Readout-only depolarizing -> standardized feature error ~0 (the MNIST 'invariance' is a
+      standardization artifact); per-LAYER noise is NOT removed (grows with rate) -> the real
+      NISQ degradation over the 380-gate circuit.
+  - id: qpu_dryrun
+    desc: "QPU readiness check: gate/shot/cost plan + device-wiring probe (no credits needed)"
+    cmd: "python3 cli.py run qpu_dryrun"
+    expect: "380-native-gate plan, 36 Z-diagonal observables, cost estimate; READY when a device opens"
   - id: scaling
     desc: "Scaling sweep g(n)/MZ-gap(n)/rank(n) + depolarizing/amplitude-damping noise"
     cmd: "python3 cli.py run scaling"

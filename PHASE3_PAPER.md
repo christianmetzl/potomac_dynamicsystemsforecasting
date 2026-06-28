@@ -125,8 +125,12 @@ linear-PCA baseline at every n** (real nonlinear lift), confirming **sufficient 
 n≥8; 2.9% at n=5) — competitive, not dominant. **Noise:** the classifier is **invariant to
 depolarizing** noise — provably, because depolarizing is a uniform Bloch contraction that
 per-feature standardization removes exactly (accuracy identical across rates 0.05–0.30) — and
-**robust to amplitude damping** (<0.5% at 30%). (Studied on MNIST for cross-team comparability;
-shot noise and two-qubit gate error are addressed in the QPU plan, §6.)
+**robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
+per-Trotter-layer density-matrix study shows the *converse* — accumulated two-qubit noise *during*
+evolution is **not** removed by standardization (standardized feature error grows with rate, vs
+**≈0** for readout-only depolarizing), so the invariance above is a property of the *readout*, not
+a circuit-level noise-robustness claim; accumulated 2-qubit error over the 380-gate circuit is the
+real NISQ cost (§6).
 
 **5.5 Scaling frontier + quantum-complexity metric.** A sparse-exact backend (`expm_multiply`,
 no dense propagator; matches the dense engine to **2.4×10⁻¹⁴**) reaches **n=16 exactly**. For
@@ -178,11 +182,13 @@ runs. (iv) g is regularization-dependent (we report the qualitative gap, not a t
 whether they convert beyond the classical-simulation frontier is the open question.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-Earlier, reliable volatility-regime-shift detection feeds portfolio hedging, dynamic risk limits
-and derivatives pricing; in the $30B+ daily VIX-options market, marginal gains in transition
-timing carry material P&L (JonesTrading). A credible *negative* at simulable scale is itself
-decision-useful: it tells practitioners the near-term lever is informed realized-measure
-features, not quantum hardware. **Milestone plan:** (i) pre-register ✓; (ii) scaling +
+Reliable volatility forecasts feed portfolio hedging, dynamic risk limits and derivatives pricing.
+We make the impact **concrete** (`cli.py run economics`): a volatility-timing backtest that sizes
+S&P-500 exposure by the one-step RV forecast **nearly halves the max drawdown in the 2008 crisis
+(−61%→−32%)** at a 10% vol target — a deployable risk lever — but a **plain HAR** forecast captures
+it, and rich features *and* the quantum reservoir add **no** economic value (negative
+certainty-equivalent fees). So the credible *negative* is decision-useful: the near-term lever is
+**vol-timing on a simple realized-variance forecast, not quantum hardware**. **Milestone plan:** (i) pre-register ✓; (ii) scaling +
 encoding-density sweeps ✓; (iii) adversarial HAR-X/ESN/RFF test ✓; (iv) MNIST + noise ✓;
 (v) sparse/TN frontier + bond dimension ✓; (vi) gate-Trotter QPU validation (IonQ/IQM/IBM) —
 simulator cross-checked; fallback = TN + density-matrix noise emulation. **AI disclosure:**

@@ -152,6 +152,43 @@ def zne_demo(n, J, layers, w, base_p=0.01, scales=(1, 2, 3)):
                 zne_improves=abs(zne0 - exact_val) < abs(vals[0] - exact_val))
 
 
+def _dry_run(n, layers, shots, seed, device):
+    """Validate the real-QPU path end-to-end WITHOUT running circuits or needing credits:
+    print the circuit/observable/shot/cost plan and probe whether the device can be opened."""
+    J = generate_coupling_matrix(n, CONN, seed=seed)
+    nzz = int((np.abs(np.triu(J, 1)) > 1e-12).sum())
+    nobs = n + n * (n - 1) // 2
+    circuits = 6 + 4 * 3 + 1   # 6 windows (shot study refs) + ZNE scales; representative
+    total_shots = shots * 6    # one Z-basis shot set yields ALL observables (diagonal readout)
+    print("#" * 74)
+    print(f"QPU DRY-RUN — CHIMERA-QRC gate-Trotter plan  (n={n}, layers={layers})")
+    print("#" * 74)
+    print(f"  circuit          : {nzz} IsingZZ + {n} RX per layer")
+    print(f"  depth (gates)    : {nzz*layers} two-qubit + {n*layers} one-qubit = {nzz*layers + n*layers} native")
+    print(f"  observables      : {nobs} (all Z-diagonal -> ONE shot set yields all {nobs})")
+    print(f"  shots/window     : {shots}  (epsilon ~ 1/sqrt(S) = {1/np.sqrt(shots):.3f})")
+    print(f"  est. shots/run   : ~{total_shots:,} (6 windows; the classical cross-check is free)")
+    print(f"  mitigation       : ZNE (linear) + measurement mitigation; classical cross-check every run")
+    print(f"  device requested : {device or '(none — pass --device <backend>)'}")
+    if device:
+        try:
+            import pennylane as _qml
+            _qml.device(device, wires=n)
+            print(f"  device wiring    : OK — '{device}' opened (credentials present).")
+            print("  READY: run  python3 qbraid_submit.py --device " + device)
+        except Exception as e:
+            msg = str(e).splitlines()[0][:140]
+            print(f"  device wiring    : NOT READY — could not open '{device}': {msg}")
+            print("  => install/enable the qBraid/Braket/IBM plugin and add credits/credentials,")
+            print("     then re-run this --dry-run; when it says READY, drop --dry-run to execute.")
+    else:
+        print("  Provide a backend, e.g.:")
+        print("    qBraid/Braket : qbraid_submit.py --dry-run --device braket.aws.qubit  (then add the ARN via the plugin)")
+        print("    IBM via PL    : qbraid_submit.py --dry-run --device qiskit.remote")
+        print("  The local simulator path (no --device) is fully runnable now and is what the paper reports.")
+    print("\nSee QPU_RUNBOOK.md for the full step-by-step (credits, device strings, expected output).")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8)
@@ -161,9 +198,16 @@ def main():
     ap.add_argument("--device", type=str, default=None,
                     help="real backend string (qBraid/Braket/IBM); default = local simulator")
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print the QPU execution plan + cost estimate and validate device wiring "
+                         "WITHOUT running circuits (works with or without --device/credentials)")
     args = ap.parse_args()
     n = args.n
     layers = 8 if args.quick else args.layers
+
+    if args.dry_run:
+        _dry_run(n, args.layers, args.shots, args.seed, args.device)
+        return
 
     t0 = time.time()
     J = generate_coupling_matrix(n, CONN, seed=args.seed)
