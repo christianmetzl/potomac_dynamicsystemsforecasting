@@ -122,7 +122,11 @@ def main():
     span = 12000 if args.quick else 26000      # ~1.4y / ~3y of hourly data (tractable)
     horizons = [1] if args.quick else [1, 24]
     t0 = time.time()
-    src = "NOAA Chicago O'Hare" if "noaa" in args.data else "Jena (MPI)"
+    stem = os.path.basename(args.data).replace("_hourly.npz", "").replace(".npz", "")
+    LABELS = {"jena": "Jena (MPI)", "noaa": "NOAA Chicago O'Hare", "denver": "NOAA Denver Intl",
+              "great_falls": "NOAA Great Falls MT", "rapid_city": "NOAA Rapid City SD",
+              "cheyenne": "NOAA Cheyenne WY"}
+    src = LABELS.get(stem, stem)
     print("#" * 84)
     print(f"V3 TRACK-B (weather): hourly temperature forecast — CHIMERA vs classical controls")
     print(f"  source={src} [{args.data}]  span={span} hrs  seeds={seeds}  horizons={horizons}")
@@ -137,9 +141,10 @@ def main():
         print("VERDICT: no horizon shows a significant CHIMERA advantage over the best classical "
               "model. Honest negative persists in Track B (weather) too — but see per-horizon signs/skill.")
     if not args.quick:
-        # source-keyed filename so Jena and NOAA runs don't clobber each other
-        fn = "v3_weather_results_noaa.npy" if "noaa" in args.data else "v3_weather_results.npy"
-        np.save(os.path.join(HERE, fn), dict(res=res, span=span, data=args.data), allow_pickle=True)
+        # source-keyed filename so different stations/datasets don't clobber each other
+        fn = "v3_weather_results.npy" if stem == "jena" else f"v3_weather_results_{stem}.npy"
+        np.save(os.path.join(HERE, fn), dict(res=res, span=span, data=args.data, src=src),
+                allow_pickle=True)
         print(f"saved {fn}  [{time.time()-t0:.1f}s]")
     else:
         print(f"[--quick] not written  [{time.time()-t0:.1f}s]")

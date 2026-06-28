@@ -50,8 +50,13 @@ is universal). We run the **same CHIMERA engine** and the **same adversarial pro
   (`noaa_hourly.npz`, format identical to Jena). `fetch_noaa.py` reproduces it.
 - **Jena Climate** (MPI Biogeochemistry), 2009–2016, the canonical weather-forecasting benchmark.
   Resampled to hourly → **70,038 rows × 6 vars** (`jena_hourly.npz`). `fetch_jena.py` reproduces it.
+- **Three high-chaos NOAA ISD stations** (chinook / Rocky-Mountain-lee belt, 2010–2016): **Denver
+  Intl** (725650-03017), **Rapid City SD** (726620-24090), **Great Falls MT** (727750-24143) — the
+  most short-timescale-unpredictable temperature records in the US, used as a chaotic stress test
+  (see Experiment 1). Same `fetch_noaa.py --station ... --out ...`; ~52–61k hourly rows each.
 
-Using both lets us check the result is not a single-station artifact.
+Using five stations spanning a 56–78% range of hour-to-hour unpredictability lets us check the
+result is not a single-station (or a single-chaos-regime) artifact.
 
 ## Experiment 1 — hourly temperature forecast (`v3_weather.py`)
 Forecast T (°C) **h** hours ahead from a **10-qubit informed window** = [5 recent hourly T lags +
@@ -81,6 +86,34 @@ nonlinearity matters more as the horizon grows). **But the *quantum* reservoir i
 better** — CHIMERA trails the classical ESN at every horizon on both datasets (significantly by
 HAC-DM). On NOAA it lands within ~0.01 °C of the ESN yet is still significantly worse — the closest
 it gets, but not ahead.
+
+### Chaotic-station stress test — the high-plains chinook belt (more unpredictable than O'Hare)
+To make the test as adversarial as possible for the *classical* side too, we ran the same protocol
+on three stations with violent, hard-to-predict temperature swings (Rocky-Mountain lee / chinook
+belt). The h=1 persistence RMSE is a clean proxy for hour-to-hour unpredictability, and confirms
+these are **much** more chaotic than O'Hare:
+
+| station | h=1 persistence RMSE | vs O'Hare | ESN (best) | CHIMERA | CHIMERA vs best |
+|---|---|---|---|---|---|
+| **Denver Intl** (KDEN)       | **1.929 °C** | **+78%** | h=1 1.598 / h=24 4.353 | 1.608 / 4.451 | DM +3.98 / +3.83, both p<.001 (worse) |
+| **Rapid City SD** (KRAP)     | **1.895 °C** | **+74%** | h=1 1.543 / h=24 4.484 | 1.546 / 4.604 | DM +1.22 (p=.22, **n.s.**) / +3.58 (p<.001) |
+| **Great Falls MT** (KGTF)    | **1.691 °C** | **+56%** | h=1 1.393 / h=24 4.207 | 1.398 / 4.290 | DM +3.07 / +3.21, both p<.01 (worse) |
+
+*(5 seeds, ~26k-hr span, 70/30 chronological. `v3_weather_results_{denver,rapid_city,great_falls}.npy`.)*
+
+**The honest negative is robust to weather chaos** — three findings, stated plainly:
+- **CHIMERA never wins.** It is significantly worse than the best classical ESN at 5 of 6
+  station-horizons. The single exception is **Rapid City h=1**, where CHIMERA *statistically ties*
+  the ESN (DM +1.22, p=0.22, n.s.) — the closest a CHIMERA forecast comes to parity at any chaotic
+  station, but still a point-estimate loss (1.546 vs 1.543), not a win.
+- **More chaos did not hand the reservoir a bigger edge.** Chaos raised *everyone's* error floor
+  roughly proportionally: the reservoir-over-linear margin at these wild stations (~1.6–2.7 skill
+  points) is no larger than at tame O'Hare (~1.7–2.4) — the extra "nonlinear headroom" we hoped for
+  is mostly irreducible noise, not learnable structure the *quantum* map captures better than the
+  classical one.
+- **Net.** This rules out the most charitable objection to the negative ("O'Hare is too tame"): even
+  on stations 56–78% more unpredictable, the matched quantum reservoir at best ties, never beats, a
+  classical one. The negative is robust across the full chaos spectrum we could find.
 
 ## Experiment 2 — ARIMA baseline (`arima_weather.py`)
 The brief names ARIMA. ARIMA(3,0,2) one-step (h=1) on Jena: **RMSE 0.741 °C** (26.1% skill vs
@@ -150,6 +183,9 @@ engineered dissipation + the 100+ qubit regime (Kornjača 2024) — beyond exact
 ```bash
 python3 v3_research/fetch_noaa.py                          # NOAA ISD hourly (suggested source)
 python3 v3_research/v3_weather.py --data noaa_hourly.npz   # forecast on NOAA, h=1 & h=24
+# chaotic-station stress test (Denver / Rapid City / Great Falls):
+python3 v3_research/fetch_noaa.py --station 725650-03017 --out denver_hourly.npz --name "Denver Intl"
+python3 v3_research/v3_weather.py --data denver_hourly.npz
 python3 v3_research/fetch_jena.py                          # Jena hourly (cross-check station)
 python3 v3_research/v3_weather.py                          # forecast on Jena, h=1 & h=24
 python3 v3_research/arima_weather.py                       # named ARIMA baseline (h=1)
@@ -200,12 +236,15 @@ unitary reservoir lacks autonomous stability), which is a stronger, more citable
 had on its own.
 
 ## Honest bottom line
-Across Track A (realized volatility) and Track B (weather temperature on two stations), and across
-RMSE / MAE / QLIKE / Mincer-Zarnowitz / VPT / information-processing-capacity, in **static and
-recurrent** paradigms, at simulable scale the quantum reservoir is *competitive and distinct* but
-**not better** than strong classical baselines. The negative is **domain-, metric-, and
-architecture-general** — which is exactly what makes V1's honest no-advantage finding credible rather
-than a single-task artifact. The submission stays V1 (tag `v1-submission`).
+Across Track A (realized volatility) and Track B (weather temperature on **five** stations spanning
+a 56–78% range of hour-to-hour chaos, from mild Jena/O'Hare to the violent Denver/Rapid City/Great
+Falls chinook belt), and across RMSE / MAE / QLIKE / Mincer-Zarnowitz / VPT /
+information-processing-capacity, in **static and recurrent** paradigms, at simulable scale the
+quantum reservoir is *competitive and distinct* but **not better** than strong classical baselines
+(its closest approach is a single statistical tie at Rapid City h=1 — never a win). The negative is
+**domain-, metric-, architecture-, and chaos-regime-general** — which is exactly what makes V1's
+honest no-advantage finding credible rather than a single-task artifact. The submission stays V1
+(tag `v1-submission`).
 
 *Caveats, stated plainly:* (i) a single fixed reservoir family / encoding was tested per paradigm;
 (ii) noise channels for weather were exercised at n=5 (Track A covers n≤10 fully); (iii) no

@@ -41,20 +41,36 @@ def _es(t):                        # Magnus saturation vapor pressure (hPa)
     return 6.112 * np.exp(17.62 * t / (243.12 + t))
 
 
+def _is_gzip(path):                 # gzip magic bytes (guards against S3 XML error pages)
+    try:
+        with open(path, "rb") as fh:
+            return fh.read(2) == b"\x1f\x8b"
+    except OSError:
+        return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--years", nargs="+", type=int, default=list(range(2010, 2017)))
     ap.add_argument("--station", default=STATION)
+    ap.add_argument("--out", default=OUT, help="output npz path (default noaa_hourly.npz)")
+    ap.add_argument("--name", default="Chicago O'Hare", help="human label for the station")
     args = ap.parse_args()
+    out_path = args.out if os.path.isabs(args.out) else os.path.join(HERE, args.out)
     import subprocess
     recs = []
     for yr in args.years:
         gz = os.path.join(HERE, f"_isd_{args.station}_{yr}.gz")
-        if not (os.path.exists(gz) and os.path.getsize(gz) > 1000):
+        if not (os.path.exists(gz) and os.path.getsize(gz) > 1000 and _is_gzip(gz)):
             r = subprocess.run(["curl", "-sSL", "--max-time", "120", "-o", gz,
                                 f"{BASE}/{yr}/{args.station}-{yr}.gz"])
             if r.returncode != 0 or not os.path.exists(gz):
                 print(f"  {yr}: download failed — skipped"); continue
+        if not _is_gzip(gz):     # S3 returns a small XML 'NoSuchKey' page for missing station-years
+            print(f"  {yr}: no ISD file for this station-year — skipped")
+            try: os.remove(gz)
+            except OSError: pass
+            continue
         lines = gzip.open(gz, "rt", errors="replace").read().splitlines()
         for l in lines:
             if len(l) < 105:
@@ -79,14 +95,14 @@ def main():
         "T (degC)": h["T"], "p (mbar)": h["slp"].fillna(h["slp"].median()),
         "rh (%)": rh, "VPmax (mbar)": vpmax, "wv (m/s)": h["wv"].fillna(0).clip(lower=0),
         "Tdew (degC)": h["Td"]}).dropna()
-    np.savez_compressed(OUT, X=out[COLS].values,
+    np.savez_compressed(out_path, X=out[COLS].values,
                         dates=out.index.tz_localize(None).values.astype("datetime64[ns]"),
                         cols=np.array(COLS))
-    print(f"\nsaved {OUT}")
+    print(f"\nsaved {out_path}")
     print(f"  {out.shape[0]} hourly rows x {out.shape[1]} vars, "
-          f"{out.index.min().date()}..{out.index.max().date()}  station={args.station} (Chicago O'Hare)")
+          f"{out.index.min().date()}..{out.index.max().date()}  station={args.station} ({args.name})")
     print(f"  T range {out['T (degC)'].min():.1f}..{out['T (degC)'].max():.1f} C")
-    print("Now:  python3 v3_research/v3_weather.py --data noaa_hourly.npz")
+    print(f"Now:  python3 v3_research/v3_weather.py --data {os.path.basename(out_path)}")
 
 
 if __name__ == "__main__":
