@@ -57,9 +57,9 @@ The central, falsifiable mechanism is **expressivity scaling**, which we measure
 the geometric difference (Huang et al. 2021). The quantum kernel is poorly reproducible by a
 matched classical reservoir: against the name-matched ESN-108 reference,
 **g(ESN→CHIMERA) ≈ 62 vs ≈4 control** (`cli.py run kernel`); against per-n *feature-matched*
-ESNs the gap is larger still (g ≈ 125 at n=8, rising to ≈158 at n=10). (g is reported at a fixed ridge
-regularization; the qualitative ~15–40× separation over the classical–classical control, not
-the exact value, is the claim.) Crucially, at ≤12–16 qubits the map remains classically
+ESNs the gap is larger still (g ≈ 125 at n=8, rising to ≈158 at n=10). (g is at fixed ridge
+regularization; the qualitative ~15–40× separation, not the exact value, is the claim.)
+Crucially, at ≤12–16 qubits the map remains classically
 simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
 here, it is indeed *not* sufficient.
 
@@ -115,10 +115,9 @@ pre-registered criteria, H0 is refuted — we report this negative.** What hones
 the quantum reservoir: it is **competitive** (within ~0.5–1.5% RMSE of the best at every n),
 **more stable than the recurrent ESN** (lower per-seed variance, e.g. n=12: 0.009 vs 0.015),
 and it **beats the recurrent ESN on the calm window** (raw p=0.018; n.s. after Holm).
-**Named canonical baselines** (`cli.py run canonical`): running the models a finance referee
-expects — **SHAR, HAR-CJ, HARQ** (RQ≈RV² proxy) and **HEAVY-RM**, under MSE- *and* QLIKE-loss DM —
-**none beats HAR-X** (confirming it is a fair, strong stand-in, not a strawman), and CHIMERA ties
-the best of them on RMSE with only a *raw, non-Holm-significant* QLIKE/MZ-efficiency edge
+**Named canonical baselines** (`cli.py run canonical`): **SHAR, HAR-CJ, HARQ** (RQ≈RV² proxy) and
+**HEAVY-RM**, under MSE- *and* QLIKE-loss DM — **none beats HAR-X** (a fair, strong stand-in, not a
+strawman), and CHIMERA ties the best on RMSE with only a *raw, non-Holm* QLIKE/MZ edge
 (`results/canonical_baselines_findings.md`).
 
 ![**Figure 2.** Rigorous Axis-B (8 seeds, crisis window). HAR-X (rich features, linear) is the best or co-best model at every n; the quantum reservoir is competitive but shows no advantage that survives HAC-DM + Holm correction. Left: RMSE(log-RV). Right: Mincer–Zarnowitz R².](figures/fig_axisB_rigorous.png)
@@ -131,34 +130,33 @@ n≥8; 2.9% at n=5) — competitive, not dominant. **Noise:** the classifier is 
 depolarizing** noise — provably, because depolarizing is a uniform Bloch contraction that
 per-feature standardization removes exactly (accuracy identical across rates 0.05–0.30) — and
 **robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
-per-Trotter-layer density-matrix study shows the *converse* — accumulated two-qubit noise *during*
-evolution is **not** removed by standardization (standardized feature error grows with rate, vs
-**≈0** for readout-only depolarizing), so the invariance above is a property of the *readout*, not
-a circuit-level noise-robustness claim; accumulated 2-qubit error over the 380-gate circuit is the
-real NISQ cost (§6).
+per-Trotter-layer density-matrix study shows the *converse* — two-qubit noise *during* evolution is
+**not** removed by standardization (standardized error grows with rate, vs **≈0** for readout-only
+depolarizing): the invariance above is a *readout* property, not a circuit-level robustness claim;
+accumulated 2-qubit error over the 380-gate circuit is the real NISQ cost (§6).
 
 **5.5 Scaling frontier + quantum-complexity metric.** A sparse-exact backend (`expm_multiply`,
 no dense propagator; matches the dense engine to **2.4×10⁻¹⁴**) reaches **n=16 exactly**. For
 the random ≈50%-connected reservoir we measure the **bond dimension** χ_eff across a balanced
 cut: it is **full at every n, χ_eff = 2^(n/2)** (16→256 for n=8→16) — an exact MPS gets **zero
-compression** — with entanglement entropy S ≈ 1.7–3.2 nats (peaking near n=14; S is noisier
-than the rank). The reservoir therefore admits **no low-bond-dimension (MPS/TEBD) shortcut** —
+compression** — with entanglement entropy S ≈ 1.7–3.2 nats. The reservoir therefore admits
+**no low-bond-dimension (MPS/TEBD) shortcut** —
 exact cost stays exponential (full entanglement is *necessary, not sufficient* for true classical
 hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
-appears at the simulable scale we can test. **Capability check (`cli.py run capacity`):** an
-information-processing-capacity probe (Dambre et al. 2012) finds that at matched feature count the
-quantum reservoir is **not more** — indeed slightly *less* — nonlinearly expressive than a matched
-RFF/ESN, so the negative is not "the task wastes the reservoir's extra expressivity" but "there is
-no excess expressivity to exploit at simulable scale." A frontier check (`cli.py run frontier`) adds
-that classical-irreproducibility g(n) does **not** widen toward n=16 under informed encoding (it
-declines; D_eff/rank grow but a matched ESN keeps pace) — the simulable-scale evidence does not
-point to a gap opening with scale.
+appears at the simulable scale we can test. **Capability + efficiency checks.** An
+information-processing-capacity probe (Dambre et al. 2012; `cli.py run capacity`) finds the quantum
+reservoir **not more** — slightly *less* — nonlinearly expressive than a matched RFF/ESN at equal
+feature count: no excess expressivity to exploit. A frontier check (`cli.py run frontier`) adds that
+g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched ESN keeps pace), and
+a direct **resource-efficiency** frontier (quality vs feature count, inputs held fixed;
+`results/efficiency_frontier_findings.md`) shows a *smaller* QRC cannot substitute for a *larger*
+classical reservoir — quantum accuracy **saturates** while the classical curves keep improving (the
+two static maps are comparable per feature). The simulable-scale evidence shows no gap opening with scale.
 
 ## 6. Quantum platform and resource planning
-Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/tensor-network to ≈16, GPU for
-larger. **Resource estimates** (gate-Trotter, 20 layers; readout is single-basis because all
-`⟨Z_i⟩,⟨Z_iZ_j⟩` are diagonal in the computational basis, so one set of S shots yields **all**
-n+C(n,2) observables):
+Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/TN to ≈16, GPU for larger.
+**Resource estimates** (gate-Trotter, 20 layers; readout is single-basis — all `⟨Z_i⟩,⟨Z_iZ_j⟩`
+are computational-basis-diagonal, so one S-shot set yields **all** n+C(n,2) observables):
 
 | n | two-qubit gates | one-qubit gates | observables | shots S (ε≈1/√S) | sim wall-clock |
 |---|---|---|---|---|---|
@@ -167,20 +165,18 @@ n+C(n,2) observables):
 | 12 | 760 | 240 | 78 | 2k–8k | ~1 min build |
 | 16 (sparse) | — | — | 136 | — | ~40 min/point |
 
-*(wall-clock is hardware-dependent — measured on a single CPU here; it is an engineering, not a scientific, quantity.)*
+*(wall-clock is hardware-dependent — an engineering, not a scientific, quantity.)*
 
 **QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / IBM** via qBraid — the
 random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, easing NISQ
-mapping (trapped-ion all-to-all natively supports the arbitrary couplings) — with **ZNE +
-measurement mitigation** and a classical cross-check for every run. The submission path is
+mapping — with **ZNE + measurement mitigation** and a classical cross-check per run. The submission path is
 **executable now** (`qbraid_submit.py`, `cli.py run qsubmit`): on a simulator it (i) reproduces
-the engine to **3.9×10⁻¹⁶** via the exact circuit (the classical cross-check we run for every
-hardware execution), (ii) characterizes the **shot budget** — mean feature error 0.046 / 0.013
-/ 0.0066 at S = 256 / 4k / 16k shots, the ε≈1/√S law, with the gate-Trotter(20) approximation
-adding ≈0.04 — and (iii) demonstrates **zero-noise extrapolation** recovering toward the
-noiseless value under a depolarizing sweep. It is one flag (`--device`) from a real backend,
-pending qBraid credit allocation. We thus characterize all four challenge axes: reservoir size
-(§5.1/5.5), encoding density (§5.2/5.3), shot budget, and noise (§5.4). *(QCi Dirac-3 is the
+the engine to **3.9×10⁻¹⁶** via the exact circuit (our per-run classical cross-check),
+(ii) characterizes the **shot budget** (mean feature error 0.046/0.013/0.0066
+at S=256/4k/16k; ε≈1/√S; gate-Trotter(20) adds ≈0.04), and (iii) demonstrates **zero-noise
+extrapolation** recovering toward the noiseless value under a depolarizing sweep. It is one flag (`--device`) from a real backend,
+pending qBraid credit allocation. We thus characterize all four challenge axes: reservoir size,
+encoding density, shot budget, and noise. *(QCi Dirac-3 is the
 separate optimization challenge's device.)*
 
 ## 7. Limitations (stated plainly)
@@ -191,21 +187,24 @@ channels at the readout; full noisy-circuit and shot-noise simulation is deferre
 runs. (iv) g is regularization-dependent (we report the qualitative gap, not a tuned value).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* for advantage —
-whether they convert beyond the classical-simulation frontier is the open question.
+whether they convert beyond the classical-simulation frontier is the open question; a quantum-data
+probe (`results/quantum_data_outlook_findings.md`) marks where an edge most plausibly lies — the QRC
+natively reads nonlinear functionals of quantum *states* (purity, entanglement) beyond linear
+classical measurement, an advantage that should grow with input size (tomography costs 4ⁿ) on
+hardware-native quantum data, the regime this challenge's classical data never probes.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Reliable volatility forecasts feed portfolio hedging, dynamic risk limits and derivatives pricing.
-We make the impact **concrete** (`cli.py run economics`): a volatility-timing backtest that sizes
-S&P-500 exposure by the one-step RV forecast **nearly halves the max drawdown in the 2008 crisis
-(−61%→−32%)** at a 10% vol target — a deployable risk lever — but a **plain HAR** forecast captures
-it, and rich features *and* the quantum reservoir add **no** economic value (negative
-certainty-equivalent fees). So the credible *negative* is decision-useful: the near-term lever is
-**vol-timing on a simple realized-variance forecast, not quantum hardware**. **Milestone plan:** (i) pre-register ✓; (ii) scaling +
+We make the impact **concrete** (`cli.py run economics`): a vol-timing backtest sizing S&P-500
+exposure by the one-step RV forecast **nearly halves the 2008 max drawdown (−61%→−32%)** at a 10%
+vol target, but a **plain HAR** forecast captures it — rich features and the quantum reservoir add
+**no** economic value (negative certainty-equivalent fees). The decision-useful lever is
+**vol-timing on a simple RV forecast, not quantum hardware**. **Milestone plan:** (i) pre-register ✓; (ii) scaling +
 encoding-density sweeps ✓; (iii) adversarial HAR-X/ESN/RFF test ✓; (iv) MNIST + noise ✓;
 (v) sparse/TN frontier + bond dimension ✓; (vi) gate-Trotter QPU validation (IonQ/IQM/IBM) —
 simulator cross-checked; fallback = TN + density-matrix noise emulation. **AI disclosure:**
 Claude (Anthropic) assisted with code and drafting under the team's direction; all formulations,
-decisions, and results are the team's own, produced by executing team code on public data.
+decisions, and results are the team's own.
 
 ## References
 Kornjača et al. 2024 (arXiv:2407.02553) · Zhu et al. 2025 (PRR 7, 023290) · Ahmed, Tennie &
