@@ -179,6 +179,35 @@ synchronization")** — exactly the stability problem of Ahmed-Tennie-Magri (202
 reference). A large dissipative ESN therefore far exceeds any n≤8 unitary reservoir. *Open frontier:*
 engineered dissipation + the 100+ qubit regime (Kornjača 2024) — beyond exact simulation.
 
+## Experiment 6 — recurrent CHIMERA, autonomous rollout on REAL station weather (`recurrent_weather_vpt.py`)
+Experiment 5 ran the recurrent QRC on clean deterministic Lorenz-63. This puts the *same* recurrent
+quantum reservoir on **real station temperature** in autonomous closed-loop mode: it feeds its own
+hourly forecast back as input, while the wall-clock (hour-of-day, always knowable) is injected so the
+rollout can phase-lock to the diurnal cycle. Real weather is stochastic-plus-chaotic (no clean
+Lyapunov time), so VPT is reported in **hours** (first hour where |pred−true|/std(T) > 0.4), over 24
+starts × 2 seeds, 10-day horizon. n=8 recurrent (3 input + 5 memory), density-matrix exact.
+
+| model | Jena (mild) VPT (h) | Denver (most chaotic) VPT (h) |
+|---|---|---|
+| Closed-loop persistence | 15.8 | 5.9 |
+| Seasonal+diurnal climatology (harmonic) | 7.4 | 6.4 |
+| **Recurrent-CHIMERA (n=8)** | **6.5** | **8.1** |
+| ESN, **size-matched** (36 nodes) | 13.4 | 12.3 |
+| ESN, strong (300 nodes) | **19.0** | **14.7** |
+
+*(one-step train R² = 0.92 / 0.90 — the reservoir learns the one-step map well. `recurrent_weather_vpt_{jena,denver}.npy`.)*
+
+**The negative holds on real-weather autonomous rollout, and the mechanism shows through:**
+- **Fair test (size-matched, both recurrent):** recurrent-CHIMERA is **below** the size-matched ESN
+  at both stations (6.5 vs 13.4; 8.1 vs 12.3) — no quantum advantage even here, the most
+  QRC-favorable architecture.
+- **Autonomous instability, now on real data.** One-step R² is ~0.9, yet the quantum reservoir's
+  closed-loop rollout decays fast — at Jena it fails to beat even trivial climatology (7.4 h) or
+  persistence (15.8 h). The classical ESN, by contrast, *does* beat both (13.4–19.0 h), extracting
+  genuine sub-diurnal skill. This is the **non-dissipative-unitarity** divergence diagnosed on
+  Lorenz (Experiment 5), confirmed on messy real series: unitary evolution lacks the contraction
+  classical ESNs use for autonomous stability ("generalized synchronization").
+
 ## How to reproduce
 ```bash
 python3 v3_research/fetch_noaa.py                          # NOAA ISD hourly (suggested source)
@@ -191,7 +220,8 @@ python3 v3_research/v3_weather.py                          # forecast on Jena, h
 python3 v3_research/arima_weather.py                       # named ARIMA baseline (h=1)
 python3 v3_research/v3_weather_sweep.py                    # 5/10/15 qubit + noise sweep (n=15 ~30 min)
 python3 v3_research/lorenz_vpt.py                          # VPT, static reservoirs
-python3 v3_research/recurrent_qrc.py                       # VPT, recurrent QRC vs ESN (fair)
+python3 v3_research/recurrent_qrc.py                       # VPT, recurrent QRC vs ESN (Lorenz, fair)
+python3 v3_research/recurrent_weather_vpt.py --data jena_hourly.npz    # recurrent QRC, REAL-weather autonomous VPT
 ```
 
 ## What this means for our V1 findings in finance
