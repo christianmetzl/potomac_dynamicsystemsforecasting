@@ -10,13 +10,28 @@
 > git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip
 > ```
 
-## Honest scope caveat (read first)
-The official **GIC-2026 Track-B brief is not in this repo**, so the precise Track-B task is
-**inferred**, not known. We take Track B to be *weather/climate time-series forecasting* and use
-the standard public benchmark and a standard target (temperature). If the real Track-B spec
-differs (e.g. precipitation, a spatial field, a specific horizon/metric), the **engine and the
-adversarial protocol transfer unchanged** — only the target series changes. We flag this openly so
-nothing here is mistaken for a verified Track-B result.
+## Track-B spec (now confirmed from the official Phase-3 brief)
+> *Track B — Weather Time-Series Forecasting:* "Using **real-world weather station data**
+> (temperature, pressure, humidity, wind), design a QRC that forecasts atmospheric variables over
+> short horizons." Suggested sources: **NOAA ISD/ASOS**, ECMWF ERA5, NOAA GFS. Recommended Track-B
+> **baselines: Persistence, ARIMA, ESN, NWP-style**. Metrics: **RMSE, MAE, and Valid Prediction
+> Time (VPT)** (Lyapunov-normalized horizon at which forecast error exceeds a threshold). Also
+> required across both tracks: the common **MNIST** benchmark and a demonstration across **qubit
+> counts (5/10/15)** under **depolarizing + amplitude-damping** noise.
+
+**How this V3 maps to the spec, honestly:**
+| spec item | this V3 | gap to full spec |
+|---|---|---|
+| real-world weather station data | **Jena Climate** (MPI station, hourly T/p/rh/wind) ✓ | NOAA ISD/ASOS is the *suggested* source — Jena qualifies as real station data but isn't NOAA |
+| forecast atmospheric variable | **temperature** at h=1, h=24 ✓ | could add pressure/humidity |
+| baselines | Persistence ✓, ESN ✓, linear (AR-X, ≈ARIMA-lite) | ARIMA proper + an NWP-style reference not run |
+| metrics | RMSE ✓, MAE ✓ | **VPT not yet computed** (needs autonomous rollout) |
+| qubit-count + noise sweep | n=10 only here | 5/10/15 sweep + depol/amp-damp not yet run for weather |
+
+So this V3 is a **valid, on-task Track-B exploration** (real weather, real baselines, real metrics),
+but it is **not** a fully spec-complete Track-B *submission* — it omits VPT, a proper ARIMA, the
+qubit/noise sweep, and ideally NOAA data. Those are the concrete steps to make it submission-grade
+(see "next steps"). The submission remains V1 (Track A).
 
 ## Why V3 exists
 Two reasons. (1) The user asked to explore Track B without touching the submission. (2) Weather is
@@ -64,11 +79,18 @@ python3 v3_research/v3_weather.py                 # h=1 and h=24, 5 seeds
 python3 v3_research/v3_weather.py --quick         # fast smoke (h=1, 3 seeds)
 ```
 
-## Natural next probe (not yet done)
-A **chaotic-dynamics / valid-prediction-time (VPT)** benchmark (e.g. Lorenz-63, the standard RC
-chaos task; cf. Ahmed-Tennie-Magri 2025) in *autonomous closed-loop* rollout — the single setting
-where the reservoir-computing paradigm is strongest and where a quantum-vs-classical-reservoir
-comparison is most discriminating. Deferred so we don't ship a half-tested VPT harness.
+## Next steps to make this a spec-complete Track-B submission (not yet done)
+Now that the official spec is confirmed, the concrete gaps to a full Track-B submission are:
+1. **Valid Prediction Time (VPT)** — the spec's chaotic-forecasting metric: autonomous closed-loop
+   rollout, error-threshold horizon normalized by Lyapunov time (Lorenz-63 is the standard testbed;
+   cf. Ahmed-Tennie-Magri 2025). The single most discriminating reservoir benchmark. Deferred so we
+   don't ship a half-tested VPT harness.
+2. **ARIMA** (proper Box-Jenkins) and an **NWP-style** reference (NOAA GFS / ECMWF), per the Track-B
+   baseline list (we currently use persistence + ESN + a linear AR-X stand-in).
+3. **Qubit-count sweep (5/10/15) + depolarizing/amplitude-damping noise** on the weather task (we
+   have these for Track A; here only n=10, noiseless).
+4. Ideally **NOAA ISD/ASOS** station data (the suggested source) and pressure/humidity targets, not
+   just the Jena temperature series.
 
 ## Honest bottom line
 Across Track A (realized volatility) and Track B (weather temperature), at simulable scale the
@@ -79,6 +101,7 @@ wider margin, especially at h=24), yet a matched classical ESN still edges out t
 at every horizon. This strengthens, rather than weakens, the V1 thesis: the honest no-advantage
 finding holds across two very different domains. The submission stays V1 (tag `v1-submission`).
 
-*Caveats, stated plainly:* (i) the Track-B task is inferred (no official brief in-repo); (ii) a
-single fixed reservoir family / encoding was tested; (iii) the most discriminating reservoir
-benchmark — autonomous chaotic-dynamics VPT (Lorenz-63) — is deferred, not done.
+*Caveats, stated plainly:* (i) this is a *valid on-task* Track-B exploration but **not a
+spec-complete Track-B submission** — VPT, ARIMA/NWP baselines, the 5/10/15 qubit + noise sweep, and
+ideally NOAA data are not yet done (see "next steps"); (ii) a single fixed reservoir family /
+encoding was tested; (iii) Jena (MPI) is real station data but not the suggested NOAA source.
