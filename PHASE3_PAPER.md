@@ -143,21 +143,25 @@ exact cost stays exponential (full entanglement is *necessary, not sufficient* f
 hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
 appears at the simulable scale we can test. **Capability + efficiency checks.** An
 information-processing-capacity probe (Dambre et al. 2012; `cli.py run capacity`) finds the quantum
-reservoir **not more** — slightly *less* — nonlinearly expressive than a matched RFF/ESN at equal
-feature count: no excess expressivity to exploit. A frontier check (`cli.py run frontier`) adds that
-g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched ESN keeps pace), and
-a direct **resource-efficiency** frontier (quality vs feature count, inputs held fixed;
-`results/efficiency_frontier_findings.md`) shows a *smaller* QRC cannot substitute for a *larger*
-classical reservoir — quantum accuracy **saturates** while the classical curves keep improving (the
-two static maps are comparable per feature). The simulable-scale evidence shows no gap opening with scale.
-**Robustness (supporting study, `v3_research/`).** The negative is neither task- nor
-architecture-specific: the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
-unpredictability) and the autonomous **VPT** metric still show no advantage, and the literature's
-**recurrent** QRC is competitive-not-better — mechanism: unitary evolution is non-dissipative,
-lacking the contraction behind ESN "generalized synchronization" (Ahmed–Tennie–Magri 2025).
+reservoir **not more** — slightly *less* — nonlinearly expressive than a matched RFF/ESN:
+no excess expressivity to exploit. A frontier check (`cli.py run frontier`) adds that
+g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched ESN keeps pace).
+**Robustness (supporting study, `v3_research/`).** *Efficiency:* with input held fixed, a *smaller*
+QRC cannot substitute for a *larger* classical reservoir — quantum accuracy **saturates** while the
+classical curves improve; per feature the static maps are comparable, so the negative is
+**saturation, not per-feature inferiority** (best RMSE across sizes, weather °C):
+
+| reservoir | CHIMERA | RFF (static) | ESN (recurrent) |
+|---|---|---|---|
+| best RMSE (°C) | 0.85 | 0.78 | 0.71 |
+
+*Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
+unpredictability) and the autonomous **VPT** metric still show no advantage; the **recurrent** QRC is
+competitive-not-better — unitary evolution is non-dissipative, lacking the contraction behind ESN
+"generalized synchronization" (Ahmed–Tennie–Magri 2025).
 
 ## 6. Quantum platform and resource planning
-Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/TN to ≈16, GPU for larger.
+Simulator-first on qBraid: statevector ≤12 qubits, sparse/TN to ≈16, GPU beyond.
 **Resource estimates** (gate-Trotter, 20 layers; readout is single-basis — all `⟨Z_i⟩,⟨Z_iZ_j⟩`
 are computational-basis-diagonal, so one S-shot set yields **all** n+C(n,2) observables):
 
@@ -166,9 +170,7 @@ are computational-basis-diagonal, so one S-shot set yields **all** n+C(n,2) obse
 | 8 | 220 | 160 | 36 | 2k–8k (ε≈.011–.022) | <1 s/state |
 | 10 | 480 | 200 | 55 | 2k–8k | ~sec |
 | 12 | 760 | 240 | 78 | 2k–8k | ~1 min build |
-| 16 (sparse) | — | — | 136 | — | ~40 min/point |
 
-*(wall-clock is hardware-dependent — an engineering, not a scientific, quantity.)*
 
 **QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / IBM** via qBraid — the
 random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, easing NISQ
@@ -183,17 +185,18 @@ budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
-linear) is the best model on this task. (ii) The S&P 500 RV sample ends Feb-2020 — the 2008 GFC
-is in-sample, the 2020 COVID shock just outside it; broader assets/periods untested. (iii) Noise is studied on MNIST
+linear) is the best model on this task. (ii) The RV sample ends Feb-2020
+(2008 GFC in-sample, 2020 COVID just outside); broader assets/periods untested. (iii) Noise is studied on MNIST
 (single-qubit readout channels); full noisy-circuit/shot-noise sim is deferred to QPU runs.
-(iv) g is regularization-dependent (qualitative gap, not a tuned value).
+(iv) g is regularization-dependent (qualitative gap only).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* for advantage —
 whether they convert beyond the classical-simulation frontier is the open question; a quantum-data
 probe (`results/quantum_data_outlook_findings.md`) marks where an edge most plausibly lies — the QRC
-natively reads nonlinear functionals of quantum *states* (purity, entanglement) beyond linear
-classical measurement, an advantage that should grow with input size (tomography costs 4ⁿ) on
-hardware-native quantum data, the regime this challenge's classical data never probes.
+natively reads nonlinear functionals of quantum *states* from **1** measurement setting vs
+tomography's **3ᵏ**, the same-budget gap closing monotonically over k=2–4
+(`results/quantum_data_crossover_findings.md`) — a measurement-complexity edge growing on
+hardware-native quantum data this challenge's classical tracks never probe.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, dynamic risk limits and derivatives pricing.
@@ -205,12 +208,11 @@ quantum hardware**. **Milestone plan:** (i)–(v) pre-registration,
 scaling + encoding sweeps, the adversarial HAR-X/ESN/RFF test, MNIST + noise, and the sparse/TN
 frontier are ✓; (vi) gate-Trotter QPU validation (IonQ/IQM/IBM) is simulator-cross-checked
 (fallback = TN noise emulation). **AI disclosure:**
-Claude (Anthropic) assisted with code and drafting under the team's direction; all formulations,
-decisions, and results are the team's own.
+Claude (Anthropic) assisted with code and drafting under the team's direction; all decisions and
+results are the team's own.
 
 ## References
-Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 (Proc. R. Soc. A 481) ·
-Li et al. 2025 · Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
-Kobayashi & Motome 2026 · Huang et al. 2021 (Nat. Commun. 12, 2631) · Corsi 2009 · Patton 2011 ·
-Hansen, Lunde & Nason 2011 · Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 ·
-Heber, Lunde, Shephard & Sheppard 2009.
+Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 · Li et al. 2025 ·
+Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
+Kobayashi & Motome 2026 · Huang et al. 2021 · Corsi 2009 · Patton 2011 · Hansen et al. 2011 ·
+Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 · Heber et al. 2009.

@@ -26,7 +26,8 @@ negative a result rather than a null.**
 | 9 | VPT, recurrent QRC on **real weather** | Jena/Denver autonomous rollout | CHIMERA 6.5/8.1 h **< matched ESN 13.4/12.3 h**; fails to beat climatology at Jena | `recurrent_weather_vpt_*.npy` |
 | 10 | Noise robustness | depol / amplitude-damping | readout-only = invariant (a standardization artifact); per-layer **degrades** | `noise_circuit_findings.md` |
 | 11 | **Resource efficiency** (small QRC vs larger classical) | quality vs #features, input held fixed | CHIMERA saturates at ~0.85; RFF reaches 0.78, ESN 0.71 — comparable per-feature only at the smallest sizes; **a small QRC cannot do a larger classical's job** | `efficiency_frontier_findings.md` |
-| 12 | **Quantum DATA** (purity / entanglement of input states) | inject quantum states, repeated | QRC **natively reads nonlinear state functionals** (beats classical-linear ≈0); classical-nonlinear with full tomography still matches/beats at 2-qubit scale | `quantum_data_outlook_findings.md` |
+| 12 | **Quantum DATA** (purity / entanglement of input states) | inject quantum states, repeated | QRC **natively reads nonlinear state functionals** (beats classical-linear ≈0); classical-nonlinear w/ full tomography still matches/beats at 2-qubit scale | `quantum_data_outlook_findings.md` |
+| 12b | **Quantum-data CROSSOVER** (k=2,3,4) | measurement complexity | **exact** separation: QRC needs **1** measurement setting vs **3ᵏ** (9/27/81); same-budget accuracy gap **closes monotonically** (−0.137→−0.049) — a trend toward (not yet realized) crossover | `quantum_data_crossover_findings.md` |
 
 Twelve independent fair tests; on accuracy the quantum reservoir wins **none** of them. Its single
 closest approach is one statistical tie (Rapid City h=1) and one near-match (recurrent Lorenz VPT
