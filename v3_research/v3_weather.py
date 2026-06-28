@@ -44,8 +44,8 @@ def rmse(a, b): return float(np.sqrt(np.mean((a - b) ** 2)))
 def mae(a, b): return float(np.mean(np.abs(a - b)))
 
 
-def build(h, span):
-    d = np.load(os.path.join(HERE, "jena_hourly.npz"), allow_pickle=True)
+def build(h, span, data="jena_hourly.npz"):
+    d = np.load(os.path.join(HERE, data), allow_pickle=True)
     X = d["X"].astype(float); cols = [str(c) for c in d["cols"]]
     if span and len(X) > span:
         X = X[-span:]                                   # most-recent contiguous span (tractable)
@@ -69,8 +69,8 @@ def build(h, span):
     return Xin, LIN, y, persist
 
 
-def run(h, span, seeds):
-    Xin, LIN, y, persist = build(h, span)
+def run(h, span, seeds, data="jena_hourly.npz"):
+    Xin, LIN, y, persist = build(h, span, data)
     m = len(y); ntr = int(0.7 * m); tr = np.arange(ntr); te = np.arange(ntr, m)
     yT = y[te]
     lo, hi = Xin[tr].min(0), Xin[tr].max(0); rng = np.where((hi - lo) == 0, 1, hi - lo)
@@ -115,16 +115,19 @@ def run(h, span, seeds):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--data", default="jena_hourly.npz",
+                    help="panel npz (jena_hourly.npz or noaa_hourly.npz)")
     args = ap.parse_args()
     seeds = (0, 1, 2) if args.quick else (0, 1, 2, 3, 4)
     span = 12000 if args.quick else 26000      # ~1.4y / ~3y of hourly data (tractable)
     horizons = [1] if args.quick else [1, 24]
     t0 = time.time()
+    src = "NOAA Chicago O'Hare" if "noaa" in args.data else "Jena (MPI)"
     print("#" * 84)
-    print("V3 TRACK-B (weather): Jena hourly temperature forecast — CHIMERA vs classical controls")
-    print(f"  span={span} hrs  seeds={seeds}  horizons={horizons}  (10-qubit informed encoding)")
+    print(f"V3 TRACK-B (weather): hourly temperature forecast — CHIMERA vs classical controls")
+    print(f"  source={src} [{args.data}]  span={span} hrs  seeds={seeds}  horizons={horizons}")
     print("#" * 84)
-    res = [run(h, span, seeds) for h in horizons]
+    res = [run(h, span, seeds, args.data) for h in horizons]
     print("\n" + "=" * 84)
     wins = [r for r in res if r["dm"] < 0 and r["p"] < 0.05]
     if wins:
@@ -134,8 +137,10 @@ def main():
         print("VERDICT: no horizon shows a significant CHIMERA advantage over the best classical "
               "model. Honest negative persists in Track B (weather) too — but see per-horizon signs/skill.")
     if not args.quick:
-        np.save(os.path.join(HERE, "v3_weather_results.npy"), dict(res=res, span=span), allow_pickle=True)
-        print(f"saved v3_weather_results.npy  [{time.time()-t0:.1f}s]")
+        # source-keyed filename so Jena and NOAA runs don't clobber each other
+        fn = "v3_weather_results_noaa.npy" if "noaa" in args.data else "v3_weather_results.npy"
+        np.save(os.path.join(HERE, fn), dict(res=res, span=span, data=args.data), allow_pickle=True)
+        print(f"saved {fn}  [{time.time()-t0:.1f}s]")
     else:
         print(f"[--quick] not written  [{time.time()-t0:.1f}s]")
 
