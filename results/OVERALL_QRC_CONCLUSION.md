@@ -3,7 +3,9 @@
 *Cross-cutting synthesis of the whole project — V1 (Track A, realized-volatility submission), V2
 (Track-A extensions), V3 (Track B, weather), and the methodological probes (capacity, frontier
 scaling, noise, recurrence). Every claim below is tied to a script + saved artifact in this repo.
-This document is a synthesis; it does not modify the V1 submission (frozen at tag `v1-submission`).*
+This document is a synthesis. The submitted Track-A paper is currently tag `v1.3-submission` (the
+original zero-defect baseline is recoverable at `v1-submission`; tags v1.1–v1.3 surgically fold a few
+fully-traceable supporting results — efficiency, recurrent mechanism, domain-generality — into it).*
 
 ## The one-sentence conclusion
 **At classically-simulable scale (n ≲ 16 qubits), a unitary quantum reservoir is *competitive and
@@ -27,7 +29,7 @@ negative a result rather than a null.**
 | 10 | Noise robustness | depol / amplitude-damping | readout-only = invariant (a standardization artifact); per-layer **degrades** | `noise_circuit_findings.md` |
 | 11 | **Resource efficiency** (small QRC vs larger classical) | quality vs #features, input held fixed | CHIMERA saturates at ~0.85; RFF reaches 0.78, ESN 0.71 — comparable per-feature only at the smallest sizes; **a small QRC cannot do a larger classical's job** | `efficiency_frontier_findings.md` |
 | 12 | **Quantum DATA** (purity / entanglement of input states) | inject quantum states, repeated | QRC **natively reads nonlinear state functionals** (beats classical-linear ≈0); classical-nonlinear w/ full tomography still matches/beats at 2-qubit scale | `quantum_data_outlook_findings.md` |
-| 12b | **Quantum-data CROSSOVER** (k=2,3,4) | measurement complexity | **exact** separation: QRC needs **1** measurement setting vs **3ᵏ** (9/27/81); same-budget accuracy gap **closes monotonically** (−0.137→−0.049) — a trend toward (not yet realized) crossover | `quantum_data_crossover_findings.md` |
+| 12b | **Quantum-data CROSSOVER** (k=2,3,4) | measurement complexity | QRC reads functionals from 1 setting vs **full-tomography** 3ᵏ, but the SOTA baseline is **classical shadows** (also efficient); budget-matched classical still edges the QRC at k≤4 — **open question, not a demonstrated advantage** | `quantum_data_crossover_findings.md` |
 
 Twelve independent fair tests; on accuracy the quantum reservoir wins **none** of them. Its single
 closest approach is one statistical tie (Rapid City h=1) and one near-match (recurrent Lorenz VPT
@@ -67,10 +69,12 @@ methods lack — see the outlook below.
 **The one genuinely promising direction — quantum data (verified capability, asymptotic edge):**
 7. **On quantum data the QRC has a real qualitative capability classical-cheap methods lack.** It
    natively estimates *nonlinear functionals of an input quantum state* — purity (R² 0.75) and
-   entanglement (0.50) — where a linear readout of the full state gives ≈0. At 2-qubit (simulable)
-   scale a classical model with full tomography + nonlinearity still matches it, so there is no
-   quantitative advantage *yet*; but the classical route needs **4ᵏ** Pauli expectations for k-qubit
-   inputs while the QRC reads a fixed poly-size observable set. The credible quantum-advantage
+   entanglement (0.50) — where a linear readout of the full state gives ≈0. **But the proper
+   classical baseline is classical shadows** (Huang–Kueng–Preskill 2020), which are *also*
+   measurement-efficient for low-degree functionals like purity; against full tomography the QRC
+   needs 1 setting vs 3ᵏ, yet a budget-matched classical still edges it at k≤4 (crossover doc). So
+   there is **no demonstrated quantitative advantage** — a genuine edge would require beating
+   *shadows* on a shadows-hard functional, which we have not shown. The credible quantum-advantage
    frontier is therefore **many-qubit quantum-input / hardware-native tasks** (and, for dynamics,
    100+ qubit *dissipative recurrent* reservoirs; Kornjača 2024) — beyond exact simulation, and
    exactly the regime classical-data forecasting (both challenge tracks) never probes. We *verified

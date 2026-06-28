@@ -1,12 +1,14 @@
 # V2 research — exploratory extensions (NOT part of the V1 submission)
 
-> **Status: exploratory. The competition submission is V1**, frozen at git tag
-> `v1-submission`. Nothing in this folder is referenced by the V1 paper, README, or
-> `cli.py reproduce`, and no V1 file was modified to produce it.
+> **Status: exploratory side research.** The competition submission is the Track-A paper, currently
+> tag **`v1.3-submission`** (original baseline recoverable at `v1-submission`). Nothing in *this V2
+> folder* is referenced by the submitted paper, README, or `cli.py reproduce`, and no core V1 engine
+> file was modified to produce it. (V3 — Track B — has a few results surgically folded into the paper
+> by citation; V2 does not.)
 >
-> **Revert to / rebuild the exact V1 submission at any time:**
+> **Recover the exact ORIGINAL (pre-additions) submission at any time:**
 > ```bash
-> git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip   # exact V1 package
+> git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip   # original; current paper = tag v1.3-submission
 > # or inspect: git checkout v1-submission
 > ```
 

@@ -23,15 +23,18 @@ evaluated once on the test window.
 | ESN headline (size-matched 55, **untuned**) | 0.6052 |
 | **ESN tuned** (55 nodes, sr=0.99, leak=0.6; selected on val tail) | **0.6020** |
 
-## Verdict — the negative is STRENGTHENED, not weakened
-- A properly **tuned** ESN (0.6020) **beats both HAR-X (0.6034) and CHIMERA (0.6094)** on the test
-  window. Validation selected 55 nodes with a higher spectral radius / leak — larger reservoirs
-  (up to 800) did not improve held-out performance on this short crisis-train (mild overfitting),
-  so the gain came from hyperparameters, not size.
-- The quantum reservoir shows **no edge even against a fully optimized classical reservoir** given
-  every advantage (size freedom + hyperparameter search). This directly answers the referee's
-  objection: the headline negative was *conservative* toward the classical side, not unfair to it —
-  tuning the ESN only widens the gap against CHIMERA.
+## Verdict — the negative is STRENGTHENED, not weakened (stated without overclaim)
+- A properly **tuned** ESN (0.6020) is **level with HAR-X (0.6034) and a hair ahead of CHIMERA
+  (0.6094)**. **Honesty note:** these differences are *within noise* — this is a single crisis
+  window, n=10, 2 ESN seeds, and we apply **no** HAC-DM/Holm to this specific check, so we do **not**
+  claim the tuned ESN "beats" HAR-X; the point is only that it does **not fall behind**, i.e. the ESN
+  was not crippled. Validation selected 55 nodes with a higher spectral radius / leak — larger
+  reservoirs (to 800) did not improve held-out performance on this short crisis-train (mild
+  overfitting), so the (small) gain came from hyperparameters, not size.
+- The takeaway is robustness, not a new ranking: the quantum reservoir shows **no edge even against a
+  fully optimized classical reservoir** given size freedom + a hyperparameter search. This answers the
+  referee's objection — the headline negative was *conservative* toward the classical side, not unfair
+  to it — without asserting a within-noise classical "win".
 
 This hardens the decisive comparison: CHIMERA is competitive but trails a *tuned* classical ESN, and
 the honest no-advantage conclusion does not depend on an under-powered baseline.

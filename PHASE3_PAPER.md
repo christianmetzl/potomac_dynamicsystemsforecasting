@@ -149,11 +149,12 @@ g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched 
 **Robustness (supporting study, `v3_research/`).** *Efficiency:* with input held fixed, a *smaller*
 QRC cannot substitute for a *larger* classical reservoir — quantum accuracy **saturates** while the
 classical curves improve; per feature the static maps are comparable, so the negative is
-**saturation, not per-feature inferiority** (best RMSE across sizes, weather °C):
+**saturation, not per-feature inferiority** (weather °C; CHIMERA at its qubit-range ceiling, classical
+at their larger-budget plateaus):
 
-| reservoir | CHIMERA | RFF (static) | ESN (recurrent) |
+| reservoir | CHIMERA (≤55 feat) | RFF (static) | ESN (recurrent) |
 |---|---|---|---|
-| best RMSE (°C) | 0.85 | 0.78 | 0.71 |
+| RMSE (°C) | 0.85 | 0.78 | 0.71 |
 
 *Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
 unpredictability) and the autonomous **VPT** metric still show no advantage; the **recurrent** QRC is
@@ -190,13 +191,12 @@ linear) is the best model on this task. (ii) The RV sample ends Feb-2020
 (single-qubit readout channels); full noisy-circuit/shot-noise sim is deferred to QPU runs.
 (iv) g is regularization-dependent (qualitative gap only).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
-(vi) Distinctness and full-rank entanglement are *necessary, not sufficient* for advantage —
-whether they convert beyond the classical-simulation frontier is the open question; a quantum-data
-probe (`results/quantum_data_outlook_findings.md`) marks where an edge most plausibly lies — the QRC
-natively reads nonlinear functionals of quantum *states* from **1** measurement setting vs
-tomography's **3ᵏ**, the same-budget gap closing monotonically over k=2–4
-(`results/quantum_data_crossover_findings.md`) — a measurement-complexity edge growing on
-hardware-native quantum data this challenge's classical tracks never probe.
+(vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they convert
+beyond the simulable frontier is open. A quantum-data probe (`results/quantum_data_crossover_findings.md`)
+shows the QRC natively reads nonlinear *state* functionals (purity, entanglement) a linear readout
+cannot, but the proper baseline — **classical shadows** (Huang–Kueng–Preskill 2020), also
+measurement-efficient — still edges it at k≤4: a genuine quantum-data edge is an **honest open
+question**, not shown here, and the one regime this challenge's classical-data tracks never probe.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, dynamic risk limits and derivatives pricing.
@@ -214,5 +214,6 @@ results are the team's own.
 ## References
 Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 · Li et al. 2025 ·
 Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
-Kobayashi & Motome 2026 · Huang et al. 2021 · Corsi 2009 · Patton 2011 · Hansen et al. 2011 ·
+Kobayashi & Motome 2026 · Huang et al. 2021 · Huang, Kueng & Preskill 2020 (classical shadows) ·
+Corsi 2009 · Patton 2011 · Hansen et al. 2011 ·
 Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 · Heber et al. 2009.

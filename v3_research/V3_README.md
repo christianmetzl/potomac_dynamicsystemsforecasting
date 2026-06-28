@@ -1,13 +1,17 @@
 # V3 research — Track B (weather) exploration (NOT part of the V1 submission)
 
-> **Status: exploratory. The competition submission is V1 (Track A), frozen at git tag
-> `v1-submission`.** Nothing in this folder is referenced by the V1 paper, README, or
-> `cli.py reproduce`, and no V1 file was modified to produce it. V2 (Track-A extensions) and V3
-> (this, Track B) are both side research.
+> **Status: mostly exploratory side research.** The competition submission is the Track-A paper,
+> currently tag **`v1.3-submission`** (original zero-defect baseline recoverable at `v1-submission`).
+> The submitted paper now **surgically folds in a few V3-derived results** — the resource-efficiency
+> finding (§5.5), the recurrent-QRC non-dissipative mechanism and weather domain-generality (§5.5
+> robustness note), and the quantum-data outlook (§7vi) — by **citing the `results/*_findings.md`
+> files**, not by pasting the bulky tables. The **bulk of V3** (per-station weather tables, Lorenz
+> VPT, qubit sweep, ARIMA) remains supporting material, not in the 5-page paper. No core V1 engine
+> file was modified to produce any V3 result.
 >
-> **Revert to / rebuild the exact V1 submission at any time:**
+> **Recover the exact ORIGINAL (pre-additions) submission at any time:**
 > ```bash
-> git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip
+> git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip     # current paper: tag v1.3-submission
 > ```
 
 ## Track-B spec (confirmed from the official Phase-3 brief)

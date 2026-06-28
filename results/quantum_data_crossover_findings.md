@@ -45,8 +45,26 @@ Entanglement gap: **−0.067 → −0.037 → −0.011**.
    edge is exactly the regime classical-data forecasting never probes — large-qubit, hardware-native
    quantum inputs.
 
+## Critical caveat — the proper classical baseline is CLASSICAL SHADOWS, not full tomography
+The "1 setting vs 3ᵏ" comparison is against **full tomography**, which is a *strawman*: the modern
+classical method for estimating functionals of a quantum state is **classical shadows**
+(Huang–Kueng–Preskill, *Nat. Phys.* 2020), which use **randomized** measurements and estimate
+low-degree functionals (purity is degree-2) with **few settings / O(log) samples** — not 3ᵏ. So:
+- The measurement-*settings* "advantage" largely **evaporates against classical shadows**, which are
+  also measurement-efficient. It is real only versus naive full tomography.
+- On *accuracy* at a matched budget the QRC already **loses** to a random-Pauli-subset classical at
+  every k≤4 (the gaps above are negative); against the stronger shadows baseline it would do no
+  better. Purity in particular is exactly what shadows estimate efficiently.
+
+**Therefore this is NOT a demonstrated quantum-data advantage.** It is an *honest open question*: a
+genuine edge would require **beating classical shadows on a shadows-hard functional** (e.g. a
+high-degree or non-local observable) at a matched budget, with a crossover *realized* at simulable k
+— which we have **not** shown.
+
 ## Honest bottom line
-There **is** a genuine quantum-data advantage here — exponential in *measurement settings* (1 vs 3ᵏ),
-exact and demonstrated — and a *trend* toward a same-budget accuracy crossover that we honestly do
-not yet realize at k≤4. It is the project's one clear pointer to where quantum reservoirs could win,
-stated without overclaim.
+The QRC **verifiably reads nonlinear functionals of a quantum state** that a *linear* single-copy
+readout cannot — a real qualitative capability. But against the correct SOTA classical baseline
+(**classical shadows**, not full tomography) there is **no demonstrated advantage** at simulable
+scale, and the same-budget accuracy gap, while closing, stays negative through k≤4. We report this as
+an **open direction**, not a win — the one place pointing toward where quantum reservoirs *might*
+help (large-qubit, hardware-native quantum inputs), explicitly not claimed as established.
