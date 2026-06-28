@@ -43,8 +43,7 @@ classical controls, isolating quantum-vs-classical. Four mechanisms extend the c
 feature); Phase 3 adds an **encoding-density / data-re-uploading path** (§5.2) and a
 **sparse/tensor backend** (§5.5). The engine is pure NumPy; an explicit PennyLane circuit
 reproduces it to ≈5×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
-one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph (an all-to-all
-reservoir would need ≈720).
+one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph.
 
 ![**Figure 1.** CHIMERA-QRC pipeline: lagged log-RV (and, in Axis B, realized-measure) inputs are angle-encoded onto qubits, evolved under a fixed random-coupled Ising Hamiltonian, and read out as single/pairwise Pauli-Z expectations into a ridge head fused with a linear block of the same inputs; a BOCPD detector selects the Hamiltonian for regime adaptivity.](figures/fig_architecture.png)
 
@@ -124,12 +123,11 @@ strawman), and CHIMERA ties the best on RMSE with only a *raw, non-Holm* QLIKE/M
 
 **5.4 Common MNIST benchmark + noise.** Same engine, pixels→PCA(n)→n qubits→Pauli readout→ridge.
 Accuracy **scales with qubits** (n=5/8/10/12: 0.632/0.798/0.831/0.859, 3 seeds) and **beats the
-linear-PCA baseline at every n** (real nonlinear lift), confirming **sufficient expressivity**
-(the benchmark's purpose); a matched ESN **ties or slightly exceeds** CHIMERA (within ≈1% for
-n≥8; 2.9% at n=5) — competitive, not dominant. **Noise:** the classifier is **invariant to
-depolarizing** noise — provably, because depolarizing is a uniform Bloch contraction that
-per-feature standardization removes exactly (accuracy identical across rates 0.05–0.30) — and
-**robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
+linear-PCA baseline at every n** (real nonlinear lift), confirming **sufficient expressivity**;
+a matched ESN **ties or slightly exceeds** CHIMERA (within ≈1% for n≥8; 2.9% at n=5) —
+competitive, not dominant. **Noise:** the classifier is **invariant to
+depolarizing** noise (a uniform Bloch contraction that per-feature standardization removes exactly;
+accuracy identical across rates 0.05–0.30) and **robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
 per-Trotter-layer density-matrix study shows the *converse* — two-qubit noise *during* evolution is
 **not** removed by standardization (standardized error grows with rate, vs **≈0** for readout-only
 depolarizing): the invariance above is a *readout* property, not a circuit-level robustness claim;
@@ -152,6 +150,11 @@ a direct **resource-efficiency** frontier (quality vs feature count, inputs held
 `results/efficiency_frontier_findings.md`) shows a *smaller* QRC cannot substitute for a *larger*
 classical reservoir — quantum accuracy **saturates** while the classical curves keep improving (the
 two static maps are comparable per feature). The simulable-scale evidence shows no gap opening with scale.
+**Robustness (supporting study, `v3_research/`).** The negative is neither task- nor
+architecture-specific: the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
+unpredictability) and the autonomous **VPT** metric still show no advantage, and the literature's
+**recurrent** QRC is competitive-not-better — mechanism: unitary evolution is non-dissipative,
+lacking the contraction behind ESN "generalized synchronization" (Ahmed–Tennie–Magri 2025).
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/TN to ≈16, GPU for larger.
@@ -172,19 +175,18 @@ random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, 
 mapping — with **ZNE + measurement mitigation** and a classical cross-check per run. The submission path is
 **executable now** (`qbraid_submit.py`, `cli.py run qsubmit`): on a simulator it (i) reproduces
 the engine to **3.9×10⁻¹⁶** via the exact circuit (our per-run classical cross-check),
-(ii) characterizes the **shot budget** (mean feature error 0.046/0.013/0.0066
-at S=256/4k/16k; ε≈1/√S; gate-Trotter(20) adds ≈0.04), and (iii) demonstrates **zero-noise
-extrapolation** recovering toward the noiseless value under a depolarizing sweep. It is one flag (`--device`) from a real backend,
-pending qBraid credit allocation. We thus characterize all four challenge axes: reservoir size,
-encoding density, shot budget, and noise. *(QCi Dirac-3 is the
-separate optimization challenge's device.)*
+(ii) characterizes the **shot budget** (ε≈1/√S; feature error
+0.046→0.0066 at S=256→16k; gate-Trotter(20) adds ≈0.04), and (iii) demonstrates **zero-noise
+extrapolation** under a depolarizing sweep. One `--device` flag from a real backend (pending qBraid
+credits). We thus characterize all four challenge axes: reservoir size, encoding density, shot
+budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
 linear) is the best model on this task. (ii) The S&P 500 RV sample ends Feb-2020 — the 2008 GFC
-is in-sample, the 2020 COVID shock just outside it; broader assets/periods untested. (iii) Noise is studied on MNIST with single-qubit
-channels at the readout; full noisy-circuit and shot-noise simulation is deferred to the QPU
-runs. (iv) g is regularization-dependent (we report the qualitative gap, not a tuned value).
+is in-sample, the 2020 COVID shock just outside it; broader assets/periods untested. (iii) Noise is studied on MNIST
+(single-qubit readout channels); full noisy-circuit/shot-noise sim is deferred to QPU runs.
+(iv) g is regularization-dependent (qualitative gap, not a tuned value).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* for advantage —
 whether they convert beyond the classical-simulation frontier is the open question; a quantum-data
@@ -194,22 +196,21 @@ classical measurement, an advantage that should grow with input size (tomography
 hardware-native quantum data, the regime this challenge's classical data never probes.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-Reliable volatility forecasts feed portfolio hedging, dynamic risk limits and derivatives pricing.
+Volatility forecasts feed hedging, dynamic risk limits and derivatives pricing.
 We make the impact **concrete** (`cli.py run economics`): a vol-timing backtest sizing S&P-500
-exposure by the one-step RV forecast **nearly halves the 2008 max drawdown (−61%→−32%)** at a 10%
-vol target, but a **plain HAR** forecast captures it — rich features and the quantum reservoir add
-**no** economic value (negative certainty-equivalent fees). The decision-useful lever is
-**vol-timing on a simple RV forecast, not quantum hardware**. **Milestone plan:** (i) pre-register ✓; (ii) scaling +
-encoding-density sweeps ✓; (iii) adversarial HAR-X/ESN/RFF test ✓; (iv) MNIST + noise ✓;
-(v) sparse/TN frontier + bond dimension ✓; (vi) gate-Trotter QPU validation (IonQ/IQM/IBM) —
-simulator cross-checked; fallback = TN + density-matrix noise emulation. **AI disclosure:**
+exposure by the one-step RV forecast **nearly halves the 2008 max drawdown (−61%→−32%)**, but a
+**plain HAR** forecast captures it — rich features and the quantum reservoir add **no** economic
+value (negative CE fees). The decision-useful lever is **vol-timing on a simple RV forecast, not
+quantum hardware**. **Milestone plan:** (i)–(v) pre-registration,
+scaling + encoding sweeps, the adversarial HAR-X/ESN/RFF test, MNIST + noise, and the sparse/TN
+frontier are ✓; (vi) gate-Trotter QPU validation (IonQ/IQM/IBM) is simulator-cross-checked
+(fallback = TN noise emulation). **AI disclosure:**
 Claude (Anthropic) assisted with code and drafting under the team's direction; all formulations,
 decisions, and results are the team's own.
 
 ## References
-Kornjača et al. 2024 (arXiv:2407.02553) · Zhu et al. 2025 (PRR 7, 023290) · Ahmed, Tennie &
-Magri 2025 (Proc. R. Soc. A 481) · Li et al. 2025 (arXiv:2505.13933) · Tandon et al. 2025
-(arXiv:2505.22837) · Hou et al. 2025 (arXiv:2508.12383) · Čindrak et al. 2026 (arXiv:2603.21371)
-· Antoncich et al. 2026 (arXiv:2602.14641) · Kobayashi & Motome 2026 (PRL 136, 040602) · Huang
-et al. 2021 (Nat. Commun. 12, 2631) · Corsi 2009 · Patton 2011 · Hansen, Lunde & Nason 2011 ·
-Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 · Heber, Lunde, Shephard & Sheppard 2009.
+Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 (Proc. R. Soc. A 481) ·
+Li et al. 2025 · Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
+Kobayashi & Motome 2026 · Huang et al. 2021 (Nat. Commun. 12, 2631) · Corsi 2009 · Patton 2011 ·
+Hansen, Lunde & Nason 2011 · Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 ·
+Heber, Lunde, Shephard & Sheppard 2009.
