@@ -55,6 +55,12 @@ actions:
       HAR-X (rich features, linear) is best/co-best at every n; CHIMERA never beats it and is
       n.s. vs ESN/RFF after Holm. NO quantum advantage at simulable scale -> H0 REFUTED
       (pre-registered). CHIMERA is competitive + lower seed variance than the ESN.
+  - id: canonical
+    desc: "Named canonical realized-vol models (SHAR/HAR-CJ/HARQ/HEAVY-RM) vs HAR-X & CHIMERA; MSE + QLIKE DM"
+    cmd: "python3 cli.py run canonical"
+    expect: >
+      No named canonical model beats HAR-X (so HAR-X is a fair strong stand-in, not a strawman);
+      CHIMERA ties the best on RMSE with only a raw, non-Holm-significant QLIKE/MZ efficiency edge.
   - id: scaling
     desc: "Scaling sweep g(n)/MZ-gap(n)/rank(n) + depolarizing/amplitude-damping noise"
     cmd: "python3 cli.py run scaling"

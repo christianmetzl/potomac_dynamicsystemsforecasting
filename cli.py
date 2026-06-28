@@ -46,17 +46,18 @@ ACTIONS = {
     "mnist_noise":  (["mnist_benchmark.py", "--noise-only"], "MNIST noise-rate robustness curve", False),
     "tensor":       (["tensor_backend.py"], "Sparse/TN frontier + bond-dimension complexity metric", True),
     "axisB_rig":    (["axisB_rigorous.py"], "Axis-B HARDENED: HAR-X + recurrent-ESN + RFF, HAC-DM, Holm", True),
+    "canonical":    (["canonical_har_baselines.py"], "Named realized-vol models (SHAR/HAR-CJ/HARQ/HEAVY) vs HAR-X & CHIMERA; MSE+QLIKE DM", True),
     "tensor_check": (["tensor_backend.py", "--check"], "Verify sparse backend matches dense engine", False),
 }
 
 # curated bundles
 GROUPS = {
-    "headline": ["prereg", "scaling", "axisB_rig", "mnist", "tensor"],   # Phase-3 story (axisB_rig = honest test)
+    "headline": ["prereg", "scaling", "axisB_rig", "canonical", "mnist", "tensor"],   # Phase-3 story (axisB_rig = honest test)
     "phase2":   ["tests", "calm", "crisis", "kernel", "sdk"],            # Phase-2 reproduction
     "all":      list(ACTIONS.keys()),
     "reproduce": ["tests", "calm", "crisis", "kernel", "sdk", "qsubmit",
                   "baselines", "lstm", "prereg", "scaling", "axisB", "axisB_rig",
-                  "mnist", "tensor"],
+                  "canonical", "mnist", "tensor"],
 }
 
 

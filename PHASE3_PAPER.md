@@ -110,6 +110,11 @@ pre-registered criteria, H0 is refuted — we report this negative.** What hones
 the quantum reservoir: it is **competitive** (within ~0.5–1.5% RMSE of the best at every n),
 **more stable than the recurrent ESN** (lower per-seed variance, e.g. n=12: 0.009 vs 0.015),
 and it **beats the recurrent ESN on the calm window** (raw p=0.018; n.s. after Holm).
+**Named canonical baselines** (`cli.py run canonical`): running the models a finance referee
+expects — **SHAR, HAR-CJ, HARQ** (RQ≈RV² proxy) and **HEAVY-RM**, under MSE- *and* QLIKE-loss DM —
+**none beats HAR-X** (confirming it is a fair, strong stand-in, not a strawman), and CHIMERA ties
+the best of them on RMSE with only a *raw, non-Holm-significant* QLIKE/MZ-efficiency edge
+(`results/canonical_baselines_findings.md`).
 
 ![**Figure 2.** Rigorous Axis-B (8 seeds, crisis window). HAR-X (rich features, linear) is the best or co-best model at every n; the quantum reservoir is competitive but shows no advantage that survives HAC-DM + Holm correction. Left: RMSE(log-RV). Right: Mincer–Zarnowitz R².](figures/fig_axisB_rigorous.png)
 
