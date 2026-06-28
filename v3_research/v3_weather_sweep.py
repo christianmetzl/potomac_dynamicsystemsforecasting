@@ -54,7 +54,7 @@ def main():
     args = ap.parse_args()
     ns = [5, 10] if args.quick else [5, 10, 15]
     seeds = (0,)                                  # single seed (a demonstration, not a full study)
-    span = 600 if args.quick else 900
+    span = 600 if args.quick else 900             # n=15 sparse is ~1s/row; subset kept tractable
     t0 = time.time()
     Xin, y, persist = build(span)
     m = len(y); ntr = int(0.7 * m); tr = np.arange(ntr); te = np.arange(ntr, m)
