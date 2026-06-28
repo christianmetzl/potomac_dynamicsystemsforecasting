@@ -68,6 +68,19 @@ actions:
       Vol-timing nearly halves crisis max-drawdown (-61%->-32%); but plain HAR captures it and
       neither rich features nor CHIMERA add economic value (negative CE fees) -> no economic
       quantum advantage, consistent with the statistical negative.
+  - id: capacity
+    desc: "Information-processing capacity (Dambre-style): CHIMERA vs matched RFF/ESN, linear vs nonlinear"
+    cmd: "python3 cli.py run capacity"
+    expect: >
+      CHIMERA does NOT have higher nonlinear capacity (lower than RFF/ESN at matched feature
+      count) -> the quantum reservoir is not more expressive at simulable scale; deepens the
+      honest negative.
+  - id: frontier
+    desc: "Classical-irreproducibility g(n) to the n=16 sparse frontier under fully-informed encoding"
+    cmd: "python3 cli.py run frontier"
+    expect: >
+      Whether g(ESN||CHIMERA) keeps growing to n=16 under informed encoding (necessary-not-
+      sufficient for beyond-frontier advantage) or saturates; reported honestly either way.
   - id: noise_circuit
     desc: "Per-Trotter-layer vs readout-only noise on the gate-Trotter circuit (density-matrix sim)"
     cmd: "python3 cli.py run noise_circuit"

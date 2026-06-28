@@ -24,6 +24,11 @@ are given the same information; the dominant lever is *which features are encode
 reservoir's quantum nonlinearity. We report what *does* survive — measurable kernel
 distinctness, lower seed variance, and full-rank entanglement (classical-simulation hardness) —
 as quantum-specific *properties* that are necessary, not sufficient, for advantage.
+**Vs. prior work.** The closest study (Li et al. 2025/26 — QRC for realized volatility) presents
+the approach as a competitive, noise-resilient *proof-of-concept*; we add the control-hardened,
+pre-registered evaluation it omits — the decisive **HAR-X** control, HAC-DM/Holm/MCS, and explicit
+capability and per-layer-noise audits — turning an encouraging proof-of-concept into a falsifiable
+result.
 
 ## 2. QRC architecture (Fig. 1)
 CHIMERA is a delay-embedding quantum reservoir. Inputs are angle-encoded `RY(π·x)`, one value
@@ -140,7 +145,11 @@ compression** — with entanglement entropy S ≈ 1.7–3.2 nats (peaking near n
 than the rank). The reservoir therefore admits **no low-bond-dimension (MPS/TEBD) shortcut** —
 exact cost stays exponential (full entanglement is *necessary, not sufficient* for true classical
 hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
-appears at the simulable scale we can test.
+appears at the simulable scale we can test. **Capability check (`cli.py run capacity`):** an
+information-processing-capacity probe (Dambre et al. 2012) finds that at matched feature count the
+quantum reservoir is **not more** — indeed slightly *less* — nonlinearly expressive than a matched
+RFF/ESN, so the negative is not "the task wastes the reservoir's extra expressivity" but "there is
+no excess expressivity to exploit at simulable scale."
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/tensor-network to ≈16, GPU for
