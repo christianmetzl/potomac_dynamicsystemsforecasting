@@ -208,6 +208,47 @@ starts × 2 seeds, 10-day horizon. n=8 recurrent (3 input + 5 memory), density-m
   Lorenz (Experiment 5), confirmed on messy real series: unitary evolution lacks the contraction
   classical ESNs use for autonomous stability ("generalized synchronization").
 
+## Experiment 7 — resource efficiency: can a SMALL QRC match a LARGER classical? (`qrc_efficiency.py`)
+"Size-matched" meant equal readout dimension. The sharper question: is the quantum map more efficient
+*per feature*? We trace test-RMSE vs #features for CHIMERA (qubit count n → d=n+n(n−1)/2) vs RFF and
+ESN, with the **input information held fixed** across all n (a 5-T-lag pool data-re-uploaded onto n
+qubits) so only reservoir size changes. RFF is the matched static control; ESN is recurrent (context).
+
+| #features | CHIMERA | RFF (static) | ESN (recurrent) |
+|---|---|---|---|
+| 15 | **1.057** | 1.087 | 0.788 |
+| 21 | **0.921** | 0.988 | 0.776 |
+| 28 | 0.936 | **0.856** | 0.757 |
+| 45–55 | 0.848 | 0.79–0.80 | 0.735 |
+| 80–640 | — | 0.782 (plateau) | **0.713** (plateau) |
+
+**No — a small QRC cannot do a larger classical's job.** CHIMERA's accuracy **saturates ~0.85 °C**;
+RFF reaches that by d≈28–36 and surpasses it (0.78), the recurrent ESN reaches 0.71. *Per feature*
+the static quantum and classical maps are comparable — CHIMERA is marginally better only at the very
+smallest sizes (d≤21) — but it never matches a larger classical reservoir. Architecture (recurrence)
+beats feature-map. Consistent with the capacity and frontier-scaling findings. (`results/efficiency_frontier_findings.md`)
+
+## Experiment 8 — the outlook: does QRC have an edge on QUANTUM data? (`qrc_quantum_data.py`)
+Every other experiment fed CLASSICAL data — the regime with no advantage. The QRC literature's actual
+claim is on **quantum data**. We test it honestly: estimate nonlinear functionals (purity,
+entanglement) of random 2-qubit input states by *injecting the state* into the reservoir (re-injected
+K=3×) vs classical readouts on the state's full tomography.
+
+| target | QRC (quantum-native) | classical-linear (full tomog.) | classical-nonlinear (full tomog.) |
+|---|---|---|---|
+| purity Tr(ρ²) | **+0.748** | −0.048 | +0.887 |
+| concurrence (entanglement) | **+0.498** | −0.002 | +0.650 |
+
+**Verified capability, honest limit, real outlook.** The QRC **natively reads nonlinear functionals
+of a quantum state** (purity R² 0.75, entanglement 0.50) where a *linear* readout of the full state
+gives ≈0 — the genuine QRC property the literature describes. But a *nonlinear* classical model with
+full tomography still beats it at 2-qubit scale, so **no quantitative advantage yet**. The real edge
+is asymptotic: full tomography costs **4ᵏ** Pauli expectations for k-qubit inputs while the QRC reads
+a fixed poly-size observable set — so a genuine quantum-data advantage lives at **many-qubit /
+hardware-native** scale, which exact simulation can't show but whose *mechanism we verified*. This is
+the one direction our evidence points toward a plausible real advantage — and it is exactly what
+classical-data forecasting (both challenge tracks) never probes. (`results/quantum_data_outlook_findings.md`)
+
 ## How to reproduce
 ```bash
 python3 v3_research/fetch_noaa.py                          # NOAA ISD hourly (suggested source)
@@ -222,6 +263,8 @@ python3 v3_research/v3_weather_sweep.py                    # 5/10/15 qubit + noi
 python3 v3_research/lorenz_vpt.py                          # VPT, static reservoirs
 python3 v3_research/recurrent_qrc.py                       # VPT, recurrent QRC vs ESN (Lorenz, fair)
 python3 v3_research/recurrent_weather_vpt.py --data jena_hourly.npz    # recurrent QRC, REAL-weather autonomous VPT
+python3 v3_research/qrc_efficiency.py                      # small-QRC-vs-larger-classical efficiency frontier
+python3 v3_research/qrc_quantum_data.py                    # quantum-DATA outlook (purity/entanglement)
 ```
 
 ## What this means for our V1 findings in finance

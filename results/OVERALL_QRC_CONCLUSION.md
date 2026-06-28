@@ -25,9 +25,13 @@ negative a result rather than a null.**
 | 8 | VPT, **recurrent** QRC | Lorenz-63, fair size-match | CHIMERA 0.50 **< matched ESN 0.61**; closest it ever gets | `recurrent_qrc_results.npy` |
 | 9 | VPT, recurrent QRC on **real weather** | Jena/Denver autonomous rollout | CHIMERA 6.5/8.1 h **< matched ESN 13.4/12.3 h**; fails to beat climatology at Jena | `recurrent_weather_vpt_*.npy` |
 | 10 | Noise robustness | depol / amplitude-damping | readout-only = invariant (a standardization artifact); per-layer **degrades** | `noise_circuit_findings.md` |
+| 11 | **Resource efficiency** (small QRC vs larger classical) | quality vs #features, input held fixed | CHIMERA saturates at ~0.85; RFF reaches 0.78, ESN 0.71 — comparable per-feature only at the smallest sizes; **a small QRC cannot do a larger classical's job** | `efficiency_frontier_findings.md` |
+| 12 | **Quantum DATA** (purity / entanglement of input states) | inject quantum states, repeated | QRC **natively reads nonlinear state functionals** (beats classical-linear ≈0); classical-nonlinear with full tomography still matches/beats at 2-qubit scale | `quantum_data_outlook_findings.md` |
 
-Ten independent fair tests; the quantum reservoir wins **none** of them. Its single closest approach
-is one statistical tie (Rapid City h=1) and one near-match (recurrent Lorenz VPT 0.50 vs 0.61).
+Twelve independent fair tests; on accuracy the quantum reservoir wins **none** of them. Its single
+closest approach is one statistical tie (Rapid City h=1) and one near-match (recurrent Lorenz VPT
+0.50 vs 0.61). Test 12 is the one place it shows a genuine *qualitative* capability classical-cheap
+methods lack — see the outlook below.
 
 ## What we can therefore conclude — graded by confidence
 
@@ -52,14 +56,24 @@ is one statistical tie (Rapid City h=1) and one near-match (recurrent Lorenz VPT
    classical ESNs their "generalized synchronization" and autonomous stability (the
    Ahmed-Tennie-Magri 2025 mechanism). This is structural, not a tuning failure.
 
-**Honest open frontier (we neither confirm nor refute):**
-6. **The large-scale, dissipative, recurrent regime is untested.** Everything above is exact
-   simulation at n ≲ 16. A genuine QRC edge — if it exists — most plausibly lives at **100+ qubits
-   with engineered dissipation** on analog hardware (Kornjača 2024), beyond classical simulation.
-   Our results are silent there by construction.
-7. **QRC's value may not be accuracy at all.** Native processing of *quantum* data, analog energy
-   efficiency, or tasks with intrinsic quantum structure are real possibilities that classical-data
-   financial/weather forecasting simply does not probe.
+**Resource efficiency (also negative — and directly relevant to the paper):**
+6. **A small QRC cannot match a larger classical reservoir.** Tracing quality vs feature-count with
+   the input held fixed, CHIMERA's accuracy *saturates* (~0.85 °C on the test task) while classical
+   curves keep improving (RFF 0.78, recurrent ESN 0.71). Per feature the quantum and classical static
+   maps are comparable — marginally favouring the quantum map only when features are very scarce — but
+   that never compounds into doing a larger reservoir's job. No efficiency advantage either.
+
+**The one genuinely promising direction — quantum data (verified capability, asymptotic edge):**
+7. **On quantum data the QRC has a real qualitative capability classical-cheap methods lack.** It
+   natively estimates *nonlinear functionals of an input quantum state* — purity (R² 0.75) and
+   entanglement (0.50) — where a linear readout of the full state gives ≈0. At 2-qubit (simulable)
+   scale a classical model with full tomography + nonlinearity still matches it, so there is no
+   quantitative advantage *yet*; but the classical route needs **4ᵏ** Pauli expectations for k-qubit
+   inputs while the QRC reads a fixed poly-size observable set. The credible quantum-advantage
+   frontier is therefore **many-qubit quantum-input / hardware-native tasks** (and, for dynamics,
+   100+ qubit *dissipative recurrent* reservoirs; Kornjača 2024) — beyond exact simulation, and
+   exactly the regime classical-data forecasting (both challenge tracks) never probes. We *verified
+   the mechanism* that would drive it; we do not claim to have demonstrated the edge.
 
 ## The methodological takeaway (arguably the real contribution)
 Much of the QRC literature reports advantages against **weak or non-size-matched** baselines. Under a
