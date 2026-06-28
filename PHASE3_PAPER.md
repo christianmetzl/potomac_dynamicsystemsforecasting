@@ -149,7 +149,10 @@ appears at the simulable scale we can test. **Capability check (`cli.py run capa
 information-processing-capacity probe (Dambre et al. 2012) finds that at matched feature count the
 quantum reservoir is **not more** — indeed slightly *less* — nonlinearly expressive than a matched
 RFF/ESN, so the negative is not "the task wastes the reservoir's extra expressivity" but "there is
-no excess expressivity to exploit at simulable scale."
+no excess expressivity to exploit at simulable scale." A frontier check (`cli.py run frontier`) adds
+that classical-irreproducibility g(n) does **not** widen toward n=16 under informed encoding (it
+declines; D_eff/rank grow but a matched ESN keeps pace) — the simulable-scale evidence does not
+point to a gap opening with scale.
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: dense statevector ≤12 qubits, sparse/tensor-network to ≈16, GPU for
