@@ -32,3 +32,5 @@ v2_research/_all_stocks_5yr.csv
 v2_research/_oxfordman_full.xlsx
 # V2 COVID-panel raw per-index downloads (small cached cross_asset_panel_covid.npz committed instead)
 v2_research/_covid_*.csv
+# V3 Track-B raw download (13MB zip; small cached jena_hourly.npz committed instead)
+v3_research/_jena.csv.zip
