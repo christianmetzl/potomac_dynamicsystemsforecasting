@@ -285,16 +285,40 @@ class QbraidRunner:
         self.provider = QbraidProvider()          # needs QBRAID_API_KEY (qBraid account)
         self.device = self.provider.get_device(device_id)
         self.job_ids = []
+        self.max_shots = getattr(self.device.profile, "max_shots", None) or 10 ** 9
 
-    def run(self, qasm, shots):
+    def _run_one(self, qasm, shots):
         job = self.device.run(qasm, shots=shots)
         jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
         self.job_ids.append(str(jid))
         print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
         res = job.result()
         data = res.data
-        counts = data.get_counts() if hasattr(data, "get_counts") else data.measurement_counts
-        return counts
+        return data.get_counts() if hasattr(data, "get_counts") else data.measurement_counts
+
+    def run(self, qasm, shots):
+        """Respect the device's per-job shot cap by splitting into batches and
+        summing counts (effective shot count preserved). The cap is discovered
+        adaptively from the API error if the profile does not expose it."""
+        import re
+        total = {}
+        remaining = shots
+        while remaining > 0:
+            s = min(remaining, self.max_shots)
+            try:
+                counts = self._run_one(qasm, s)
+            except Exception as e:
+                m = re.search(r"maximum of (\d+)", str(e))
+                if m and int(m.group(1)) < s:
+                    self.max_shots = int(m.group(1))
+                    print(f"    (device shot cap discovered: {self.max_shots}/job — batching)",
+                          flush=True)
+                    continue
+                raise
+            for k, v in counts.items():
+                total[k] = total.get(k, 0) + int(v)
+            remaining -= s
+        return total
 
 
 def list_devices():
@@ -329,16 +353,34 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     runner = None
     if mode == "hw":
         runner = QbraidRunner(device)
+    state = {"reverse": False}
 
     def execute(ops):
         if mode == "hw":
-            return runner.run(to_qasm2(ops, n), shots)
-        return run_counts_pennylane(ops, n, shots, device if mode == "pl" else None,
-                                    p_gate=(p_gate if mode == "rehearsal" else 0.0),
-                                    p_read=(p_read if mode == "rehearsal" else 0.0))
+            counts = runner.run(to_qasm2(ops, n), shots)
+        else:
+            counts = run_counts_pennylane(ops, n, shots, device if mode == "pl" else None,
+                                          p_gate=(p_gate if mode == "rehearsal" else 0.0),
+                                          p_read=(p_read if mode == "rehearsal" else 0.0))
+        if state["reverse"]:
+            counts = {k[::-1]: v for k, v in _norm_counts(counts, n).items()}
+        return counts
 
-    # 1) readout calibration: |0..0> and |1..1| (X = two RXs of pi/2? -> use ry(pi))
-    print("\n[1/3] readout calibration (2 circuits)...", flush=True)
+    # 0) bit-order orientation probe: |1> on qubit 0 ONLY. If the backend keys
+    #    bitstrings with qubit 0 rightmost, every <Z_i> would be mis-assigned.
+    print("\n[0/3] bit-order orientation probe (1 tiny circuit)...", flush=True)
+    zi = features_from_probs(probs_from_counts(execute([("ry", (0,), np.pi)]), n), n)[:n]
+    if zi[0] < -0.5:
+        print("    orientation OK (qubit 0 = leftmost bit)")
+    elif zi[-1] < -0.5:
+        state["reverse"] = True
+        print("    REVERSED bit order detected -> auto-correcting all subsequent counts")
+    else:
+        print(f"    WARNING: ambiguous orientation (<Z_0>={zi[0]:+.2f}, <Z_{n-1}>={zi[-1]:+.2f}) "
+              f"- proceeding unreversed; inspect results")
+
+    # 1) readout calibration: |0..0> and |1..1> (RY(pi)|0> = |1>)
+    print("[1/3] readout calibration (2 circuits)...", flush=True)
     cal0 = execute([])                                   # identity -> |0...0>
     cal1 = execute([("ry", (q,), np.pi) for q in range(n)])   # RY(pi)|0> = |1>
     Ms = confusion_from_calibration(cal0, cal1, n)
