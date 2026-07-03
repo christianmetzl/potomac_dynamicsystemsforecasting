@@ -27,9 +27,9 @@ reservoir_config:   # the knobs an agent can vary
 
 actions:
   - id: tests
-    desc: "Engine sanity tests (23 checks)"
+    desc: "Engine sanity tests (24 checks)"
     cmd: "python3 cli.py run tests"
-    expect: "23 passed, 0 failed"
+    expect: "24 passed, 0 failed"
   - id: kernel
     desc: "Kernel geometry distinctness"
     cmd: "python3 cli.py run kernel"
@@ -115,7 +115,7 @@ actions:
   - id: mnist
     desc: "Common cross-team MNIST benchmark (accuracy vs qubit count)"
     cmd: "python3 cli.py run mnist"
-    expect: "accuracy grows with n (0.63->0.86, n=5->12); CHIMERA >> linear, ~= ESN"
+    expect: "accuracy grows with n (0.63->0.86 n=5->12; 0.88 at n=15 sparse via --n15); CHIMERA >> linear, ~= ESN"
   - id: mnist_noise
     desc: "MNIST noise-rate robustness curve (depolarizing + amplitude damping)"
     cmd: "python3 cli.py run mnist_noise"

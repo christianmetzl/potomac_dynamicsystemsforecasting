@@ -51,7 +51,9 @@ one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph.
 The exploited quantum resources map to RV's structure: (a) **Hilbert-space dimensionality** —
 n qubits give 2ⁿ amplitudes and O(n²) measured Pauli features at O(n²) parameter cost;
 (b) **intrinsic nonlinearity** from fixed unitary evolution (no gradient training, no barren
-plateaus); (c) **fading memory** (echo-state property); (d) **Hamiltonian as inductive bias**.
+plateaus); (c) **delay-embedded memory** (the headline model's memory is its explicit lag
+window, not reservoir recurrence — a recurrent variant is probed in `v3_research`);
+(d) **Hamiltonian as inductive bias**.
 The central, falsifiable mechanism is **expressivity scaling**, which we measure directly via
 the geometric difference (Huang et al. 2021). The quantum kernel is poorly reproducible by a
 matched classical reservoir: against the name-matched ESN-108 reference,
@@ -111,7 +113,8 @@ span. With **8 seeds, HAC-DM, two windows, and Holm correction** (`cli.py run ax
 **HAR-X is best or co-best everywhere; CHIMERA never beats it** (slightly worse; raw-significant
 at n=8/12) and is indistinguishable from the classical ESN/RFF after Holm (one raw-significant
 loss to RFF at crisis n=8, p=0.049). **After Holm correction no comparison is significant in
-either direction.** The earlier "beats HAR" result
+either direction, and the 95% Model Confidence Set retains all four models in both windows
+(n=10)** — a statistical tie. The earlier "beats HAR" result
 was an artifact of comparing against a *feature-poor* HAR: the gain comes from the encoded
 realized measures (a known SHAR/HARQ effect), not from quantum nonlinearity. **By our
 pre-registered criteria, H0 is refuted — we report this negative.** What honestly survives for
@@ -129,10 +132,11 @@ strawman), and CHIMERA ties the best on RMSE with only a *raw, non-Holm* QLIKE/M
 ![**Figure 2.** Rigorous Axis-B (8 seeds, crisis window). HAR-X (rich features, linear) is the best or co-best model at every n; the quantum reservoir is competitive but shows no advantage that survives HAC-DM + Holm correction. Left: RMSE(log-RV). Right: Mincer–Zarnowitz R².](figures/fig_axisB_rigorous.png)
 
 **5.4 Common MNIST benchmark + noise.** Same engine, pixels→PCA(n)→n qubits→Pauli readout→ridge.
-Accuracy **scales with qubits** (n=5/8/10/12: 0.632/0.798/0.831/0.859, 3 seeds) and **beats the
-linear-PCA baseline at every n** (real nonlinear lift), confirming **sufficient expressivity**;
-a matched ESN **ties or slightly exceeds** CHIMERA (within ≈1% for n≥8; 2.9% at n=5) —
-competitive, not dominant. **Noise:** the classifier is **invariant to
+Accuracy **scales with qubits** (n=5/8/10/12: 0.632/0.798/0.831/0.859, 3 seeds; **n=15
+sparse-exact continues the trend**, 0.878 vs 0.852 for a paired n=12 on a matched subset —
+closing the brief's 5/10/15 example) and **beats the linear-PCA baseline at every n** (real
+nonlinear lift), confirming **sufficient expressivity**; a matched ESN **ties or slightly
+exceeds** CHIMERA (within ≈1% for n≥8; 2.9% at n=5) — competitive, not dominant. **Noise:** the classifier is **invariant to
 depolarizing** noise (a uniform Bloch contraction that per-feature standardization removes exactly;
 accuracy identical across rates 0.05–0.30) and **robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
 per-Trotter-layer density-matrix study shows the *converse* — noise interleaved with the evolution

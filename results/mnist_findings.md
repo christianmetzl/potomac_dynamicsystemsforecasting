@@ -31,6 +31,21 @@ information — a clean expressivity test.
 reservoir's nonlinear lift. ESN = classical reservoir, same inputs, same #features,
 same readout.)
 
+### n=15 closure (the brief's "5/10/15" example; sparse-exact backend)
+
+The dense statevector engine tops out at n=12, so n=15 uses the **sparse-exact** backend
+(`tensor_backend.chimera_features_sparse`, verified to match the dense engine to ~1e-14), on a
+reduced 1500/500 subset with a **paired n=12 run on the SAME subset** for a like-for-like read
+(`mnist_benchmark.py --n15` → `mnist_n15_results.npy`):
+
+| n | #features | CHIMERA | ESN (matched) | Linear(PCA) | subset |
+|---|---|---|---|---|---|
+| 12 | 78 | 0.852 | 0.844 | 0.746 | 1500/500, 1 seed |
+| **15** | **120** | **0.878** | 0.884 | 0.762 | 1500/500, 1 seed |
+
+Accuracy **continues to improve 12→15** (+2.6 pts), CHIMERA still beats linear-PCA decisively,
+and the matched ESN again ties/slightly exceeds it — the same honest pattern as n≤12.
+
 ## Honest read
 
 - **Expressivity scales with qubits**, exactly as the brief asks to demonstrate:

@@ -1,6 +1,6 @@
 
 ====================================================================================
->>> action 'tests': Engine sanity tests (23 checks)
+>>> action 'tests': Engine sanity tests (24 checks)
     $ /usr/local/bin/python3 tests.py
 ====================================================================================
 ============================================================
@@ -44,10 +44,13 @@
   ✅ Different inputs → different features
   ✅ Multi-scale feature concatenation
 
+  Packaging / Skill:
+  ✅ qbraid_skill.yaml in sync with cli.py
+
 ============================================================
-  Results: 23 passed, 0 failed
+  Results: 24 passed, 0 failed
 ============================================================
---- action 'tests' finished rc=0 in 5.0s
+--- action 'tests' finished rc=0 in 0.4s
 
 ====================================================================================
 >>> action 'calm': Calm-window Table 1 + Model Confidence Set
@@ -79,7 +82,7 @@ Model Confidence Set (95%): {HAR-RV, ESN-108, CHIMERA-1scale, CHIMERA-3scale}
   MCS p-values: ESN-400=0.000, ESN-108=0.072, HAR-RV=1.000, CHIMERA-1scale=1.000, CHIMERA-3scale=1.000
 
 saved vol_fair_results.npy
---- action 'calm' finished rc=0 in 41.3s
+--- action 'calm' finished rc=0 in 27.2s
 
 ====================================================================================
 >>> action 'crisis': Crisis split (GFC in test): RMSE/QLIKE/MZ + MCS
@@ -103,10 +106,10 @@ CHIMERA-3scale vs CHIMERA-1scale (multi vs single): DM=2.96 p=0.003
 
 Model Confidence Set (95%): {HAR-RV, ESN-108, CHIMERA-1scale, CHIMERA-3scale}
   MCS p: ESN-400=0.011, ESN-108=0.056, HAR-RV=1.000, CHIMERA-1scale=1.000, CHIMERA-3scale=1.000
---- action 'crisis' finished rc=0 in 34.8s
+--- action 'crisis' finished rc=0 in 27.3s
 
 ====================================================================================
->>> action 'kernel': Kernel geometry: g(ESN->CHIMERA)~62 vs ~4 control
+>>> action 'kernel': Kernel geometry: g(ESN->CHIMERA)~64 vs ~3.7 control
     $ /usr/local/bin/python3 kernel_analysis.py
 ====================================================================================
 ======================================================================
@@ -124,7 +127,7 @@ geometric difference  g(A || B)  [large => A cannot reproduce B]
   g(CHIMERA || ESN-108) = 171.284
 
 KTA-per-feature (efficiency): CHIMERA 6.874  vs  ESN-108 5.450  (x1e-3)
-[done in 1.6s]
+[done in 1.5s]
 --- action 'kernel' finished rc=0 in 2.5s
 
 ====================================================================================
@@ -141,10 +144,12 @@ PennyLane exact vs Trotter(40 layers)         : max|Δ| = 1.94e-02
 Trotter(20) native-gate count ≈ 380  (11 ZZ + 8 RX per layer × 20)
 => the reservoir is a genuine quantum circuit; it runs on a real SDK and
    compiles to a shallow native-gate circuit for gate-model hardware.
---- action 'sdk' finished rc=0 in 9.6s
+--- action 'sdk' finished rc=0 in 2.7s
 
 ====================================================================================
 >>> action 'qsubmit': qBraid submission path: shot-budget + ZNE + classical cross-check (sim; --device for QPU)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 qbraid_submit.py --quick
 ====================================================================================
 ######################################################################
@@ -158,31 +163,44 @@ SHOT-BUDGET (feature error vs shots; ε≈1/√S):
     shots S  mean|Δ feat|  max|Δ feat|
 /usr/local/lib/python3.11/dist-packages/pennylane/devices/device_api.py:207: PennyLaneDeprecationWarning: Setting shots on device is deprecated. Please use the `set_shots` transform on the respective QNode instead.
   warnings.warn(
-        256        0.0472       0.1511
-       1024        0.0252       0.0869
-       4096        0.0114       0.0491
+        256        0.0453       0.2074
+       1024        0.0230       0.0654
+       4096        0.0104       0.0396
 gate-model approximation: max|Trotter(8) − exact| = 0.112 (decreases with more layers; cf. sdk_demo.py)
 
 ZNE DEMO (depolarizing sweep, linear extrapolation):
   noisy(scale [1, 2, 3]) = [0.0348, 0.0289, 0.024]
   ZNE→0 = 0.0400   noiseless exact = 0.0419   (ZNE closer ✓)
 
-saved qbraid_submit_results.npy   [8.0s]
+[--quick] skipped writing results (committed full-run artifact preserved) [7.9s]
 To run on real hardware: python3 qbraid_submit.py --device <qBraid backend> (needs credits).
---- action 'qsubmit' finished rc=0 in 9.9s
+--- action 'qsubmit' finished rc=0 in 9.8s
 
 ====================================================================================
 >>> action 'baselines': HAR/GARCH/GJR/AR(3)/persistence baselines
     $ /usr/local/bin/python3 har_garch_baselines.py
 ====================================================================================
-Traceback (most recent call last):
-  File "/home/user/potomac_dynamicsystemsforecasting/har_garch_baselines.py", line 24, in <module>
-    import statsmodels.api as sm
-ModuleNotFoundError: No module named 'statsmodels'
---- action 'baselines' finished rc=1 in 0.3s
+
+==============================================================================
+S&P 500 realized-volatility one-step-ahead baselines  (Oxford-Man rv5)
+test window: 2014-02-19 .. 2020-02-21  (N_test=1509)
+==============================================================================
+Model          RMSE(logRV)     QLIKE   MZ R^2  DM vs HAR       p
+------------------------------------------------------------------------------
+Persistence         0.6881   -9.2983    0.155       4.01   0.000
+AR(3)               0.6451   -9.3471    0.221      -0.06   0.951
+HAR-RV              0.6454   -9.3346    0.205       0.00   1.000  <- benchmark
+GARCH(1,1)          1.1580   -9.1349    0.153      26.72   0.000
+GJR-GARCH           1.1245   -9.1599    0.212      25.40   0.000
+------------------------------------------------------------------------------
+DM sign: negative => model beats HAR; |p|<0.05 => significant.
+GARCH(1,1) params: omega=0.0158 alpha=0.088 beta=0.901 (persistence a+b=0.989)
+--- action 'baselines' finished rc=0 in 3.5s
 
 ====================================================================================
 >>> action 'lstm': LSTM baseline (Track A, brief-named)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 lstm_baseline.py --quick
 ====================================================================================
 ==============================================================================
@@ -199,8 +217,8 @@ LSTM                 0.6415   -8.0982   0.480       2.48  0.013
 ------------------------------------------------------------------------------
 (DM<0 & p<0.05 => model beats HAR. On daily 5-min RV, HAR is a very strong bar.)
 
-saved lstm_results.npy   [1.3s]
---- action 'lstm' finished rc=0 in 2.3s
+saved lstm_results.npy   [1.1s]
+--- action 'lstm' finished rc=0 in 2.1s
 
 ====================================================================================
 >>> action 'prereg': Print pre-registered H0/H1/H4 thresholds
@@ -233,10 +251,12 @@ Source: EIGENNEXUS Phase-2 submission, Section 7
 
 Decision constants:
    DM_ALPHA=0.05  SPEARMAN_MIN=0.0  GROWTH_OVER_CONTROL=True
---- action 'prereg' finished rc=0 in 0.2s
+--- action 'prereg' finished rc=0 in 0.1s
 
 ====================================================================================
 >>> action 'scaling': Scaling sweep: g(n), MZ-gap(n), rank(n) + noise
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 scaling_sweep.py --quick
 ====================================================================================
 ##############################################################################
@@ -249,18 +269,18 @@ Pre-registered thresholds loaded from preregistration.py (committed first).
 KERNEL GEOMETRY SWEEP  (calm 70% train, N_sub=300, seed=0)
 ==============================================================================
   n  #feat #lags_enc  g(ESN||CHIM)  g_control   D_eff  rank      KTA    sec
-  8     36         8         75.33      10.09    1.85    36   0.2423    4.6
- 10     55         8         29.27       5.47    1.53    51   0.5194    7.9
- 12     78         8         21.15       3.91    1.51    49   0.5847  103.4
+  8     36         8         75.33      10.09    1.85    36   0.2423    0.3
+ 10     55         8         29.27       5.47    1.53    51   0.5194    1.7
+ 12     78         8         21.15       3.91    1.51    49   0.5847   50.2
 
 ==============================================================================
 FORECAST SWEEP  (crisis split: train ..2006, test 2007-2012, GFC in test)
 HAR baseline:  RMSE(logRV)=0.6290  QLIKE=-8.1185  MZ_R2=0.559
 ==============================================================================
   n  #feat #lags_enc     RMSE    dRMSE    QLIKE   MZ_R2  MZ-gap   DM_p    sec
-  8     36         8   0.6414  +0.0124  -8.1044   0.527  -0.032  0.004    2.4
- 10     55         8   0.6686  +0.0396  -8.0761   0.396  -0.162  0.000    5.7
- 12     78         8   0.6559  +0.0269  -8.0904   0.425  -0.134  0.000   87.3
+  8     36         8   0.6414  +0.0124  -8.1044   0.527  -0.032  0.004    1.9
+ 10     55         8   0.6686  +0.0396  -8.0761   0.396  -0.162  0.000    4.9
+ 12     78         8   0.6559  +0.0269  -8.0904   0.425  -0.134  0.000   77.9
 
 ==============================================================================
 PRE-REGISTERED ADJUDICATION
@@ -287,14 +307,14 @@ Fixed-input (pure qubit-scaling) regime used for H0/H4 verdict: [8, 10, 12]
     d_eff_rise: -0.3351099921618028
     note: With a FIXED univariate-lag encoder, saturation is expected (the input bottleneck). H4 is properly tested only once input richness scales with n (Axis B).
 
-saved figure -> figures/fig_scaling_sweep.png
-
-saved scaling_sweep_results.npy
-[total wall-clock 212.2s]
---- action 'scaling' finished rc=0 in 213.7s
+[--quick] skipped writing figure/results (committed full-run artifacts preserved)
+[total wall-clock 136.9s]
+--- action 'scaling' finished rc=0 in 137.9s
 
 ====================================================================================
->>> action 'axisB': Axis-B: informed encoding vs idle qubits (n=10 beat)
+>>> action 'axisB': Axis-B mechanism: informed encoding restores g/D_eff vs idle qubits (forecasting claim superseded by axisB_rig)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 scaling_sweep_axisB.py --quick
 ====================================================================================
 ####################################################################################
@@ -332,14 +352,15 @@ AXIS-B HEAD-TO-HEAD
 PRE-REGISTERED ADJUDICATION (rich encoder):
   [H0] REFUTED  (rho=-0.5)
   [H4] CONFIRMED  (rho=0.5)
-saved figure -> figures/fig_scaling_axisB.png
 
-saved scaling_sweep_axisB_results.npy
-[total wall-clock 309.5s]
---- action 'axisB' finished rc=0 in 310.5s
+[--quick] skipped writing figure/results (committed full-run artifacts preserved)
+[total wall-clock 277.6s]
+--- action 'axisB' finished rc=0 in 278.7s
 
 ====================================================================================
 >>> action 'axisB_rig': Axis-B HARDENED: HAR-X + recurrent-ESN + RFF, HAC-DM, Holm
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 axisB_rigorous.py --quick
 ====================================================================================
 ############################################################################################
@@ -359,6 +380,9 @@ WINDOW: crisis 2007-2012 (GFC in test)    (HAR plain: RMSE=0.6290  MZ=0.559)
         CHIMERA vs ESN: DM(HAC)=+1.68  p=0.094
         CHIMERA vs RFF: DM(HAC)=+1.05  p=0.292
 
+  MCS (decisive Axis-B family, crisis, n=10): CHIMERA p=0.075*, HAR-X p=1.000*, ESN p=1.000*, RFF p=1.000*
+   (* = retained in the 95% Model Confidence Set)
+
 ============================================================================================
 MULTIPLE-COMPARISON CONTROL (Holm-adjusted p across the full family)
 ============================================================================================
@@ -366,11 +390,46 @@ MULTIPLE-COMPARISON CONTROL (Holm-adjusted p across the full family)
   crisis 2007-2012 (GFC in test):n10:CHIMERAvsHARX raw p=0.025   Holm p=0.074
   crisis 2007-2012 (GFC in test):n10:CHIMERAvsRFF raw p=0.292   Holm p=0.292
 
-saved axisB_rigorous_results.npy   [20.2s]
---- action 'axisB_rig' finished rc=0 in 21.2s
+[--quick] skipped writing results (committed full-run artifact preserved) [16.7s]
+--- action 'axisB_rig' finished rc=0 in 17.6s
+
+====================================================================================
+>>> action 'canonical': Named realized-vol models (SHAR/HAR-CJ/HARQ/HEAVY) vs HAR-X & CHIMERA; MSE+QLIKE DM
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
+    $ /usr/local/bin/python3 canonical_har_baselines.py --quick
+====================================================================================
+################################################################################################
+CANONICAL REALIZED-VOL BASELINES vs HAR-X and CHIMERA (n=10) — MSE-loss & QLIKE-loss DM
+  SHAR (Patton-Sheppard) · HAR-CJ (ABD) · HARQ* (BPQ; RQ=RV^2 proxy) · HEAVY-RM (Shephard-Sheppard)
+################################################################################################
+
+=== crisis 2007-2012 (GFC in test) ===
+  model          RMSE       QLIKE   MZ_R2  DMvsHARX(MSE)      p  DMvsHARX(QL)      p
+  HAR          0.6290     -8.1185   0.559          +5.55  0.000         +3.78  0.000
+  SHAR         0.6053     -8.1330   0.574          +0.72  0.473         +0.21  0.836
+  HAR-CJ       0.6175     -8.1026   0.543          +1.73  0.085         +2.45  0.014
+  HARQ*        0.6981     -8.0236   0.415          +3.26  0.001         +1.51  0.132
+  HEAVY        0.6526     -8.1396   0.552          +6.62  0.000         -1.19  0.233
+  HAR-X        0.6034     -8.1335   0.618
+  CHIMERA      0.6094     -8.1247   0.658          +1.70  0.090         +2.36  0.018
+  -> best canonical = SHAR (RMSE 0.6053); CHIMERA vs it: DM(MSE)=+0.91 p=0.361 | DM(QLIKE)=+1.81 p=0.070
+
+================================================================================================
+VERDICT (Holm-adjusted across windows):
+  Q1 — canonical models that significantly beat HAR-X (raw p<0.05, either loss): NONE — HAR-X is a fair, strong stand-in for the named models
+  Q2 — CHIMERA vs the BEST canonical model (Holm-adjusted):
+      crisis 2007-2012 (GFC in test):CHIMERAvsBEST(SHAR) Holm p=0.361
+      crisis 2007-2012 (GFC in test):CHIMERAvsBEST(SHAR)_QL Holm p=0.140
+  (CHIMERA 'beats' a model only if DM<0 AND Holm p<0.05; see per-window lines for signs.)
+
+[--quick] not written (preserve committed artifact)  [26.6s]
+--- action 'canonical' finished rc=0 in 27.7s
 
 ====================================================================================
 >>> action 'mnist': MNIST common cross-team benchmark (accuracy vs n)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 mnist_benchmark.py --quick
 ====================================================================================
 ##############################################################################
@@ -384,17 +443,54 @@ MNIST ACCURACY vs QUBIT COUNT  (PCA(n) -> n qubits -> linear readout)
 train=1500  test=500  seeds=(0,)
 ==============================================================================
   n  #qfeat   CHIMERA   +-sd      ESN  Linear(PCA)    sec
-  5      15    0.6020 0.0000   0.6620       0.5760    0.7
-  8      36    0.7720 0.0000   0.7560       0.6780    1.4
+  5      15    0.6020 0.0000   0.6620       0.5760    0.6
+  8      36    0.7720 0.0000   0.7560       0.6780    1.2
 
-saved figure -> figures/fig_mnist.png
+[--quick] skipped writing figure/results (committed full-run artifacts preserved)
+[total wall-clock 1.8s]
+--- action 'mnist' finished rc=0 in 2.2s
 
-saved mnist_results.npy
-[total wall-clock 2.5s]
---- action 'mnist' finished rc=0 in 2.9s
+====================================================================================
+>>> action 'mnist_noise': MNIST noise-rate robustness curve
+    $ /usr/local/bin/python3 mnist_benchmark.py --noise-only
+====================================================================================
+##############################################################################
+CHIMERA-QRC MNIST - NOISE-RATE ROBUSTNESS CURVE
+qubit counts: [5, 8]   seeds: (0, 1)   subset 1500/500
+##############################################################################
+
+==============================================================================
+MNIST NOISE SWEEP  (exact density-matrix channels; n capped at 10)
+==============================================================================
+  n             channel   rate  CHIMERA acc    sec
+  5           noiseless  0.000       0.6270    0.8
+  5        depolarizing  0.050       0.6270    4.1
+  5        depolarizing  0.100       0.6270    4.1
+  5        depolarizing  0.200       0.6270    4.2
+  5        depolarizing  0.300       0.6270    4.2
+  5   amplitude_damping  0.050       0.6260    2.8
+  5   amplitude_damping  0.100       0.6250    2.6
+  5   amplitude_damping  0.200       0.6250    2.6
+  5   amplitude_damping  0.300       0.6260    2.5
+  8           noiseless  0.000       0.7790    2.1
+  8        depolarizing  0.050       0.7790   99.0
+  8        depolarizing  0.100       0.7790   99.1
+  8        depolarizing  0.200       0.7790   99.0
+  8        depolarizing  0.300       0.7790   98.5
+  8   amplitude_damping  0.050       0.7790   54.1
+  8   amplitude_damping  0.100       0.7790   53.1
+  8   amplitude_damping  0.200       0.7790   53.5
+  8   amplitude_damping  0.300       0.7800   52.8
+
+saved noise figure -> figures/fig_mnist_noise.png
+
+saved mnist_noise_results.npy   [total 640.6s]
+--- action 'mnist_noise' finished rc=0 in 640.9s
 
 ====================================================================================
 >>> action 'tensor': Sparse/TN frontier + bond-dimension complexity metric
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
     $ /usr/local/bin/python3 tensor_backend.py --quick
 ====================================================================================
 ####################################################################################
@@ -409,13 +505,118 @@ HIGH-N SWEEP (sparse exact)  N_sub=300  cut=balanced bipartition
 ====================================================================================
   n  enc  #feat   g(E||C)   g_ctrl   D_eff  rank   S_ent  chi_eff  chi_max    sec
   8    8     36      75.3     10.1    1.85    36   1.722     16.0       16    0.4
- 10    8     55      29.3      5.5    1.53    51   2.206     32.0       32    2.6
+ 10    8     55      29.3      5.5    1.53    51   2.206     32.0       32    2.5
 
-saved figure -> figures/fig_tensor_complexity.png
+[--quick] skipped writing figure/results (committed full-run artifacts preserved)
+--- action 'tensor' finished rc=0 in 4.1s
 
-saved tensor_backend_results.npy
---- action 'tensor' finished rc=0 in 4.9s
+====================================================================================
+>>> action 'economics': Volatility-timing backtest: Sharpe/drawdown/turnover + CE fee (economic significance)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
+    $ /usr/local/bin/python3 vol_timing_backtest.py --quick
+====================================================================================
+####################################################################################
+VOLATILITY-TIMING BACKTEST (economic significance) — S&P-500, forecast-scaled exposure
+####################################################################################
+
+=== calm 2014-2020  (test 1509 days; target 10% vol, cost 1bp/turn, cap 3x) ===
+  strategy        AnnRet  AnnVol  Sharpe netShrp   maxDD   turn
+  BuyHold          0.099   0.130    0.76    0.76   -0.20    0.0
+  HAR-timed        0.102   0.131    0.80    0.78   -0.20   33.6
+  HAR-X-timed      0.098   0.132    0.77    0.74   -0.21   34.2
+  CHIMERA-timed    0.091   0.127    0.75    0.72   -0.20   40.8
+  -> CE fee to switch HAR->HAR-X: -43 bp/yr   HAR-X->CHIMERA: -54 bp/yr
+
+====================================================================================
+VERDICT (economic):
+  - Informed realized-measure features (HAR-X) vs plain HAR: see CE fee (HAR->HAR-X).
+  - Quantum vs its linear span (CHIMERA vs HAR-X): CE fee (HAR-X->CHIMERA).
+    Honest expectation/finding: ~0 bp ⇒ no ECONOMIC quantum advantage, consistent with
+    the statistical negative; the deployable lever is the realized-measure features.
+
+[--quick] not written  [16.3s]
+--- action 'economics' finished rc=0 in 17.3s
+
+====================================================================================
+>>> action 'capacity': Information-processing capacity (linear/nonlinear) — CHIMERA vs matched RFF/ESN
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
+    $ /usr/local/bin/python3 information_capacity.py --quick
+====================================================================================
+####################################################################################
+INFORMATION-PROCESSING CAPACITY (reservoir-intrinsic) — CHIMERA vs matched RFF/ESN
+  n=8, T=1500, seeds=(0, 1), matched feat=36; capacity = Σ test R^2
+####################################################################################
+
+  basis sizes: degree1=8  degree2=8  degree3=4
+
+  model      linear(d1)  nonlin(d2)  nonlin(d3)  NONLIN tot     TOTAL
+  CHIMERA         4.942       2.574       0.012       2.586     7.528
+  RFF             7.545       3.494       0.168       3.662    11.208
+  ESN             7.741       2.466       0.068       2.535    10.275
+
+====================================================================================
+VERDICT: CHIMERA does NOT have higher nonlinear capacity (best = RFF; CHIMERA 2.59 vs RFF 3.66).
+  Even decoupled from the financial task, the quantum reservoir is not more
+  nonlinearly expressive at matched feature count — this DEEPENS the honest negative
+  and explains why a linear model wins on (linear-dominated) realized volatility.
+
+[--quick] not written  [1.5s]
+--- action 'capacity' finished rc=0 in 2.6s
+
+====================================================================================
+>>> action 'frontier': Classical-irreproducibility g(n) to the n=16 sparse frontier under informed encoding
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
+    $ /usr/local/bin/python3 frontier_scaling.py --quick
+====================================================================================
+########################################################################################
+FRONTIER SCALING: classical-irreproducibility g(n) under FULLY-INFORMED encoding
+  ns=[8, 10, 12]  kernel N_sub=200  pool P=19 (>= n, so no idle qubits)
+  dense engine n<=12; exact sparse (expm_multiply) n>=14
+########################################################################################
+
+  n  #feat  g(ESN||CHIM)  g_control  g/ctrl   D_eff  rank      KTA     sec
+  8     36         62.32       7.60     8.2    1.75    36   0.3060     0.2
+ 10     55         61.53       7.24     8.5    3.16    55   0.3265     1.6
+ 12     78         40.92       6.93     5.9    3.49    77   0.4660    49.5
+
+========================================================================================
+Spearman rho(n, g_quantum)   = -1.00
+Spearman rho(n, g/control)   = -0.50
+VERDICT: g SATURATES/declines even under fully-informed encoding — honest negative;
+  classical-irreproducibility does not widen with scale in the testable range.
+
+[--quick] not written  [51.4s]
+--- action 'frontier' finished rc=0 in 52.4s
+
+====================================================================================
+>>> action 'noise_circuit': Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)
+    [QUICK MODE — reduced seeds/sizes; verdicts match full runs, but printed
+     numbers are approximate. Authoritative full-run numbers: results/*_findings.md]
+    $ /usr/local/bin/python3 noisy_circuit_study.py --quick
+====================================================================================
+############################################################################################
+NOISY-CIRCUIT STUDY (informative): readout-only vs per-Trotter-layer noise, n=8, 20 layers
+  6 real .SPX input windows · density-matrix sim · rates [0.0, 0.02]
+############################################################################################
+
+  channel  placement    rate  raw |Δfeat| STD-z |Δfeat|
+  depol    readout     0.020       0.0098        0.0000
+  depol    perlayer    0.020       0.1307        0.3087
+  ampdamp  readout     0.020       0.0112        0.1272
+  ampdamp  perlayer    0.020       0.1456        0.7787
+
+============================================================================================
+CONTRAST at depolarizing rate 0.02:
+  readout-only : standardized feature error = 0.0000  (≈0 ⇒ standardization removes it exactly — this is the MNIST 'invariance', an artifact)
+  per-layer    : standardized feature error = 0.3087  (vs ≈0 at readout ⇒ NOT removed — the real NISQ degradation over the 380-gate circuit)
+VERDICT: CONFIRMED: per-layer noise genuinely degrades features; readout-only invariance is a standardization artifact.
+
+[--quick] not written  [138.0s]
+--- action 'noise_circuit' finished rc=0 in 139.9s
 
 ####################################################################################
-SUMMARY: tests=OK, calm=OK, crisis=OK, kernel=OK, sdk=OK, qsubmit=OK, baselines=FAIL(1), lstm=OK, prereg=OK, scaling=OK, axisB=OK, axisB_rig=OK, mnist=OK, tensor=OK
+SUMMARY: tests=OK, calm=OK, crisis=OK, kernel=OK, sdk=OK, qsubmit=OK, baselines=OK, lstm=OK, prereg=OK, scaling=OK, axisB=OK, axisB_rig=OK, canonical=OK, mnist=OK, mnist_noise=OK, tensor=OK, economics=OK, capacity=OK, frontier=OK, noise_circuit=OK
 ####################################################################################

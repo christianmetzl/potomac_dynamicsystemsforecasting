@@ -29,7 +29,7 @@ PY = sys.executable
 # action -> (script + args, one-line description, supports_quick)
 ACTIONS = {
     # ---- Phase-2 headline reproductions ----
-    "tests":        (["tests.py"], "Engine sanity tests (23 checks)", False),
+    "tests":        (["tests.py"], "Engine sanity tests (24 checks)", False),
     "calm":         (["vol_fair_benchmark.py"], "Calm-window Table 1 + Model Confidence Set", False),
     "crisis":       (["vol_crisis_benchmark.py"], "Crisis split (GFC in test): RMSE/QLIKE/MZ + MCS", False),
     "kernel":       (["kernel_analysis.py"], "Kernel geometry: g(ESN->CHIMERA)~64 vs ~3.7 control", False),

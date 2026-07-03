@@ -45,8 +45,10 @@ significant at 0.05 in either direction** (smallest Holm p = 0.103, which is CHI
 2. **No quantum advantage at simulable scale.** CHIMERA never beats HAR-X (it is slightly
    worse; raw-significant at n=8 and n=12) and is statistically indistinguishable from the
    classical ESN/RFF after Holm correction (one raw-significant loss to RFF at crisis n=8,
-   p=0.049, also in the "worse" direction). **H0 is REFUTED**, exactly as pre-registered —
-   we committed to reporting this.
+   p=0.049, also in the "worse" direction). The **95% Model Confidence Set retains all four
+   models in both windows** (crisis n=10: CHIMERA p=0.117, HAR-X/ESN/RFF p=1.000; calm n=10:
+   ESN p=0.159, others p=1.000) — a statistical tie on the decisive family. **H0 is REFUTED**,
+   exactly as pre-registered — we committed to reporting this.
 3. **What honestly survives for the quantum reservoir:** it is *competitive* (within ≈0.8–2.1%
    RMSE of the best at every n, i.e. ≤0.013 log-RV RMSE points), with **lower per-seed
    dispersion than the recurrent ESN in 3 of 4 window/n cells** (s.d., e.g. n=12: 0.009 vs
