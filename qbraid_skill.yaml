@@ -108,6 +108,14 @@ actions:
     desc: "QPU readiness check: gate/shot/cost plan + device-wiring probe (no credits needed)"
     cmd: "python3 cli.py run qpu_dryrun"
     expect: "380-native-gate plan, 36 Z-diagonal observables, cost estimate; READY when a device opens"
+  - id: qpu_selftest
+    desc: "Verify the emitted QASM2 IS the reservoir (independent interpreter) + fold identity"
+    cmd: "python3 cli.py run qpu_selftest"
+    expect: "max|QASM - engine| ~ 0.04 (Trotter-20 systematic); fold-3 identity ~1e-14; PASS"
+  - id: qpu_rehearsal
+    desc: "FULL-DRESS offline QPU rehearsal: counts readout + tensor-model readout mitigation + gate-folding ZNE + classical cross-check (identical credit-day pipeline; local noisy stand-in QPU)"
+    cmd: "python3 cli.py run qpu_rehearsal"
+    expect: "mitigation chain REDUCES mean feature error (raw -> readout-mitigated -> ZNE); pipeline validated; on credit day run: python3 qpu_run.py --mode hw --device <id>"
   - id: scaling
     desc: "Scaling sweep g(n)/MZ-gap(n)/rank(n) + depolarizing/amplitude-damping noise"
     cmd: "python3 cli.py run scaling"

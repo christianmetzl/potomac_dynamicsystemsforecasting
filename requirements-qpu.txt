@@ -1,0 +1,14 @@
+# Hardware-run extras for qpu_run.py (--mode hw). The core repo and the offline
+# rehearsal (--mode rehearsal) need ONLY requirements.txt; install this file on
+# credit day (or on qBraid, where much of it is preinstalled):
+#
+#   pip install -r requirements-qpu.txt
+#
+qbraid>=0.12          # qBraid runtime SDK: QbraidProvider, device listing, job submission
+
+# Optional alternatives / extras (NOT required - qpu_run.py implements gate-folding
+# ZNE and tensor-model readout mitigation natively, dependency-free):
+# mitiq>=0.43         # production ZNE library (drop-in alternative to the native folding)
+# mthree>=2.7         # scalable readout mitigation (alternative to the native inversion)
+# pennylane-qiskit    # only if you prefer --mode pl with an IBM device string
+# amazon-braket-pennylane-plugin   # only if you prefer --mode pl with a Braket device

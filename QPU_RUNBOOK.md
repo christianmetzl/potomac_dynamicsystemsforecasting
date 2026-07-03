@@ -1,55 +1,81 @@
 # QPU run-book — executing CHIMERA-QRC on real quantum hardware
 
-The submission is **one flag** from a real-hardware run. Everything except the QPU credits is
-built, wired, and validated on a simulator. This run-book is the exact procedure; the only
-blocker is qBraid/Braket/IBM credits/access.
+The submission is **one command** from a real-hardware run. Everything except the QPU
+credits is built, wired, and — as of `qpu_run.py` — **rehearsed end-to-end offline with the
+identical hardware pipeline** (counts readout → readout-error mitigation → gate-folding ZNE
+→ classical cross-check). The only blocker is qBraid credits/API access.
 
-## 0. Check readiness (no credits needed)
+## The two runners (what each is for)
+
+| script | role |
+|---|---|
+| `qbraid_submit.py` | *characterization*: shot-budget law, Trotter error, simulator ZNE demo, dry-run cost plan |
+| `qpu_run.py` | **the credit-day runner**: hardware-grade pipeline (counts, calibration, folding ZNE, mitigation, job IDs) with an offline full-dress rehearsal mode |
+
+## 0. Prove readiness today (no credits, no API key)
 ```bash
-python3 qbraid_submit.py --dry-run                       # prints the gate/observable/shot/cost plan
-python3 qbraid_submit.py --dry-run --device <backend>    # also probes whether the device opens
+python3 qpu_run.py --selftest        # the emitted QASM2 IS the reservoir:
+                                     #   max|QASM(Trotter20) − exact engine| ≈ 0.039 (the known
+                                     #   Trotter systematic); fold-3 identity ≈ 1e-14
+python3 cli.py run qpu_rehearsal     # FULL-DRESS offline rehearsal on a stand-in noisy QPU
+                                     # (per-gate depolarizing + readout flips): runs calibration,
+                                     # folding, ZNE, mitigation, cross-check — and verifies the
+                                     # mitigation chain RECOVERS accuracy (see
+                                     # results/qpu_readiness_findings.md for the committed run)
+python3 qbraid_submit.py --dry-run   # gate/observable/shot/cost plan
 ```
-When `--dry-run --device <backend>` prints `device wiring: OK ... READY`, drop `--dry-run` to run.
 
 ## 1. What runs on hardware
-The **gate-Trotter** circuit (n=8, 20 layers): **220 two-qubit (IsingZZ) + 160 one-qubit (RX) =
-380 native gates**, then **36 Z-diagonal observables** read from **one shot set** (all
-`⟨Z_i⟩,⟨Z_iZ_j⟩` are diagonal in the computational basis — no extra bases). The random ~50%-Ising
-needs *fewer* two-qubit gates than an all-to-all reservoir (≈720), easing NISQ mapping;
-trapped-ion (IonQ) supports the arbitrary couplings natively.
+The **gate-Trotter** circuit (n=8, 20 layers): **220 two-qubit + 160 one-qubit = 380 native
+gates**, emitted as **portable OpenQASM 2** using only `ry/rx/rz/cx` (IsingZZ decomposed as
+CX·RZ·CX — no plugin-specific decomposition surprises; validated by an independent
+interpreter in `--selftest`). All **36 observables** ⟨Z_i⟩,⟨Z_iZ_j⟩ are computational-basis
+diagonal → **one shot set per circuit yields every observable.**
 
-## 2. Cost estimate (per the dry-run)
-- ~6 input windows × 4,000 shots ≈ **24k shots** for the headline feature read (one shot set
-  yields all 36 observables). The classical cross-check and Trotter-error term are free (simulator).
-- ZNE adds 2–3 noise-scaled copies; measurement mitigation adds a calibration circuit.
-- Budget ~50–80k shots for a complete headline run with mitigation — well within a small credit grant.
+Mitigation, hardware-grade (implemented natively in `qpu_run.py`, dependency-free):
+- **Readout:** two calibration circuits (|0…0⟩, |1…1⟩) → per-qubit confusion matrices →
+  exact tensor-model inversion (2⁸×2⁸ — mthree-style, trivial at n=8).
+- **ZNE:** **global gate folding** U → U(U†U)ᵏ at noise scales 1/3/5 (folding verified to be
+  an exact identity in the noiseless limit), linear + Richardson extrapolation per observable.
+  (This replaces the simulator noise-dial — a real QPU's noise cannot be dialed.)
+- **Classical cross-check:** every run scored against the exact NumPy engine features.
 
-## 3. Device strings (PennyLane plugins; install on qBraid)
-- **IonQ via Braket:** `braket.aws.qubit` with the IonQ device ARN (set via the plugin/device args).
-- **IQM / IBM via Qiskit:** `qiskit.remote` with the backend handle (needs `pennylane-qiskit`).
-- **Local noisy reference:** no `--device` (uses `default.qubit`/`default.mixed`) — fully runnable now.
-
-## 4. Run
+## 2. Credit day — the exact three commands
 ```bash
-python3 qbraid_submit.py --device <backend> --shots 4000
+pip install -r requirements-qpu.txt        # qBraid runtime SDK (much is preinstalled on qBraid)
+export QBRAID_API_KEY=<your key>           # qBraid account → API keys
+
+python3 qpu_run.py --list-devices                          # 1. pick an ONLINE gate-model device
+python3 qpu_run.py --mode hw --device qbraid_qir_simulator # 2. free cloud smoke test (if listed)
+python3 qpu_run.py --mode hw --device <ionq/ibm/... id> --shots 4000   # 3. THE run
 ```
-This (i) runs the **classical cross-check** — the exact-evolution circuit (`QubitUnitary`) vs the
-NumPy engine, which on a simulator matches to **3.9e-16** (the invariant we re-verify on every
-hardware execution), (ii) measures the **shot budget** (ε≈1/√S), and (iii) applies **ZNE**.
+Job IDs are logged and saved with the results (`qpu_run_hw_results.npy`,
+`results/qpu_run_hw.json`) for full provenance.
 
-## 5. What "success" looks like
-- **Cross-check**: on a *simulator* the exact circuit matches the engine to ~1e-16. On hardware the
-  *raw* features will differ from the noiseless reference by the device's 2-qubit error accumulated
-  over 220 gates; **ZNE + measurement mitigation should move the mitigated features toward the
-  noiseless cross-check value.** That convergence — mitigated-hardware → classical cross-check — is
-  the validation, not bit-exactness.
-- **Honest scope**: this validates that the reservoir *circuit runs and is the reservoir under
-  mitigation*. It is **not** a quantum-advantage claim — the study's conclusion (no advantage at
-  simulable scale) is unchanged. The open scientific question (advantage beyond the classical-
-  simulation frontier, 50–256 qubits) needs a much larger device and is explicitly left open.
+## 3. Cost estimate
+3 windows × 3 fold-scales × 4,000 shots + 2 calibration circuits ≈ **11 circuits / ~44k
+shots** for the complete mitigated headline run. Budget ~50–80k shots to allow a repeat —
+well within a small credit grant. (Fold-5 circuits are ≈1,900 native gates; if the target
+device's fidelity budget is tight, run scales 1/3 only — pass `--scales 1 3`.)
 
-## 6. Expected noise on real hardware (see `noisy_circuit_study.py`)
-The per-layer-noise study shows accumulated two-qubit error over the 380-gate circuit genuinely
-degrades the features (unlike readout-only depolarizing, which per-feature standardization removes
-exactly). So budget for ZNE and expect the *mitigated* features — not the raw ones — to track the
-classical cross-check.
+## 4. What "success" looks like
+- On the **rehearsal** (committed): raw → readout-mitigated → ZNE strictly reduces the mean
+  feature error vs the exact engine. On **hardware** the same monotone chain — mitigated
+  features converging toward the classical cross-check — **is the validation**, not
+  bit-exactness. The known Trotter-20 systematic (~0.04) is the floor.
+- **Honest scope:** this validates that the reservoir circuit *runs and is the reservoir
+  under mitigation*. It is **not** a quantum-advantage claim — the study's conclusion (no
+  advantage at simulable scale) is unchanged; the open question (beyond-frontier scale)
+  stays open.
+
+## 5. Expected hardware noise (see `noisy_circuit_study.py`)
+Per-layer noise accumulated over 220 two-qubit gates genuinely degrades the features (unlike
+readout-only depolarizing, which standardization removes). At ~99.5% two-qubit fidelity the
+raw fold-1 circuit fidelity is roughly 0.995²²⁰ ≈ 0.33 — so expect visibly degraded raw
+features and rely on the mitigation chain; that is precisely what the rehearsal exercises.
+
+## 6. Fallbacks
+- `--mode pl --device <pennylane device string>` runs the identical pipeline through any
+  PennyLane plugin (install the plugin per `requirements-qpu.txt` comments).
+- If a queue stalls: each window×scale is an independent job — results accumulate; re-run
+  with fewer `--windows` / `--scales` to fit an allocation.

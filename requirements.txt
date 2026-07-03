@@ -5,3 +5,4 @@ statsmodels>=0.14
 arch>=6.0
 pennylane==0.45.0
 matplotlib>=3.7
+pyyaml>=6.0          # qbraid_skill.yaml <-> cli.py sync check in tests.py
