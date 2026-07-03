@@ -44,7 +44,7 @@ import volatility_data as vd
 import feature_pool as fp
 import scaling_sweep as ss
 from classical_baselines import EchoStateNetwork
-from vol_fair_benchmark import rmse, qlike, mz_r2, ridge_readout
+from vol_fair_benchmark import rmse, qlike, mz_r2, ridge_readout, model_confidence_set
 
 RIG_SEEDS = (0, 1, 2, 3, 4, 5, 6, 7)
 CRISIS_TR, CRISIS_TE = pd.Timestamp("2007-01-01"), pd.Timestamp("2013-01-01")
@@ -231,13 +231,25 @@ def main():
     y_logrv, y_rv = d["y_logrv"], d["y_rv"]
     dts = pd.to_datetime(d["dates"])
 
-    fam_all = {}; summary_all = []
+    fam_all = {}; summary_all = []; mcs_all = {}
+
+    def _mcs_decisive(label, res_w, yT_w, focal=10):
+        """Model Confidence Set on the DECISIVE Axis-B family (HAR-X/ESN/RFF/CHIMERA, focal n)."""
+        foc = res_w[focal]
+        losses = {m: (foc[m]["pred"] - yT_w) ** 2 for m in ("HAR-X", "ESN", "RFF", "CHIMERA")}
+        surv, mp = model_confidence_set(losses)
+        mcs_all[label] = dict(pvals=mp, survivors=sorted(surv))
+        print(f"\n  MCS (decisive Axis-B family, {label}, n={focal}): "
+              + ", ".join(f"{k} p={v:.3f}{'*' if k in surv else ''}" for k, v in mp.items()))
+        print("   (* = retained in the 95% Model Confidence Set)")
     # crisis window
     tr = np.where(dts < CRISIS_TR)[0]
     te = np.where((dts >= CRISIS_TR) & (dts < CRISIS_TE))[0]
     har, res, hl, yT = run_window("crisis", tr, te, pool, X_har, y_logrv, y_rv, ns, seeds)
     fam, summ = _print_window("crisis 2007-2012 (GFC in test)", har, res, hl, yT, 10)
     fam_all.update(fam); summary_all += summ
+    if 10 in res:
+        _mcs_decisive("crisis", res, yT)
 
     # calm window (robustness): 70/30 chronological -> test ~2014-2020
     if not args.quick:
@@ -245,6 +257,7 @@ def main():
         har2, res2, hl2, yT2 = run_window("calm", trc, tec, pool, X_har, y_logrv, y_rv, [10], seeds)
         fam2, summ2 = _print_window("calm 2014-2020 (robustness)", har2, res2, hl2, yT2, 10)
         fam_all.update(fam2); summary_all += summ2
+        _mcs_decisive("calm", res2, yT2)
 
     # Holm across the whole family
     adj = holm(fam_all)
@@ -257,7 +270,8 @@ def main():
 
     if not args.quick:           # --quick must not clobber the committed full 8-seed artifact
         np.save("axisB_rigorous_results.npy",
-                dict(family_raw=fam_all, family_holm=adj, summary=summary_all), allow_pickle=True)
+                dict(family_raw=fam_all, family_holm=adj, summary=summary_all, mcs=mcs_all),
+                allow_pickle=True)
         print(f"\nsaved axisB_rigorous_results.npy   [{time.time()-t0:.1f}s]")
     else:
         print(f"\n[--quick] skipped writing results (committed full-run artifact preserved) [{time.time()-t0:.1f}s]")

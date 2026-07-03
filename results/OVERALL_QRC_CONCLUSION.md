@@ -3,8 +3,8 @@
 *Cross-cutting synthesis of the whole project — V1 (Track A, realized-volatility submission), V2
 (Track-A extensions), V3 (Track B, weather), and the methodological probes (capacity, frontier
 scaling, noise, recurrence). Every claim below is tied to a script + saved artifact in this repo.
-This document is a synthesis. The submitted Track-A paper is currently tag `v1.3-submission` (the
-original zero-defect baseline is recoverable at `v1-submission`; tags v1.1–v1.3 surgically fold a few
+This document is a synthesis. The submitted Track-A paper is the latest `v*-submission` tag — `v1.5-submission` as of this update (the
+original zero-defect baseline is recoverable at `v1-submission`; later tags surgically fold a few
 fully-traceable supporting results — efficiency, recurrent mechanism, domain-generality — into it).*
 
 ## The one-sentence conclusion
@@ -99,4 +99,4 @@ to the field than an overclaimed win.
 The CHIMERA-QRC work establishes a **robust, fair, mechanistically-grounded no-advantage result** for
 unitary QRC on real-world forecasting at simulable scale — while pointing precisely at the one regime
 (large-scale dissipative recurrence) where the question stays open. That honesty *is* the strength:
-it is the kind of result a field can build on. Submission stays V1 (Track A), tag `v1-submission`.
+it is the kind of result a field can build on. Submission stays the Track-A paper (latest `v*-submission` tag; original baseline at `v1-submission`).

@@ -42,7 +42,7 @@ classical controls, isolating quantum-vs-classical. Four mechanisms extend the c
 τ-bank; RZ measurement feedback; regime-adaptive Ising↔Heisenberg via BOCPD; dissipation-as-
 feature); Phase 3 adds an **encoding-density / data-re-uploading path** (§5.2) and a
 **sparse/tensor backend** (§5.5). The engine is pure NumPy; an explicit PennyLane circuit
-reproduces it to ≈5×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
+reproduces it to 3.9×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
 one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph.
 
 ![**Figure 1.** CHIMERA-QRC pipeline: lagged log-RV (and, in Axis B, realized-measure) inputs are angle-encoded onto qubits, evolved under a fixed random-coupled Ising Hamiltonian, and read out as single/pairwise Pauli-Z expectations into a ridge head fused with a linear block of the same inputs; a BOCPD detector selects the Hamiltonian for regime adaptivity.](figures/fig_architecture.png)
@@ -55,17 +55,19 @@ plateaus); (c) **fading memory** (echo-state property); (d) **Hamiltonian as ind
 The central, falsifiable mechanism is **expressivity scaling**, which we measure directly via
 the geometric difference (Huang et al. 2021). The quantum kernel is poorly reproducible by a
 matched classical reservoir: against the name-matched ESN-108 reference,
-**g(ESN→CHIMERA) ≈ 62 vs ≈4 control** (`cli.py run kernel`); against per-n *feature-matched*
-ESNs the gap is larger still (g ≈ 125 at n=8, rising to ≈158 at n=10). (g is at fixed ridge
-regularization; the qualitative ~15–40× separation, not the exact value, is the claim.)
+**g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli.py run kernel`); against per-n *feature-matched*
+ESNs the gap is larger but **non-monotonic** (g ≈125 at n=8, peaking ≈158 at n=10, falling ≈88 at
+n=12). (g is at fixed ridge regularization; the qualitative ~15–40× separation, not the exact
+value, is the claim.)
 Crucially, at ≤12–16 qubits the map remains classically
 simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
 here, it is indeed *not* sufficient.
 
 ## 4. Data modeling strategy
-**Datasets (all public).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
+**Datasets (all bundled in-repo).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
 supervised days incl. the 2008 GFC (Heber et al. 2009; via R packages `highfrequency`/`bvhar`);
-public SPY daily OHLCV 2022–2026 (Garman–Klass proxy); real MNIST (Keras `.npz` mirror).
+SPY daily OHLCV 2022–2026 (Garman–Klass proxy; retrieved via Massive.com API, bundled); real
+MNIST (Keras `.npz` mirror).
 **Preprocessing:** log-RV target; features min-max scaled to [0,1] on **train only**; per-model
 ridge penalty selected on a chronological validation tail; multi-seed ensembling. We verified
 the pipeline is leakage-free (all features lagged ≥1 day; train-only scaling). **Baselines:**
@@ -81,8 +83,9 @@ reported against them. Full numbers/wall-clock: `results/*_findings.md`.
 
 **5.1 The input-bottleneck mechanism (pre-registered negative).** With a *fixed* univariate
 8-lag encoder, extra qubits receive no new input: g(n) and effective feature-rank
-**saturate/decline** (n=8→12: g 133→30, D_eff 1.8→1.5). **H0 is refuted in this regime** — the
-empirical case *for* enriching the encoding.
+**saturate/decline** (n=8→12: g 133→30 at N_sub=800; the quick-mode rerun reproduces the same
+monotone decline at lower magnitude, cf. §7(iv); D_eff 1.8→1.5). **H0 is refuted in this regime**
+— the empirical case *for* enriching the encoding.
 
 **5.2 Encoding density (Axis B) — mechanism confirmed.** Feeding the extra qubits genuinely new
 realized-measure information (signed return/leverage, downside-semivariance share, jump share)
@@ -106,14 +109,18 @@ span. With **8 seeds, HAC-DM, two windows, and Holm correction** (`cli.py run ax
 
 *(plain HAR for reference: crisis 0.6290, calm 0.6454 — HAR-X's rich features cut RMSE sharply.)*
 **HAR-X is best or co-best everywhere; CHIMERA never beats it** (slightly worse; raw-significant
-at n=8/12) and is statistically indistinguishable from the classical ESN/RFF. **After Holm
-correction no comparison is significant in either direction.** The earlier "beats HAR" result
+at n=8/12) and is indistinguishable from the classical ESN/RFF after Holm (one raw-significant
+loss to RFF at crisis n=8, p=0.049). **After Holm correction no comparison is significant in
+either direction.** The earlier "beats HAR" result
 was an artifact of comparing against a *feature-poor* HAR: the gain comes from the encoded
 realized measures (a known SHAR/HARQ effect), not from quantum nonlinearity. **By our
 pre-registered criteria, H0 is refuted — we report this negative.** What honestly survives for
-the quantum reservoir: it is **competitive** (within ~0.5–1.5% RMSE of the best at every n),
-**more stable than the recurrent ESN** (lower per-seed variance, e.g. n=12: 0.009 vs 0.015),
-and it **beats the recurrent ESN on the calm window** (raw p=0.018; n.s. after Holm).
+the quantum reservoir: it is **competitive** (within ≈0.8–2.1% RMSE of the best at every n),
+with **lower per-seed dispersion than the recurrent ESN in 3 of 4 cells** (s.d., e.g. n=12: 0.009
+vs 0.015), and it **beats the recurrent ESN on the calm window** (raw p=0.018; n.s. after Holm).
+A **tuned, size-unconstrained ESN** (45-config validation-tail search, to 800 nodes) confirms the
+control was not crippled: tuned ESN 0.6020 vs CHIMERA 0.6094, within noise of HAR-X
+(`results/esn_tuning_robustness_findings.md`) — tuning the classical side only firms the negative.
 **Named canonical baselines** (`cli.py run canonical`): **SHAR, HAR-CJ, HARQ** (RQ≈RV² proxy) and
 **HEAVY-RM**, under MSE- *and* QLIKE-loss DM — **none beats HAR-X** (a fair, strong stand-in, not a
 strawman), and CHIMERA ties the best on RMSE with only a *raw, non-Holm* QLIKE/MZ edge
@@ -128,16 +135,18 @@ a matched ESN **ties or slightly exceeds** CHIMERA (within ≈1% for n≥8; 2.9%
 competitive, not dominant. **Noise:** the classifier is **invariant to
 depolarizing** noise (a uniform Bloch contraction that per-feature standardization removes exactly;
 accuracy identical across rates 0.05–0.30) and **robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
-per-Trotter-layer density-matrix study shows the *converse* — two-qubit noise *during* evolution is
+per-Trotter-layer density-matrix study shows the *converse* — noise interleaved with the evolution
+(per-layer single-qubit channels, a proxy for the ≈220 two-qubit gates' accumulated error) is
 **not** removed by standardization (standardized error grows with rate, vs **≈0** for readout-only
 depolarizing): the invariance above is a *readout* property, not a circuit-level robustness claim;
-accumulated 2-qubit error over the 380-gate circuit is the real NISQ cost (§6).
+accumulated gate error over the 380-gate circuit — dominated on hardware by two-qubit gates — is
+the real NISQ cost (§6).
 
 **5.5 Scaling frontier + quantum-complexity metric.** A sparse-exact backend (`expm_multiply`,
 no dense propagator; matches the dense engine to **2.4×10⁻¹⁴**) reaches **n=16 exactly**. For
 the random ≈50%-connected reservoir we measure the **bond dimension** χ_eff across a balanced
-cut: it is **full at every n, χ_eff = 2^(n/2)** (16→256 for n=8→16) — an exact MPS gets **zero
-compression** — with entanglement entropy S ≈ 1.7–3.2 nats. The reservoir therefore admits
+cut: it is **essentially full at every n, χ_eff ≈ 2^(n/2)** (16→255.9 for n=8→16) — an exact MPS
+gets **zero compression** — with entanglement entropy S ≈ 1.7–3.2 nats. The reservoir therefore admits
 **no low-bond-dimension (MPS/TEBD) shortcut** —
 exact cost stays exponential (full entanglement is *necessary, not sufficient* for true classical
 hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
@@ -187,16 +196,19 @@ budget, and noise.
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
 linear) is the best model on this task. (ii) The RV sample ends Feb-2020
-(2008 GFC in-sample, 2020 COVID just outside); broader assets/periods untested. (iii) Noise is studied on MNIST
-(single-qubit readout channels); full noisy-circuit/shot-noise sim is deferred to QPU runs.
-(iv) g is regularization-dependent (qualitative gap only).
+(2008 GFC in-sample, 2020 COVID just outside); broader assets/periods are covered only by
+daily-proxy supporting studies (v2_research: cross-asset, COVID — same negative), not 5-min RV.
+(iii) Task-level noise is characterized via per-layer single-qubit channels (density-matrix, §5.4)
+and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is deferred to QPU runs.
+(iv) g is regularization- and run-configuration-dependent (qualitative gap only).
 (v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they convert
 beyond the simulable frontier is open. A quantum-data probe (`results/quantum_data_crossover_findings.md`)
 shows the QRC natively reads nonlinear *state* functionals (purity, entanglement) a linear readout
-cannot, but the proper baseline — **classical shadows** (Huang–Kueng–Preskill 2020), also
-measurement-efficient — still edges it at k≤4: a genuine quantum-data edge is an **honest open
-question**, not shown here, and the one regime this challenge's classical-data tracks never probe.
+cannot, but a budget-matched classical still edges it at k≤4 — and the proper baseline, **classical
+shadows** (Huang–Kueng–Preskill 2020, also measurement-efficient; not yet run), would be at least
+as strong: a genuine quantum-data edge is an **honest open question**, not shown here, and the one
+regime this challenge's classical-data tracks never probe.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, dynamic risk limits and derivatives pricing.
@@ -215,5 +227,5 @@ results are the team's own.
 Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 · Li et al. 2025 ·
 Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
 Kobayashi & Motome 2026 · Huang et al. 2021 · Huang, Kueng & Preskill 2020 (classical shadows) ·
-Corsi 2009 · Patton 2011 · Hansen et al. 2011 ·
+Dambre et al. 2012 · Corsi 2009 · Patton 2011 · Hansen et al. 2011 · Harvey et al. 1997 ·
 Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 · Heber et al. 2009.

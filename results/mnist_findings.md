@@ -52,7 +52,7 @@ The depolarizing and amplitude-damping channels are verified to perturb the
 reservoir features (≈2–3% at rate 0.02; the engine's density-matrix path is
 exercised). A single small rate does not move MNIST accuracy (decisions are robust),
 so the informative deliverable is a **noise-rate robustness curve** —
-see `fig_mnist_noise.png` / `mnist_noise_results.md`.
+see `fig_mnist_noise.png` / `mnist_noise_findings.md`.
 
 ## Frontier
 

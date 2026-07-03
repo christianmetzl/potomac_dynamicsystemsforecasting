@@ -32,7 +32,7 @@ ACTIONS = {
     "tests":        (["tests.py"], "Engine sanity tests (23 checks)", False),
     "calm":         (["vol_fair_benchmark.py"], "Calm-window Table 1 + Model Confidence Set", False),
     "crisis":       (["vol_crisis_benchmark.py"], "Crisis split (GFC in test): RMSE/QLIKE/MZ + MCS", False),
-    "kernel":       (["kernel_analysis.py"], "Kernel geometry: g(ESN->CHIMERA)~62 vs ~4 control", False),
+    "kernel":       (["kernel_analysis.py"], "Kernel geometry: g(ESN->CHIMERA)~64 vs ~3.7 control", False),
     "sdk":          (["sdk_demo.py"], "Explicit PennyLane circuit (engine match ~5e-16)", False),
     "qsubmit":      (["qbraid_submit.py"], "qBraid submission path: shot-budget + ZNE + classical cross-check (sim; --device for QPU)", True),
     "gk":           (["gk_validation.py"], "Independent 2022-2026 SPY (Garman-Klass) check", False),
@@ -62,7 +62,8 @@ GROUPS = {
     "all":      list(ACTIONS.keys()),
     "reproduce": ["tests", "calm", "crisis", "kernel", "sdk", "qsubmit",
                   "baselines", "lstm", "prereg", "scaling", "axisB", "axisB_rig",
-                  "canonical", "mnist", "tensor"],
+                  "canonical", "mnist", "mnist_noise", "tensor",
+                  "economics", "capacity", "frontier", "noise_circuit"],
 }
 
 

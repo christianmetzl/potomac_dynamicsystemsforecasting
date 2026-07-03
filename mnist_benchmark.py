@@ -144,6 +144,10 @@ def feat_dim(n):
 
 def quantum_features(P, n, tau, seed, noise=None, noise_rate=0.0):
     """CHIMERA reservoir features for static inputs P (one row per image)."""
+    if n > MAX_DENSE_N:                      # sparse-exact path (noiseless only), matches dense
+        assert noise is None, "noise sim is density-matrix (dense, n<=%d) only" % MAX_NOISE_N
+        from tensor_backend import chimera_features_sparse
+        return chimera_features_sparse(P, n, tau, seed)
     qr = QuantumReservoir(n_qubits=n, tau=tau, hamiltonian_type="ising",
                           input_qubits=list(range(n)),   # ALL qubits receive a PCA feature
                           hx=1.0, connectivity=0.5, seed=seed,
@@ -208,9 +212,8 @@ def run_accuracy_sweep(ns, Xtr, ytr, Xte, yte, seeds, tau=2.0):
     print(f"{'n':>3}{'#qfeat':>8}{'CHIMERA':>10}{'+-sd':>7}{'ESN':>9}{'Linear(PCA)':>13}{'sec':>7}")
     for n in ns:
         if n > MAX_DENSE_N:
-            print(f"{n:>3}  -- skipped (dense statevector frontier n={MAX_DENSE_N}; "
-                  f"n>={MAX_DENSE_N+1} -> sparse/MPS follow-up)")
-            continue
+            print(f"{n:>3}  -- sparse-exact backend (n>{MAX_DENSE_N}; ~1-2 s/image, noiseless)",
+                  flush=True)
         t0 = time.time()
         Ptr, Pte = pca_encode(Xtr, Xte, n)
         # linear-on-PCA baseline (no reservoir)
@@ -336,7 +339,25 @@ def main():
                     help="skip accuracy sweep; run only the noise-rate robustness curve")
     ap.add_argument("--ntrain", type=int, default=DEFAULT_NTRAIN)
     ap.add_argument("--ntest", type=int, default=DEFAULT_NTEST)
+    ap.add_argument("--n15", action="store_true",
+                    help="brief's 5/10/15 closure: run n=12 (dense) and n=15 (sparse-exact) on "
+                         "the SAME reduced subset (1500/500, 1 seed) for a like-for-like point")
     args = ap.parse_args()
+
+    if args.n15:
+        ntr, nte = 1500, 500          # same subset the noise sweep uses; keeps n=15 tractable
+        seeds = (0,)
+        t_all = time.time()
+        print("#" * 78)
+        print("CHIMERA-QRC MNIST - n=15 CLOSURE (brief's 5/10/15; sparse-exact backend)")
+        print(f"paired n=12 (dense) vs n=15 (sparse) on the SAME subset {ntr}/{nte}, seed {seeds}")
+        print("#" * 78)
+        Xtr, ytr, Xte, yte = load_mnist(ntr, nte)
+        rows = run_accuracy_sweep([12, 15], Xtr, ytr, Xte, yte, seeds)
+        np.save("mnist_n15_results.npy", dict(rows=rows, n_train=ntr, n_test=nte, seeds=seeds),
+                allow_pickle=True)
+        print(f"\nsaved mnist_n15_results.npy   [total {time.time()-t_all:.1f}s]")
+        return
 
     if args.noise_only:
         ns = args.ns or [5, 8]

@@ -244,6 +244,26 @@ def test_multiscale_feature_concat():
         f"Expected {3*single_dim}, got {ms.feature_dim}"
 
 
+def test_skill_manifest_sync():
+    """qbraid_skill.yaml (the agent-facing index) stays in lockstep with cli.py:
+    every yaml action id resolves in cli.py ACTIONS; every yaml group member is a
+    defined yaml action; yaml headline/reproduce groups equal cli.py's."""
+    import os
+    import yaml
+    import cli
+    here = os.path.dirname(os.path.abspath(__file__))
+    man = yaml.safe_load(open(os.path.join(here, "qbraid_skill.yaml")))
+    yaml_ids = {a["id"] for a in man["actions"]}
+    unknown = yaml_ids - set(cli.ACTIONS)
+    assert not unknown, f"yaml actions missing from cli.py: {unknown}"
+    for gname, members in man["groups"].items():
+        dangling = set(members) - yaml_ids
+        assert not dangling, f"group '{gname}' references undefined actions: {dangling}"
+    for gname in ("headline", "reproduce"):
+        assert list(man["groups"][gname]) == list(cli.GROUPS[gname]), \
+            f"group '{gname}' drifted from cli.py"
+
+
 # ============================================================
 # RUN ALL TESTS
 # ============================================================
@@ -289,7 +309,10 @@ if __name__ == "__main__":
     test("Deterministic with same seed", test_qrc_deterministic)
     test("Different inputs → different features", test_qrc_different_inputs_different_features)
     test("Multi-scale feature concatenation", test_multiscale_feature_concat)
-    
+
+    print("\n  Packaging / Skill:")
+    test("qbraid_skill.yaml in sync with cli.py", test_skill_manifest_sync)
+
     print(f"\n{'='*60}")
     print(f"  Results: {passed} passed, {failed} failed")
     print(f"{'='*60}")

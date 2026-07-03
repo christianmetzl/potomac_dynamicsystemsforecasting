@@ -27,15 +27,34 @@ def _ensure(pkg, mod=None):
         subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", pkg], check=True)
 
 
+def merge_paragraph_lines(lines):
+    """Join hard-wrapped body lines into single paragraphs (markdown semantics), so
+    **bold**/*italic* spans that cross a source line-wrap render correctly."""
+    out, buf = [], []
+
+    def flush():
+        if buf:
+            out.append(" ".join(buf)); buf.clear()
+    for ln in lines:
+        if ln.strip() == "" or ln.startswith(("#", "|", "- ", ">", "![")):
+            flush(); out.append(ln)
+        else:
+            buf.append(ln.strip())
+    flush()
+    return out
+
+
 def _add_runs(paragraph, text):
-    """Add text with **bold** and `code` inline formatting."""
-    for tok in re.split(r"(\*\*[^*]+\*\*|`[^`]+`)", text):
+    """Add text with **bold**, *italic* and `code` inline formatting."""
+    for tok in re.split(r"(\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*)", text):
         if not tok:
             continue
         if tok.startswith("**") and tok.endswith("**"):
             r = paragraph.add_run(tok[2:-2]); r.bold = True
         elif tok.startswith("`") and tok.endswith("`"):
             r = paragraph.add_run(tok[1:-1]); r.font.name = "Courier New"
+        elif tok.startswith("*") and tok.endswith("*") and len(tok) > 2:
+            r = paragraph.add_run(tok[1:-1]); r.italic = True
         else:
             paragraph.add_run(tok)
 
@@ -56,7 +75,7 @@ def main():
         s.top_margin = s.bottom_margin = Inches(0.75)
         s.left_margin = s.right_margin = Inches(0.75)
 
-    lines = open(MD, encoding="utf-8").read().splitlines()
+    lines = merge_paragraph_lines(open(MD, encoding="utf-8").read().splitlines())
     i = 0
     while i < len(lines):
         ln = lines[i]
@@ -91,7 +110,9 @@ def main():
             except Exception:
                 pass
             cp = doc.add_paragraph(); cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            rr = cp.add_run(cap); rr.italic = True; rr.font.size = Pt(9)
+            _add_runs(cp, cap)
+            for rr in cp.runs:
+                rr.italic = True; rr.font.size = Pt(9)
             i += 1
             continue
         if ln.startswith("#### "):
@@ -115,11 +136,15 @@ def main():
     build_pdf(lines)
 
 
+CODE_FACE = "Courier"     # switched to FreeMono (full Unicode) when freefont registers
+
+
 def _inline(s):
-    """markdown bold/code -> reportlab markup (after escaping & < >)."""
+    """markdown bold/italic/code -> reportlab markup (after escaping & < >)."""
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
-    s = re.sub(r"`(.+?)`", r'<font face="Courier">\1</font>', s)
+    s = re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<i>\1</i>", s)
+    s = re.sub(r"`(.+?)`", r'<font face="%s" size="10">\1</font>' % CODE_FACE, s)
     return s
 
 
@@ -134,16 +159,37 @@ def build_pdf(lines):
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.enums import TA_JUSTIFY
 
+    # Full-Unicode serif (Times-like) so quantum notation (⟨Z⟩, superscripts, Greek)
+    # renders instead of falling back to Latin-1 tofu boxes.
+    serif, serif_b, serif_bi = "Times-Roman", "Times-Bold", "Times-BoldItalic"
+    try:
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfbase.pdfmetrics import registerFontFamily
+        FF = "/usr/share/fonts/truetype/freefont/"
+        pdfmetrics.registerFont(TTFont("FreeSerif", FF + "FreeSerif.ttf"))
+        pdfmetrics.registerFont(TTFont("FreeSerif-Bold", FF + "FreeSerifBold.ttf"))
+        pdfmetrics.registerFont(TTFont("FreeSerif-Italic", FF + "FreeSerifItalic.ttf"))
+        pdfmetrics.registerFont(TTFont("FreeSerif-BoldItalic", FF + "FreeSerifBoldItalic.ttf"))
+        registerFontFamily("FreeSerif", normal="FreeSerif", bold="FreeSerif-Bold",
+                           italic="FreeSerif-Italic", boldItalic="FreeSerif-BoldItalic")
+        pdfmetrics.registerFont(TTFont("FreeMono", FF + "FreeMono.ttf"))
+        global CODE_FACE
+        CODE_FACE = "FreeMono"
+        serif, serif_b, serif_bi = "FreeSerif", "FreeSerif-Bold", "FreeSerif-BoldItalic"
+    except Exception:
+        pass                               # fall back to built-in Times (Latin-1 only)
+
     ss = getSampleStyleSheet()
-    body = ParagraphStyle("body", parent=ss["Normal"], fontName="Times-Roman",
+    body = ParagraphStyle("body", parent=ss["Normal"], fontName=serif,
                           fontSize=11, leading=12.6, alignment=TA_JUSTIFY, spaceAfter=2)
-    h1 = ParagraphStyle("h1", parent=body, fontName="Times-Bold", fontSize=14,
+    h1 = ParagraphStyle("h1", parent=body, fontName=serif_b, fontSize=14,
                         leading=16, alignment=0, spaceAfter=2)
-    h2 = ParagraphStyle("h2", parent=body, fontName="Times-Bold", fontSize=12,
+    h2 = ParagraphStyle("h2", parent=body, fontName=serif_b, fontSize=12,
                         leading=14, alignment=0, spaceBefore=4, spaceAfter=2)
-    h3 = ParagraphStyle("h3", parent=body, fontName="Times-Bold", fontSize=11,
+    h3 = ParagraphStyle("h3", parent=body, fontName=serif_b, fontSize=11,
                         leading=13, alignment=0, spaceAfter=1)
-    h4 = ParagraphStyle("h4", parent=h3, fontName="Times-BoldItalic")
+    h4 = ParagraphStyle("h4", parent=h3, fontName=serif_bi)
     note = ParagraphStyle("note", parent=body, fontSize=9, textColor=colors.grey)
 
     story = []
@@ -169,7 +215,7 @@ def build_pdf(lines):
                 t.setStyle(TableStyle([
                     ("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
                     ("BACKGROUND", (0, 0), (-1, 0), colors.whitesmoke),
-                    ("FONTNAME", (0, 0), (-1, 0), "Times-Bold"),
+                    ("FONTNAME", (0, 0), (-1, 0), serif_b),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
                     ("TOPPADDING", (0, 0), (-1, -1), 1.5),
                     ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),

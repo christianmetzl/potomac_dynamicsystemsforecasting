@@ -1,7 +1,7 @@
 # V3 research — Track B (weather) exploration (NOT part of the V1 submission)
 
 > **Status: mostly exploratory side research.** The competition submission is the Track-A paper,
-> currently tag **`v1.3-submission`** (original zero-defect baseline recoverable at `v1-submission`).
+> the latest **`v*-submission`** tag (`v1.5-submission` as of this update; original zero-defect baseline recoverable at `v1-submission`).
 > The submitted paper now **surgically folds in a few V3-derived results** — the resource-efficiency
 > finding (§5.5), the recurrent-QRC non-dissipative mechanism and weather domain-generality (§5.5
 > robustness note), and the quantum-data outlook (§7vi) — by **citing the `results/*_findings.md`
@@ -11,7 +11,8 @@
 >
 > **Recover the exact ORIGINAL (pre-additions) submission at any time:**
 > ```bash
-> git archive v1-submission -o EIGENNEXUS_Challenge_Phase3.zip     # current paper: tag v1.3-submission
+> bash package_submission.sh    # builds the CURRENT submission zip from HEAD
+> git archive v1-submission -o V1_original.zip   # or recover the pre-additions original
 > ```
 
 ## Track-B spec (confirmed from the official Phase-3 brief)
@@ -321,7 +322,7 @@ quantum reservoir is *competitive and distinct* but **not better** than strong c
 (its closest approach is a single statistical tie at Rapid City h=1 — never a win). The negative is
 **domain-, metric-, architecture-, and chaos-regime-general** — which is exactly what makes V1's
 honest no-advantage finding credible rather than a single-task artifact. The submission stays V1
-(tag `v1-submission`).
+(latest `v*-submission` tag; original baseline at `v1-submission`).
 
 *Caveats, stated plainly:* (i) a single fixed reservoir family / encoding was tested per paradigm;
 (ii) noise channels for weather were exercised at n=5 (Track A covers n≤10 fully); (iii) no

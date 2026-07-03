@@ -23,17 +23,29 @@ only for the explicit-circuit SDK demo). All data is bundled, so everything runs
 
 ## Quickstart
 
+**⏱ 10-minute judge verification (recommended first run):**
 ```bash
 pip install -r requirements.txt
+python3 cli.py headline --quick   # the Phase-3 story: prereg → decisive test → canonical
+                                  # baselines → MNIST → frontier (~5-10 min; verdicts match
+                                  # the full runs; authoritative numbers: results/*_findings.md)
+```
+
+**Full reproduction:**
+```bash
 python3 cli.py list              # all reproducible actions (agent-executable Skill)
-python3 cli.py run headline      # the Phase-3 story
-python3 cli.py reproduce         # full Phase-2 + Phase-3 reproduction
+python3 cli.py reproduce         # full Phase-2 + Phase-3 reproduction (~1-2 hr)
 ```
 or run any script directly, e.g. `python3 scaling_sweep_axisB.py`.
 
 The **qBraid Skill** (`cli.py` + `qbraid_skill.yaml` + `SKILL.md`) is the agent-executable
 interface required by the brief: an AI agent can enumerate actions, configure the reservoir,
 run training, and reproduce every headline number end-to-end.
+
+**Evidence map:** `results/OVERALL_QRC_CONCLUSION.md` tabulates every independent fair test
+in this project (12+ rows: volatility, weather×5 stations, VPT static/recurrent, capacity,
+efficiency frontier, noise, quantum-data) with its verdict and artifact — the one-page view
+of why the honest negative is domain-, metric-, and architecture-general.
 
 ---
 

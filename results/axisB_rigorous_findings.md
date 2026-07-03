@@ -44,11 +44,13 @@ significant at 0.05 in either direction** (smallest Holm p = 0.103, which is CHI
    (SHAR/HARQ), not from quantum (or any) nonlinear reservoir.
 2. **No quantum advantage at simulable scale.** CHIMERA never beats HAR-X (it is slightly
    worse; raw-significant at n=8 and n=12) and is statistically indistinguishable from the
-   classical ESN/RFF after Holm correction. **H0 is REFUTED**, exactly as pre-registered —
+   classical ESN/RFF after Holm correction (one raw-significant loss to RFF at crisis n=8,
+   p=0.049, also in the "worse" direction). **H0 is REFUTED**, exactly as pre-registered —
    we committed to reporting this.
-3. **What honestly survives for the quantum reservoir:** it is *competitive* (within ~0.5–1.5%
-   RMSE of the best at every n), **more stable than the recurrent ESN** (lower per-seed
-   variance, e.g. n=12: 0.009 vs 0.015), and it *does* beat the recurrent ESN on the calm
+3. **What honestly survives for the quantum reservoir:** it is *competitive* (within ≈0.8–2.1%
+   RMSE of the best at every n, i.e. ≤0.013 log-RV RMSE points), with **lower per-seed
+   dispersion than the recurrent ESN in 3 of 4 window/n cells** (s.d., e.g. n=12: 0.009 vs
+   0.015; the exception is crisis n=10), and it *does* beat the recurrent ESN on the calm
    window (raw p=0.018; n.s. after Holm). Together with the measured kernel distinctness
    (`kernel_analysis`) and full-rank entanglement (`tensor_backend`), these are genuine,
    quantum-specific *properties* — but they are **necessary, not sufficient** for a

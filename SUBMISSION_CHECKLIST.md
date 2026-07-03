@@ -1,6 +1,6 @@
 # Phase-3 submission checklist — EIGENNEXUS / Track A
 
-Deadline: **Sunday, July 26, 2026, 11:59 PM EST.** Upload one zip named
+Deadline: **Sunday, July 26, 2026, 11:59 PM Eastern Time (EDT in July).** Upload one zip named
 `EIGENNEXUS_Challenge_Phase3.zip` to Aqora.
 
 ## Headline (honest, pre-registered)
@@ -38,12 +38,24 @@ the same verdicts at reduced seeds/sizes.
 - [x] Concrete numbers (qubit counts, 2-qubit gate depth, observables, shots, wall-clock, metrics).
 - [x] Honest limitations stated prominently (no advantage at simulable scale; H0 refuted; MNIST ≈ ESN).
 
-## ⚠️ Two manual steps before you submit (only you can do these)
+## ⚠️ Manual steps before you submit (only you can do these)
 1. **Prepend the official GIC_2026 cover page** (`GIC_2026 Cover Page.docx` from Aqora)
    as **page 1** of the final PDF. Per the rules it may not be recreated/modified, so
    it is intentionally not in this package. Easiest path: open `PHASE3_PAPER.docx`,
    paste the cover page as page 1, export to PDF, replace `PHASE3_PAPER.pdf`, re-zip.
-2. **qBraid real-QPU validation (optional, rubric bonus):** once the team qBraid
+2. **Re-verify the merged PDF's page count.** The body is exactly 5 pages; a
+   Word/LibreOffice export can reflow text. After the cover-page merge, confirm
+   total = cover + 5 body pages (e.g. `python3 -c "import fitz;
+   print(fitz.open('PHASE3_PAPER.pdf').page_count)"` → 6).
+3. **Zip freshness check.** Build the zip AT THE FINAL COMMIT and confirm it contains
+   the current paper: `bash package_submission.sh` prints the commit it archived —
+   it must match `git rev-parse --short HEAD` and the latest `v*-submission` tag.
+   Never upload a stale zip lying around from an earlier build.
+4. **Launch-button check.** The README's Launch-on-qBraid button must point at a
+   **public** repo state that contains this work (if the work lives on a branch,
+   merge to the default branch or point the button at the branch) — click it once
+   from a clean account and run `python3 cli.py run tests`.
+5. **qBraid real-QPU validation (optional, rubric bonus):** once the team qBraid
    credits are live, run the gate-Trotter circuit (`sdk_demo.py`) on IonQ/IQM/IBM and
    add the measured numbers to §5/§6. The submission is complete and reproducible
    without it (simulator-first), but a real hardware result strengthens criterion 6.

@@ -33,7 +33,23 @@ actions:
   - id: kernel
     desc: "Kernel geometry distinctness"
     cmd: "python3 cli.py run kernel"
-    expect: "g(ESN-108 -> CHIMERA) ~ 62 vs ~4 classical control"
+    expect: "g(ESN-108 -> CHIMERA) ~ 64 vs ~3.7 classical control"
+  - id: calm
+    desc: "Calm-window Table 1 + Model Confidence Set (Phase-2 reproduction)"
+    cmd: "python3 cli.py run calm"
+    expect: "calm-window RMSE/QLIKE/MZ table + MCS p-values"
+  - id: sdk
+    desc: "Explicit PennyLane circuit reproduces the NumPy engine"
+    cmd: "python3 cli.py run sdk"
+    expect: "engine match ~ 4e-16 (machine precision)"
+  - id: gk
+    desc: "Independent 2022-2026 SPY (Garman-Klass) out-of-sample check"
+    cmd: "python3 cli.py run gk"
+    expect: "same qualitative ranking on an independent recent sample"
+  - id: tensor_check
+    desc: "Verify the sparse backend matches the dense engine"
+    cmd: "python3 cli.py run tensor_check"
+    expect: "max|sparse - dense| ~ 1e-14 (OK)"
   - id: crisis
     desc: "Crisis-window regime tracking (Phase-2; vs PLAIN HAR only)"
     cmd: "python3 cli.py run crisis"
@@ -121,10 +137,12 @@ actions:
     cmd: "python3 cli.py run lstm"
     expect: "LSTM does NOT beat HAR (DM > 0) - honest expected outcome"
 
-groups:
-  headline: [prereg, scaling, axisB_rig, mnist, tensor]
+groups:   # kept in lockstep with cli.py GROUPS (tests.py asserts the sync)
+  headline: [prereg, scaling, axisB_rig, canonical, mnist, tensor]
   phase2: [tests, calm, crisis, kernel, sdk]
-  reproduce: [tests, calm, crisis, kernel, sdk, qsubmit, baselines, lstm, prereg, scaling, axisB, axisB_rig, mnist, tensor]
+  reproduce: [tests, calm, crisis, kernel, sdk, qsubmit, baselines, lstm, prereg, scaling,
+              axisB, axisB_rig, canonical, mnist, mnist_noise, tensor,
+              economics, capacity, frontier, noise_circuit]
 
 hardware_plan:
   primary: "simulator-first (statevector dense <=12q; sparse/TN to ~16q)"
