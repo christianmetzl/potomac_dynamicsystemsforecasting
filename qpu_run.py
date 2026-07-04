@@ -317,7 +317,12 @@ class QbraidRunner:
                             time.sleep(5)
                     raise TimeoutError(f"counts never propagated for {jid}")
                 if st in (JobStatus.FAILED, JobStatus.CANCELLED):
-                    print(f"    job {jid}: {st} (platform transient?) - "
+                    reason = self._failure_reason(jid)
+                    if reason and "credit" in reason.lower():
+                        raise RuntimeError(
+                            f"job {jid} FAILED: '{reason}' - provider credit pool "
+                            f"exhausted; resubmitting cannot help. Top up and rerun.")
+                    print(f"    job {jid}: {st} ({reason or 'platform transient?'}) - "
                           f"resubmit {attempt}/{submit_retries}", flush=True)
                     time.sleep(60 * attempt)
                     break                                     # -> resubmit
@@ -326,6 +331,16 @@ class QbraidRunner:
                 raise TimeoutError(f"job {jid} not terminal within {poll_timeout}s")
         raise RuntimeError(f"job failed after {submit_retries} submissions "
                            f"(qBraid platform issue - retry later)")
+
+    def _failure_reason(self, jid):
+        """Best-effort fetch of the server-side failure message (e.g. the
+        OpenQuantum 'Insufficient credits' seen in production)."""
+        try:
+            job = self.provider.client.get_job(str(jid))
+            d = job.model_dump() if hasattr(job, "model_dump") else dict(job)
+            return str(d.get("statusMsg") or d.get("statusText") or "").strip() or None
+        except Exception:
+            return None
 
     def run(self, qasm, shots):
         """Respect the device's per-job shot cap by splitting into batches and
@@ -375,7 +390,7 @@ def list_devices():
 # The validation protocol (identical for rehearsal and hardware)
 # ---------------------------------------------------------------------------
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
-                 poll_timeout=7200):
+                 poll_timeout=7200, orientation="probe"):
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -401,16 +416,27 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
 
     # 0) bit-order orientation probe: |1> on qubit 0 ONLY. If the backend keys
     #    bitstrings with qubit 0 rightmost, every <Z_i> would be mis-assigned.
-    print("\n[0/3] bit-order orientation probe (1 tiny circuit)...", flush=True)
-    zi = features_from_probs(probs_from_counts(execute([("ry", (0,), np.pi)]), n), n)[:n]
-    if zi[0] < -0.5:
-        print("    orientation OK (qubit 0 = leftmost bit)")
-    elif zi[-1] < -0.5:
+    #    --orientation normal|reverse skips the probe job when a previous run on
+    #    the same device already established the convention (saves one paid job).
+    if orientation == "reverse":
         state["reverse"] = True
-        print("    REVERSED bit order detected -> auto-correcting all subsequent counts")
+        print("\n[0/3] orientation probe SKIPPED (--orientation reverse: known from a "
+              "prior run on this device)", flush=True)
+    elif orientation == "normal":
+        print("\n[0/3] orientation probe SKIPPED (--orientation normal: known from a "
+              "prior run on this device)", flush=True)
     else:
-        print(f"    WARNING: ambiguous orientation (<Z_0>={zi[0]:+.2f}, <Z_{n-1}>={zi[-1]:+.2f}) "
-              f"- proceeding unreversed; inspect results")
+        print("\n[0/3] bit-order orientation probe (1 tiny circuit)...", flush=True)
+        zi = features_from_probs(probs_from_counts(execute([("ry", (0,), np.pi)]), n),
+                                 n)[:n]
+        if zi[0] < -0.5:
+            print("    orientation OK (qubit 0 = leftmost bit)")
+        elif zi[-1] < -0.5:
+            state["reverse"] = True
+            print("    REVERSED bit order detected -> auto-correcting all subsequent counts")
+        else:
+            print(f"    WARNING: ambiguous orientation (<Z_0>={zi[0]:+.2f}, "
+                  f"<Z_{n-1}>={zi[-1]:+.2f}) - proceeding unreversed; inspect results")
 
     # 1) readout calibration: |0..0> and |1..1> (RY(pi)|0> = |1>)
     print("[1/3] readout calibration (2 circuits)...", flush=True)
@@ -490,6 +516,11 @@ def main():
     ap.add_argument("--poll-timeout", type=int, default=7200,
                     help="seconds to wait per job for a terminal state (raise for devices "
                          "with availability windows / long queues)")
+    ap.add_argument("--orientation", choices=["probe", "normal", "reverse"],
+                    default="probe",
+                    help="bit-order handling: 'probe' runs the 1-job orientation test; "
+                         "'normal'/'reverse' skip it when the convention is already known "
+                         "from a prior run on the same device (saves one paid job)")
     ap.add_argument("--list-devices", action="store_true")
     ap.add_argument("--selftest", action="store_true",
                     help="verify the emitted QASM equals the reservoir (independent interpreter)")
@@ -519,7 +550,7 @@ def main():
 
     out = run_protocol(args.mode, args.device, n, layers, shots, args.seed, k,
                        tuple(args.scales), args.p_gate, args.p_read,
-                       poll_timeout=args.poll_timeout)
+                       poll_timeout=args.poll_timeout, orientation=args.orientation)
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
