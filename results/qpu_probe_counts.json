@@ -1,0 +1,30 @@
+{
+ "ionq_forte1": {
+  "job_id": "openquantum:ionq:qpu:forte-1-bd52-qjob-6a4835c5c024b34f95b418e8",
+  "shots": 100,
+  "circuit": "RY(pi) on all 8 qubits -> |1>^8 prep",
+  "p_all_ones": 0.97,
+  "counts": {
+   "11111111": 97,
+   "11011111": 2,
+   "11111011": 1
+  }
+ },
+ "iqm_garnet": {
+  "job_id": "openquantum:iqm:qpu:garnet-bd52-qjob-6a4835cbc024b34f95b418ee",
+  "shots": 100,
+  "circuit": "RY(pi) on all 8 qubits -> |1>^8 prep",
+  "p_all_ones": 0.78,
+  "counts": {
+   "11111111": 78,
+   "11111011": 7,
+   "11101111": 5,
+   "11110111": 3,
+   "01111111": 2,
+   "10111111": 2,
+   "11011111": 1,
+   "11101101": 1,
+   "11111101": 1
+  }
+ }
+}
