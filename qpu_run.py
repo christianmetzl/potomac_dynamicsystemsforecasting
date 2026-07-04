@@ -288,7 +288,7 @@ class QbraidRunner:
         self.job_ids = []
         self.max_shots = getattr(self.device.profile, "max_shots", None) or 10 ** 9
 
-    def _run_one(self, qasm, shots, submit_retries=3, poll_timeout=7200):
+    def _run_one(self, qasm, shots, submit_retries=3, poll_timeout=None):
         """Submit -> poll status to terminal -> fetch counts. Resilient to the two
         platform behaviors observed in production: (a) transient instant-FAILED
         ('compute backend did not return a job identifier') -> resubmit with backoff;
@@ -296,6 +296,7 @@ class QbraidRunner:
         snapshot -> re-fetch with FRESH job handles."""
         from qbraid.runtime.native import QbraidJob
         from qbraid.runtime import JobStatus
+        poll_timeout = poll_timeout or getattr(self, "poll_timeout", 7200)
         for attempt in range(1, submit_retries + 1):
             job = self.device.run(qasm, shots=shots)
             jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
@@ -373,7 +374,8 @@ def list_devices():
 # ---------------------------------------------------------------------------
 # The validation protocol (identical for rehearsal and hardware)
 # ---------------------------------------------------------------------------
-def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read):
+def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
+                 poll_timeout=7200):
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -383,6 +385,7 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     runner = None
     if mode == "hw":
         runner = QbraidRunner(device)
+        runner.poll_timeout = poll_timeout
     state = {"reverse": False}
 
     def execute(ops):
@@ -481,6 +484,9 @@ def main():
                     help="rehearsal: readout bit-flip prob (stand-in QPU)")
     ap.add_argument("--tag", default=None,
                     help="artifact-name tag (default: the mode); e.g. --tag garnet_prediction")
+    ap.add_argument("--poll-timeout", type=int, default=7200,
+                    help="seconds to wait per job for a terminal state (raise for devices "
+                         "with availability windows / long queues)")
     ap.add_argument("--list-devices", action="store_true")
     ap.add_argument("--selftest", action="store_true",
                     help="verify the emitted QASM equals the reservoir (independent interpreter)")
@@ -509,7 +515,8 @@ def main():
     print("#" * 76)
 
     out = run_protocol(args.mode, args.device, n, layers, shots, args.seed, k,
-                       tuple(args.scales), args.p_gate, args.p_read)
+                       tuple(args.scales), args.p_gate, args.p_read,
+                       poll_timeout=args.poll_timeout)
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:

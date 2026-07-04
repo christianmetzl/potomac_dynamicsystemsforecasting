@@ -172,7 +172,11 @@ at their larger-budget plateaus):
 *Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
 unpredictability) and the autonomous **VPT** metric still show no advantage; the **recurrent** QRC is
 competitive-not-better — unitary evolution is non-dissipative, lacking the contraction behind ESN
-"generalized synchronization" (Ahmed–Tennie–Magri 2025).
+"generalized synchronization" (Ahmed–Tennie–Magri 2025). We then **demonstrated the mechanism by
+fixing it**: engineered memory-qubit damping shows the pre-registered inverted-U in the damping
+rate and lifts autonomous VPT ≈+60% (replicated on fresh starts), raising the recurrent QRC from
+clearly-behind to **statistical parity** with the size-matched ESN — not better
+(`results/dissipative_qrc_findings.md`).
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: statevector ≤12 qubits, sparse/TN to ≈16, GPU beyond.
@@ -193,9 +197,15 @@ mapping — with **ZNE + measurement mitigation** and a classical cross-check pe
 the engine to **3.9×10⁻¹⁶** via the exact circuit (our per-run classical cross-check),
 (ii) characterizes the **shot budget** (ε≈1/√S; feature error
 0.046→0.0066 at S=256→16k; gate-Trotter(20) adds ≈0.04), and (iii) demonstrates **zero-noise
-extrapolation** under a depolarizing sweep. One `--device` flag from a real backend (pending qBraid
-credits). We thus characterize all four challenge axes: reservoir size, encoding density, shot
-budget, and noise.
+extrapolation** under a depolarizing sweep. **Executed on real hardware:** the full mitigated
+protocol ran on **Rigetti Cepheus-1-108q** (12 logged cloud jobs; little-endian bit order
+auto-detected; measured readout errors 2.3%/6.4%): after lattice routing the scale-1 circuit
+already exceeds the coherence budget (raw feature error 0.261 vs the 0.196 fully-depolarized
+limit), so folded ZNE cannot recover — measuring on metal exactly the accumulated two-qubit-gate
+cost §5.4 predicts; the routing-free trapped-ion run (IonQ Forte-1, all-to-all; hardware probe
+P(|1⟩⁸)=0.97) is queued (`results/qpu_hardware_findings.md`, with pre-registered predictions
+committed before execution). We thus characterize all four challenge axes: reservoir size,
+encoding density, shot budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
@@ -205,14 +215,18 @@ daily-proxy supporting studies (v2_research: cross-asset, COVID — same negativ
 (iii) Task-level noise is characterized via per-layer single-qubit channels (density-matrix, §5.4)
 and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is deferred to QPU runs.
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
-(v) **No real-QPU run yet** (simulator cross-checked; pending qBraid credit allocation).
+(v) Hardware execution (Rigetti, §6) is a **characterized negative** — scale-1 beyond the
+coherence budget after routing; mitigation *recovery* remains unvalidated on hardware
+(trapped-ion run queued).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they convert
 beyond the simulable frontier is open. A quantum-data probe (`results/quantum_data_crossover_findings.md`)
 shows the QRC natively reads nonlinear *state* functionals (purity, entanglement) a linear readout
-cannot, but a budget-matched classical still edges it at k≤4 — and the proper baseline, **classical
-shadows** (Huang–Kueng–Preskill 2020, also measurement-efficient; not yet run), would be at least
-as strong: a genuine quantum-data edge is an **honest open question**, not shown here, and the one
-regime this challenge's classical-data tracks never probe.
+cannot, but the proper baseline — **classical shadows** (Huang–Kueng–Preskill 2020), now run
+head-to-head at matched per-state budgets with an ensemble-prior guard — **wins wherever real
+information is extracted**, including the shadows-hard Tr(ρ³) (nominal QRC "wins" at tiny budgets
+equal the trivial prior and are discarded; `results/shadows_hard_findings.md`): the quantum-data
+question is **closed negatively at simulable scale**; hardware-native many-qubit inputs remain the
+one untested regime.
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, dynamic risk limits and derivatives pricing.

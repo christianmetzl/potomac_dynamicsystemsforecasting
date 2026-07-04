@@ -6,77 +6,77 @@
    "domain": "finance",
    "n": 8,
    "k": 3,
-   "vs_local_mean": 0.01587747200728213,
-   "vs_local_max": 0.051375263796810955,
-   "vs_engine_mean": 0.01951062516541468,
-   "vs_engine_max": 0.07978523838958279
+   "vs_local_mean": 0.014998946095684706,
+   "vs_local_max": 0.044805084515416094,
+   "vs_engine_mean": 0.017646721250564587,
+   "vs_engine_max": 0.06468454809327578
   },
   {
    "domain": "finance",
    "n": 10,
    "k": 3,
-   "vs_local_mean": 0.015444888866128671,
-   "vs_local_max": 0.04823815326083558,
-   "vs_engine_mean": 0.11870619710895738,
-   "vs_engine_max": 0.6188170803073351
+   "vs_local_mean": 0.01673893915224967,
+   "vs_local_max": 0.06140302719977908,
+   "vs_engine_mean": 0.016747625147848832,
+   "vs_engine_max": 0.09225888006369284
   },
   {
    "domain": "mnist",
    "n": 10,
    "k": 3,
-   "vs_local_mean": 0.01708991651042269,
-   "vs_local_max": 0.06964582577864076,
-   "vs_engine_mean": 0.02027980198228568,
-   "vs_engine_max": 0.07461778563215443
+   "vs_local_mean": 0.018997521430518596,
+   "vs_local_max": 0.06072949867000893,
+   "vs_engine_mean": 0.019667747622788664,
+   "vs_engine_max": 0.06945596539213984
   },
   {
    "domain": "weather",
    "n": 10,
    "k": 3,
-   "vs_local_mean": 0.019335677816000377,
-   "vs_local_max": 0.062456582738448535,
-   "vs_engine_mean": 0.02227584886763924,
-   "vs_engine_max": 0.06790453570807688
+   "vs_local_mean": 0.016227521785421486,
+   "vs_local_max": 0.049528882317198986,
+   "vs_engine_mean": 0.01943702905642516,
+   "vs_engine_max": 0.06507372977443134
   },
   {
    "domain": "finance",
    "n": 12,
    "k": 3,
-   "vs_local_mean": 0.08768937712495495,
-   "vs_local_max": 0.2899344891287595,
-   "vs_engine_mean": 0.15586780011650755,
-   "vs_engine_max": 0.7534486683977741
+   "vs_local_mean": 0.1459919646823802,
+   "vs_local_max": 0.4582356897464639,
+   "vs_engine_mean": 0.14267404456645622,
+   "vs_engine_max": 0.45863852016617435
   },
   {
    "domain": "mnist",
    "n": 8,
    "k": 3,
-   "vs_local_mean": 0.019352798313509903,
-   "vs_local_max": 0.06810604757517544,
-   "vs_engine_mean": 0.02233998166845442,
-   "vs_engine_max": 0.08764547464198
+   "vs_local_mean": 0.017742307444005397,
+   "vs_local_max": 0.07748477486128433,
+   "vs_engine_mean": 0.019119219953136656,
+   "vs_engine_max": 0.07599730157339787
   }
  ],
  "job_ids": [
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490bfec024b34f95b4597d",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490c1fc024b34f95b459e3",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490c3fc024b34f95b459ea",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490c64c024b34f95b459fb",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490cd60d6e5eddfaac78a4",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490d480d6e5eddfaac78bb",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490db40d6e5eddfaac78dd",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490e260d6e5eddfaac7900",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490e980d6e5eddfaac791f",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490f0b0d6e5eddfaac7944",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490f7d0d6e5eddfaac7968",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a490ff00d6e5eddfaac798c",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4910d60d6e5eddfaac79c4",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4913070d6e5eddfaac7a64",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4915420d6e5eddfaac7b09",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a49177c0d6e5eddfaac7baa",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a49179c0d6e5eddfaac7bba",
-  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4917bd0d6e5eddfaac7bc4"
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491a560d6e5eddfaac7c39",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491a770d6e5eddfaac7c49",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491a980d6e5eddfaac7c53",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491aba0d6e5eddfaac7c62",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491b2d0d6e5eddfaac7c87",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491b9f0d6e5eddfaac7cab",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491c130d6e5eddfaac7ccf",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491c850d6e5eddfaac7cf2",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491cf70d6e5eddfaac7d16",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491d6b0d6e5eddfaac7d56",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491ddd0d6e5eddfaac7d84",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491e500d6e5eddfaac7db2",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a491ef60d6e5eddfaac7df3",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a49211c0d6e5eddfaac7ed0",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4923430d6e5eddfaac7fe1",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4925680d6e5eddfaac80fe",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a4925890d6e5eddfaac8110",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a49259f0d6e5eddfaac8123"
  ],
  "shot_floor": 0.022360679774997897,
- "wall_clock_s": 3042.8
+ "wall_clock_s": 2920.7
 }

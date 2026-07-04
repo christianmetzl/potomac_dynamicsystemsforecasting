@@ -1,0 +1,68 @@
+{
+ "mode": "hw",
+ "device": "aws:rigetti:qpu:cepheus-1-108q",
+ "n": 8,
+ "layers": 20,
+ "shots": 2000,
+ "scales": [
+  1,
+  3,
+  5
+ ],
+ "readout_e0": [
+  0.006,
+  0.021,
+  0.0125,
+  0.008,
+  0.014000000000000002,
+  0.07700000000000001,
+  0.0325,
+  0.01
+ ],
+ "readout_e1": [
+  0.04900000000000001,
+  0.0675,
+  0.05800000000000001,
+  0.04700000000000001,
+  0.035500000000000004,
+  0.09250000000000003,
+  0.07300000000000001,
+  0.089
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.2611437079928199,
+   0.63612967908661
+  ],
+  "readout-mitigated": [
+   0.2607297149769425,
+   0.6198019561064285
+  ],
+  "+ ZNE linear": [
+   0.26458072114712666,
+   0.6432565244008375
+  ],
+  "+ ZNE Richardson": [
+   0.2557667942528535,
+   0.7145817592336937
+  ]
+ },
+ "improved": false,
+ "job_ids": [
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a491cfe0d6e5eddfaac7d1b",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a491d140d6e5eddfaac7d26",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a491d290d6e5eddfaac7d30",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a491d350d6e5eddfaac7d3e",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a4927c70d6e5eddfaac8202",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492a2c0d6e5eddfaac82e9",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492a610d6e5eddfaac82fd",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492a8d0d6e5eddfaac830e",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492abb0d6e5eddfaac831b",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492ae60d6e5eddfaac832d",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492b120d6e5eddfaac8340",
+  "aws:rigetti:qpu:cepheus-1-108q-bd52-qjob-6a492b410d6e5eddfaac8351"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 3703.1
+}
