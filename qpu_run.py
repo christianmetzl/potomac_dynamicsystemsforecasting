@@ -56,8 +56,9 @@ TAU, HX, CONN = 2.0, 1.0, 0.5
 # ---------------------------------------------------------------------------
 def base_ops(w, n, J, layers):
     """CHIMERA gate-Trotter circuit as (gate, wires, angle) tuples.
-    IsingZZ(phi)=exp(-i phi/2 ZZ) decomposed as CX(i,j) RZ(phi)(j) CX(i,j)."""
-    ops = [("ry", (q,), np.pi * float(np.clip(w[q % len(w)], 0, 1))) for q in range(n)]
+    IsingZZ(phi)=exp(-i phi/2 ZZ) decomposed as CX(i,j) RZ(phi)(j) CX(i,j).
+    Matches the engine exactly: one value per qubit, qubits beyond len(w) stay |0>."""
+    ops = [("ry", (q,), np.pi * float(np.clip(w[q], 0, 1))) for q in range(min(len(w), n))]
     dt = TAU / layers
     for _ in range(layers):
         for i in range(n):
