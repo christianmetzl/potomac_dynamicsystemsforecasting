@@ -478,6 +478,8 @@ def main():
                     help="rehearsal: depolarizing prob per qubit per 2q gate (stand-in QPU)")
     ap.add_argument("--p-read", type=float, default=0.02,
                     help="rehearsal: readout bit-flip prob (stand-in QPU)")
+    ap.add_argument("--tag", default=None,
+                    help="artifact-name tag (default: the mode); e.g. --tag garnet_prediction")
     ap.add_argument("--list-devices", action="store_true")
     ap.add_argument("--selftest", action="store_true",
                     help="verify the emitted QASM equals the reservoir (independent interpreter)")
@@ -510,7 +512,7 @@ def main():
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
-        tag = "hw" if args.mode == "hw" else args.mode
+        tag = args.tag or ("hw" if args.mode == "hw" else args.mode)
         np.save(f"qpu_run_{tag}_results.npy", out, allow_pickle=True)
         with open(f"results/qpu_run_{tag}.json", "w") as f:
             json.dump(out, f, indent=1)
