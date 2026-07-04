@@ -287,14 +287,43 @@ class QbraidRunner:
         self.job_ids = []
         self.max_shots = getattr(self.device.profile, "max_shots", None) or 10 ** 9
 
-    def _run_one(self, qasm, shots):
-        job = self.device.run(qasm, shots=shots)
-        jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
-        self.job_ids.append(str(jid))
-        print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
-        res = job.result()
-        data = res.data
-        return data.get_counts() if hasattr(data, "get_counts") else data.measurement_counts
+    def _run_one(self, qasm, shots, submit_retries=3, poll_timeout=7200):
+        """Submit -> poll status to terminal -> fetch counts. Resilient to the two
+        platform behaviors observed in production: (a) transient instant-FAILED
+        ('compute backend did not return a job identifier') -> resubmit with backoff;
+        (b) counts lagging job completion + result() caching its first empty
+        snapshot -> re-fetch with FRESH job handles."""
+        from qbraid.runtime.native import QbraidJob
+        from qbraid.runtime import JobStatus
+        for attempt in range(1, submit_retries + 1):
+            job = self.device.run(qasm, shots=shots)
+            jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
+            self.job_ids.append(str(jid))
+            print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
+            t0 = time.time()
+            while time.time() - t0 < poll_timeout:
+                st = QbraidJob(jid, client=self.provider.client).status()
+                if st == JobStatus.COMPLETED:
+                    for _ in range(30):                      # counts-propagation retry
+                        try:
+                            data = QbraidJob(jid, client=self.provider.client).result().data
+                            return (data.get_counts() if hasattr(data, "get_counts")
+                                    else data.measurement_counts)
+                        except ValueError as e:
+                            if "not available" not in str(e):
+                                raise
+                            time.sleep(5)
+                    raise TimeoutError(f"counts never propagated for {jid}")
+                if st in (JobStatus.FAILED, JobStatus.CANCELLED):
+                    print(f"    job {jid}: {st} (platform transient?) - "
+                          f"resubmit {attempt}/{submit_retries}", flush=True)
+                    time.sleep(60 * attempt)
+                    break                                     # -> resubmit
+                time.sleep(10)
+            else:
+                raise TimeoutError(f"job {jid} not terminal within {poll_timeout}s")
+        raise RuntimeError(f"job failed after {submit_retries} submissions "
+                           f"(qBraid platform issue - retry later)")
 
     def run(self, qasm, shots):
         """Respect the device's per-job shot cap by splitting into batches and
