@@ -414,7 +414,10 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
 
     # 1) readout calibration: |0..0> and |1..1> (RY(pi)|0> = |1>)
     print("[1/3] readout calibration (2 circuits)...", flush=True)
-    cal0 = execute([])                                   # identity -> |0...0>
+    # identity -> |0...0>; expressed as RY(pi)RY(-pi) per qubit because some backends
+    # (IonQ JSON) reject gate-less circuits at validation
+    cal0 = execute([op for q in range(n)
+                    for op in (("ry", (q,), np.pi), ("ry", (q,), -np.pi))])
     cal1 = execute([("ry", (q,), np.pi) for q in range(n)])   # RY(pi)|0> = |1>
     Ms = confusion_from_calibration(cal0, cal1, n)
     Minv = mitigation_matrix(Ms)
