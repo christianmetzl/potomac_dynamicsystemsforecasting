@@ -318,6 +318,13 @@ class QbraidRunner:
                     raise TimeoutError(f"counts never propagated for {jid}")
                 if st in (JobStatus.FAILED, JobStatus.CANCELLED):
                     reason = self._failure_reason(jid)
+                    if not (reason and "credit" in reason.lower()):
+                        # statusMsg is backfilled asynchronously: right after FAILED
+                        # the API may only show a generic init error while the
+                        # dashboard later reads 'Insufficient credits' (observed in
+                        # production). Re-fetch once before spending a resubmission.
+                        time.sleep(30)
+                        reason = self._failure_reason(jid) or reason
                     if reason and "credit" in reason.lower():
                         raise RuntimeError(
                             f"job {jid} FAILED: '{reason}' - provider credit pool "
