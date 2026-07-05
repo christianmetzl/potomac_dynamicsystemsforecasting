@@ -89,14 +89,22 @@ def folded_ops(ops, scale):
 
 
 def to_qasm2(ops, n):
-    """Minimal, backend-portable OpenQASM 2.0 (ry/rx/rz/cx + full measurement)."""
+    """Minimal, backend-portable OpenQASM 2.0 (ry/rx/rz/cx + full measurement).
+
+    Rotation angles are emitted mod 2*pi (theta and theta+2*pi differ only by a
+    global phase, so every measurement distribution is identical): measured on
+    IonQ Forte-1 that a RY(pi)RY(-pi) identity pair executes as net RY(pi) --
+    i.e. the platform silently mishandles negative-angle rotations, which would
+    also corrupt the negated gates ZNE folding emits. Non-negative emission
+    makes the same QASM safe on every backend."""
+    two_pi = 2.0 * np.pi
     lines = ['OPENQASM 2.0;', 'include "qelib1.inc";',
              f'qreg q[{n}];', f'creg c[{n}];']
     for g, wires, a in ops:
         if g == "cx":
             lines.append(f"cx q[{wires[0]}],q[{wires[1]}];")
         else:
-            lines.append(f"{g}({a:.12f}) q[{wires[0]}];")
+            lines.append(f"{g}({float(a) % two_pi:.12f}) q[{wires[0]}];")
     lines += [f"measure q[{i}] -> c[{i}];" for i in range(n)]
     return "\n".join(lines) + "\n"
 
@@ -449,10 +457,11 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
 
     # 1) readout calibration: |0..0> and |1..1> (RY(pi)|0> = |1>)
     print("[1/3] readout calibration (2 circuits)...", flush=True)
-    # identity -> |0...0>; expressed as RY(pi)RY(-pi) per qubit because some backends
-    # (IonQ JSON) reject gate-less circuits at validation
-    cal0 = execute([op for q in range(n)
-                    for op in (("ry", (q,), np.pi), ("ry", (q,), -np.pi))])
+    # |0...0> prep must contain gates (IonQ rejects gate-less circuits) yet stay
+    # exact even if the backend drops or merges gates (measured on Forte-1 with a
+    # RY(pi)RY(-pi) pair): rz-only circuits are diagonal, so |0...0> is invariant
+    # under ANY subset of them executing.
+    cal0 = execute([("rz", (q,), 0.5) for q in range(n)])
     cal1 = execute([("ry", (q,), np.pi) for q in range(n)])   # RY(pi)|0> = |1>
     Ms = confusion_from_calibration(cal0, cal1, n)
     Minv = mitigation_matrix(Ms)
