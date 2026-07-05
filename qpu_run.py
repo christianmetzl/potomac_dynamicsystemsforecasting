@@ -348,6 +348,23 @@ class QbraidRunner:
         raise RuntimeError(f"job failed after {submit_retries} submissions "
                            f"(qBraid platform issue - retry later)")
 
+    def fetch_counts(self, jid):
+        """Fetch counts of an already-COMPLETED job (checkpoint reuse: pay once,
+        resume across interrupted runs). Fresh handles, same propagation retry
+        as _run_one."""
+        from qbraid.runtime.native import QbraidJob
+        self.job_ids.append(str(jid))
+        for _ in range(30):
+            try:
+                data = QbraidJob(str(jid), client=self.provider.client).result().data
+                return (data.get_counts() if hasattr(data, "get_counts")
+                        else data.measurement_counts)
+            except ValueError as e:
+                if "not available" not in str(e):
+                    raise
+                time.sleep(5)
+        raise TimeoutError(f"counts never propagated for {jid}")
+
     def _failure_reason(self, jid):
         """Best-effort fetch of the server-side failure message (e.g. the
         OpenQuantum 'Insufficient credits' seen in production)."""
@@ -406,7 +423,8 @@ def list_devices():
 # The validation protocol (identical for rehearsal and hardware)
 # ---------------------------------------------------------------------------
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
-                 poll_timeout=7200, orientation="probe", submit_retries=3):
+                 poll_timeout=7200, orientation="probe", submit_retries=3,
+                 reuse_cal0_job=None):
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -461,7 +479,14 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     # exact even if the backend drops or merges gates (measured on Forte-1 with a
     # RY(pi)RY(-pi) pair): rz-only circuits are diagonal, so |0...0> is invariant
     # under ANY subset of them executing.
-    cal0 = execute([("rz", (q,), 0.5) for q in range(n)])
+    if reuse_cal0_job and mode == "hw":
+        print(f"    cal0 reused from completed job {reuse_cal0_job} "
+              f"(checkpoint, no new job billed)", flush=True)
+        cal0 = _norm_counts(runner.fetch_counts(reuse_cal0_job), n)
+        if state["reverse"]:
+            cal0 = {k[::-1]: v for k, v in cal0.items()}
+    else:
+        cal0 = execute([("rz", (q,), 0.5) for q in range(n)])
     cal1 = execute([("ry", (q,), np.pi) for q in range(n)])   # RY(pi)|0> = |1>
     Ms = confusion_from_calibration(cal0, cal1, n)
     Minv = mitigation_matrix(Ms)
@@ -534,6 +559,10 @@ def main():
     ap.add_argument("--poll-timeout", type=int, default=7200,
                     help="seconds to wait per job for a terminal state (raise for devices "
                          "with availability windows / long queues)")
+    ap.add_argument("--reuse-cal0-job", default=None,
+                    help="qBraid job ID of an already-COMPLETED |0..0> calibration on the "
+                         "same device: reuse its counts instead of billing a new job "
+                         "(checkpoint resume after an interrupted hw run)")
     ap.add_argument("--submit-retries", type=int, default=3,
                     help="submissions per circuit before giving up (1 = polite mode: "
                          "each failed job triggers a qBraid email to the account owner)")
@@ -572,7 +601,8 @@ def main():
     out = run_protocol(args.mode, args.device, n, layers, shots, args.seed, k,
                        tuple(args.scales), args.p_gate, args.p_read,
                        poll_timeout=args.poll_timeout, orientation=args.orientation,
-                       submit_retries=args.submit_retries)
+                       submit_retries=args.submit_retries,
+                       reuse_cal0_job=args.reuse_cal0_job)
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
