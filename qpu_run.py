@@ -288,7 +288,7 @@ class QbraidRunner:
         self.job_ids = []
         self.max_shots = getattr(self.device.profile, "max_shots", None) or 10 ** 9
 
-    def _run_one(self, qasm, shots, submit_retries=3, poll_timeout=None):
+    def _run_one(self, qasm, shots, submit_retries=None, poll_timeout=None):
         """Submit -> poll status to terminal -> fetch counts. Resilient to the two
         platform behaviors observed in production: (a) transient instant-FAILED
         ('compute backend did not return a job identifier') -> resubmit with backoff;
@@ -297,6 +297,7 @@ class QbraidRunner:
         from qbraid.runtime.native import QbraidJob
         from qbraid.runtime import JobStatus
         poll_timeout = poll_timeout or getattr(self, "poll_timeout", 7200)
+        submit_retries = submit_retries or getattr(self, "submit_retries", 3)
         for attempt in range(1, submit_retries + 1):
             job = self.device.run(qasm, shots=shots)
             jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
@@ -397,7 +398,7 @@ def list_devices():
 # The validation protocol (identical for rehearsal and hardware)
 # ---------------------------------------------------------------------------
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
-                 poll_timeout=7200, orientation="probe"):
+                 poll_timeout=7200, orientation="probe", submit_retries=3):
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -408,6 +409,7 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     if mode == "hw":
         runner = QbraidRunner(device)
         runner.poll_timeout = poll_timeout
+        runner.submit_retries = submit_retries
     state = {"reverse": False}
 
     def execute(ops):
@@ -523,6 +525,9 @@ def main():
     ap.add_argument("--poll-timeout", type=int, default=7200,
                     help="seconds to wait per job for a terminal state (raise for devices "
                          "with availability windows / long queues)")
+    ap.add_argument("--submit-retries", type=int, default=3,
+                    help="submissions per circuit before giving up (1 = polite mode: "
+                         "each failed job triggers a qBraid email to the account owner)")
     ap.add_argument("--orientation", choices=["probe", "normal", "reverse"],
                     default="probe",
                     help="bit-order handling: 'probe' runs the 1-job orientation test; "
@@ -557,7 +562,8 @@ def main():
 
     out = run_protocol(args.mode, args.device, n, layers, shots, args.seed, k,
                        tuple(args.scales), args.p_gate, args.p_read,
-                       poll_timeout=args.poll_timeout, orientation=args.orientation)
+                       poll_timeout=args.poll_timeout, orientation=args.orientation,
+                       submit_retries=args.submit_retries)
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
