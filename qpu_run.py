@@ -41,6 +41,7 @@ Team EIGENNEXUS | GIC 2026 Phase 3 (hardware validation path; see QPU_RUNBOOK.md
 """
 import argparse
 import json
+import os
 import time
 import numpy as np
 
@@ -311,6 +312,8 @@ class QbraidRunner:
             jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
             self.job_ids.append(str(jid))
             print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
+            if getattr(self, "on_submit", None):
+                self.on_submit(str(jid))                  # checkpoint pending submission
             t0 = time.time()
             while time.time() - t0 < poll_timeout:
                 st = QbraidJob(jid, client=self.provider.client).status()
@@ -364,6 +367,24 @@ class QbraidRunner:
                     raise
                 time.sleep(5)
         raise TimeoutError(f"counts never propagated for {jid}")
+
+    def resume_job(self, jid):
+        """Re-attach to a job submitted by an interrupted run: poll it to terminal
+        instead of buying a duplicate. Returns counts, or None if it FAILED /
+        was CANCELLED (caller then submits fresh)."""
+        from qbraid.runtime.native import QbraidJob
+        from qbraid.runtime import JobStatus
+        poll_timeout = getattr(self, "poll_timeout", 7200)
+        t0 = time.time()
+        while time.time() - t0 < poll_timeout:
+            st = QbraidJob(str(jid), client=self.provider.client).status()
+            if st == JobStatus.COMPLETED:
+                return self.fetch_counts(jid)
+            if st in (JobStatus.FAILED, JobStatus.CANCELLED):
+                print(f"    pending job {jid} ended {st} - submitting fresh", flush=True)
+                return None
+            time.sleep(10)
+        raise TimeoutError(f"pending job {jid} not terminal within {poll_timeout}s")
 
     def _failure_reason(self, jid):
         """Best-effort fetch of the server-side failure message (e.g. the
@@ -424,7 +445,7 @@ def list_devices():
 # ---------------------------------------------------------------------------
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
                  poll_timeout=7200, orientation="probe", submit_retries=3,
-                 reuse_cal0_job=None):
+                 reuse_cal0_job=None, tag=None):
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -438,15 +459,64 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
         runner.submit_retries = submit_retries
     state = {"reverse": False}
 
-    def execute(ops):
+    # --- job-level checkpointing (hw only): every completed circuit's counts and
+    # every in-flight submission are persisted, so an interrupted run (credit
+    # exhaustion, container restart) resumes without re-billing paid jobs.
+    cfg = {"device": device, "n": n, "layers": layers, "shots": shots,
+           "windows": k_windows, "scales": list(scales), "seed": seed,
+           "orientation": orientation}
+    ckpt_path = f"results/qpu_ckpt_{tag}.json" if (mode == "hw" and tag) else None
+    ckpt = {"config": cfg, "jobs": {}, "pending": {}}
+    if ckpt_path and os.path.exists(ckpt_path):
+        old = json.load(open(ckpt_path))
+        if old.get("config") == cfg:
+            ckpt = old
+            ckpt.setdefault("jobs", {}); ckpt.setdefault("pending", {})
+            print(f"checkpoint loaded: {len(ckpt['jobs'])} completed circuit(s), "
+                  f"{len(ckpt['pending'])} pending ({ckpt_path})", flush=True)
+        else:
+            print(f"checkpoint {ckpt_path} has a DIFFERENT config - starting fresh",
+                  flush=True)
+
+    def _save_ckpt():
+        if ckpt_path:
+            tmp = ckpt_path + ".tmp"
+            json.dump(ckpt, open(tmp, "w"), indent=1)
+            os.replace(tmp, ckpt_path)
+
+    def execute(ops, label=None):
+        use_ckpt = ckpt_path and label
+        if use_ckpt and label in ckpt["jobs"]:
+            e = ckpt["jobs"][label]
+            print(f"    [{label}] reused from checkpoint (job {e['job']}, no new job "
+                  f"billed)", flush=True)
+            return {k: int(v) for k, v in e["counts"].items()}
         if mode == "hw":
-            counts = runner.run(to_qasm2(ops, n), shots)
+            if use_ckpt and label in ckpt["pending"]:
+                jid = ckpt["pending"][label]
+                print(f"    [{label}] re-attaching to pending job {jid}...", flush=True)
+                counts = runner.resume_job(jid)
+                if counts is None:                       # FAILED/CANCELLED -> fresh
+                    del ckpt["pending"][label]; _save_ckpt()
+                    counts = runner.run(to_qasm2(ops, n), shots)
+            else:
+                if use_ckpt:
+                    runner.on_submit = (lambda j, L=label:
+                                        (ckpt["pending"].__setitem__(L, j), _save_ckpt()))
+                counts = runner.run(to_qasm2(ops, n), shots)
         else:
             counts = run_counts_pennylane(ops, n, shots, device if mode == "pl" else None,
                                           p_gate=(p_gate if mode == "rehearsal" else 0.0),
                                           p_read=(p_read if mode == "rehearsal" else 0.0))
         if state["reverse"]:
             counts = {k[::-1]: v for k, v in _norm_counts(counts, n).items()}
+        if use_ckpt and mode == "hw":
+            ckpt["jobs"][label] = {"job": runner.job_ids[-1],
+                                   "counts": {k: int(v) for k, v in
+                                              _norm_counts(counts, n).items()}}
+            ckpt["pending"].pop(label, None)
+            runner.on_submit = None
+            _save_ckpt()
         return counts
 
     # 0) bit-order orientation probe: |1> on qubit 0 ONLY. If the backend keys
@@ -462,8 +532,8 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
               "prior run on this device)", flush=True)
     else:
         print("\n[0/3] bit-order orientation probe (1 tiny circuit)...", flush=True)
-        zi = features_from_probs(probs_from_counts(execute([("ry", (0,), np.pi)]), n),
-                                 n)[:n]
+        zi = features_from_probs(probs_from_counts(
+            execute([("ry", (0,), np.pi)], label="orient"), n), n)[:n]
         if zi[0] < -0.5:
             print("    orientation OK (qubit 0 = leftmost bit)")
         elif zi[-1] < -0.5:
@@ -486,8 +556,9 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
         if state["reverse"]:
             cal0 = {k[::-1]: v for k, v in cal0.items()}
     else:
-        cal0 = execute([("rz", (q,), 0.5) for q in range(n)])
-    cal1 = execute([("ry", (q,), np.pi) for q in range(n)])   # RY(pi)|0> = |1>
+        cal0 = execute([("rz", (q,), 0.5) for q in range(n)], label="cal0")
+    cal1 = execute([("ry", (q,), np.pi) for q in range(n)],
+                   label="cal1")                              # RY(pi)|0> = |1>
     Ms = confusion_from_calibration(cal0, cal1, n)
     Minv = mitigation_matrix(Ms)
     e0s = [float(M[1, 0]) for M in Ms]; e1s = [float(M[0, 1]) for M in Ms]
@@ -502,7 +573,7 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
         ops = base_ops(w, n, J, layers)
         F_scales_raw, F_scales_mit = [], []
         for s in scales:
-            counts = execute(folded_ops(ops, s))
+            counts = execute(folded_ops(ops, s), label=f"w{wi}_s{s}")
             p = probs_from_counts(counts, n)
             F_scales_raw.append(features_from_probs(p, n))
             F_scales_mit.append(features_from_probs(mitigate_probs(p, Minv), n))
@@ -598,15 +669,16 @@ def main():
               f"readout flip {args.p_read}  (full-dress offline rehearsal)")
     print("#" * 76)
 
+    tag = args.tag or ("hw" if args.mode == "hw" else args.mode)
     out = run_protocol(args.mode, args.device, n, layers, shots, args.seed, k,
                        tuple(args.scales), args.p_gate, args.p_read,
                        poll_timeout=args.poll_timeout, orientation=args.orientation,
                        submit_retries=args.submit_retries,
-                       reuse_cal0_job=args.reuse_cal0_job)
+                       reuse_cal0_job=args.reuse_cal0_job,
+                       tag=(None if args.quick else tag))
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
-        tag = args.tag or ("hw" if args.mode == "hw" else args.mode)
         np.save(f"qpu_run_{tag}_results.npy", out, allow_pickle=True)
         with open(f"results/qpu_run_{tag}.json", "w") as f:
             json.dump(out, f, indent=1)
