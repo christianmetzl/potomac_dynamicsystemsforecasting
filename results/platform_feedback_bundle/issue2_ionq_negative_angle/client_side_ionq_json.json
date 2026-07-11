@@ -1,0 +1,87 @@
+{
+ "qubits": 8,
+ "circuit": [
+  {
+   "gate": "ry",
+   "target": 0,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 0,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 1,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 1,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 2,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 2,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 3,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 3,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 4,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 4,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 5,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 5,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 6,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 6,
+   "rotation": -3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 7,
+   "rotation": 3.14159265359
+  },
+  {
+   "gate": "ry",
+   "target": 7,
+   "rotation": -3.14159265359
+  }
+ ],
+ "gateset": "qis",
+ "format": "ionq.circuit.v0"
+}
