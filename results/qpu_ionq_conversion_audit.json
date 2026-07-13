@@ -1,0 +1,102 @@
+{
+ "emitter": "qpu_run.to_qasm2 (angles mod 2*pi, post-hardening)",
+ "converter": "qbraid.transpiler.conversions.openqasm3.openqasm3_to_ionq (qbraid 0.12.1)",
+ "config": {
+  "n": 8,
+  "layers": 20,
+  "seed": 0,
+  "windows": 3,
+  "scales": [
+   1,
+   3,
+   5
+  ]
+ },
+ "verdict": "all 12 circuit classes convert; zero negative angles at every fold scale",
+ "circuits": [
+  {
+   "circuit": "cal0",
+   "ionq_json_gates": 8,
+   "two_qubit_gates": 0,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "cal1",
+   "ionq_json_gates": 8,
+   "two_qubit_gates": 0,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "orient",
+   "ionq_json_gates": 1,
+   "two_qubit_gates": 0,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w0_s1",
+   "ionq_json_gates": 828,
+   "two_qubit_gates": 440,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w0_s3",
+   "ionq_json_gates": 2484,
+   "two_qubit_gates": 1320,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w0_s5",
+   "ionq_json_gates": 4140,
+   "two_qubit_gates": 2200,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w1_s1",
+   "ionq_json_gates": 828,
+   "two_qubit_gates": 440,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w1_s3",
+   "ionq_json_gates": 2484,
+   "two_qubit_gates": 1320,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w1_s5",
+   "ionq_json_gates": 4140,
+   "two_qubit_gates": 2200,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w2_s1",
+   "ionq_json_gates": 828,
+   "two_qubit_gates": 440,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w2_s3",
+   "ionq_json_gates": 2484,
+   "two_qubit_gates": 1320,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  },
+  {
+   "circuit": "w2_s5",
+   "ionq_json_gates": 4140,
+   "two_qubit_gates": 2200,
+   "negative_angles_qasm": 0,
+   "negative_angles_json": 0
+  }
+ ]
+}

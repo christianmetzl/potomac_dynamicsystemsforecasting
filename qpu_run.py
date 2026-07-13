@@ -445,7 +445,11 @@ def list_devices():
 # ---------------------------------------------------------------------------
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
                  poll_timeout=7200, orientation="probe", submit_retries=3,
-                 reuse_cal0_job=None, tag=None):
+                 reuse_cal0_job=None, tag=None, probe_shots=None):
+    # the orientation probe answers a binary question (which end of the bitstring
+    # is qubit 0) - a fraction of the campaign shots is statistically ample and,
+    # on per-shot-billed QPUs, materially cheaper
+    probe_shots = probe_shots or shots
     J = generate_coupling_matrix(n, CONN, seed=seed)
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
@@ -484,7 +488,8 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
             json.dump(ckpt, open(tmp, "w"), indent=1)
             os.replace(tmp, ckpt_path)
 
-    def execute(ops, label=None):
+    def execute(ops, label=None, n_shots=None):
+        n_shots = n_shots or shots
         use_ckpt = ckpt_path and label
         if use_ckpt and label in ckpt["jobs"]:
             e = ckpt["jobs"][label]
@@ -498,14 +503,14 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
                 counts = runner.resume_job(jid)
                 if counts is None:                       # FAILED/CANCELLED -> fresh
                     del ckpt["pending"][label]; _save_ckpt()
-                    counts = runner.run(to_qasm2(ops, n), shots)
+                    counts = runner.run(to_qasm2(ops, n), n_shots)
             else:
                 if use_ckpt:
                     runner.on_submit = (lambda j, L=label:
                                         (ckpt["pending"].__setitem__(L, j), _save_ckpt()))
-                counts = runner.run(to_qasm2(ops, n), shots)
+                counts = runner.run(to_qasm2(ops, n), n_shots)
         else:
-            counts = run_counts_pennylane(ops, n, shots, device if mode == "pl" else None,
+            counts = run_counts_pennylane(ops, n, n_shots, device if mode == "pl" else None,
                                           p_gate=(p_gate if mode == "rehearsal" else 0.0),
                                           p_read=(p_read if mode == "rehearsal" else 0.0))
         if state["reverse"]:
@@ -533,7 +538,8 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     else:
         print("\n[0/3] bit-order orientation probe (1 tiny circuit)...", flush=True)
         zi = features_from_probs(probs_from_counts(
-            execute([("ry", (0,), np.pi)], label="orient"), n), n)[:n]
+            execute([("ry", (0,), np.pi)], label="orient", n_shots=probe_shots),
+            n), n)[:n]
         if zi[0] < -0.5:
             print("    orientation OK (qubit 0 = leftmost bit)")
         elif zi[-1] < -0.5:
@@ -630,6 +636,10 @@ def main():
     ap.add_argument("--poll-timeout", type=int, default=7200,
                     help="seconds to wait per job for a terminal state (raise for devices "
                          "with availability windows / long queues)")
+    ap.add_argument("--probe-shots", type=int, default=None,
+                    help="shots for the 1-circuit orientation probe (default: --shots). "
+                         "100 is ample - the probe answers a binary question - and much "
+                         "cheaper on per-shot-billed QPUs")
     ap.add_argument("--reuse-cal0-job", default=None,
                     help="qBraid job ID of an already-COMPLETED |0..0> calibration on the "
                          "same device: reuse its counts instead of billing a new job "
@@ -675,7 +685,8 @@ def main():
                        poll_timeout=args.poll_timeout, orientation=args.orientation,
                        submit_retries=args.submit_retries,
                        reuse_cal0_job=args.reuse_cal0_job,
-                       tag=(None if args.quick else tag))
+                       tag=(None if args.quick else tag),
+                       probe_shots=args.probe_shots)
     out["wall_clock_s"] = round(time.time() - t0, 1)
 
     if not args.quick:
