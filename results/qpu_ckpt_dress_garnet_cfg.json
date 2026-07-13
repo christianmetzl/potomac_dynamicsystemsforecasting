@@ -1,0 +1,39 @@
+{
+ "config": {
+  "device": "qbraid:qbraid:sim:qir-sv",
+  "n": 8,
+  "layers": 20,
+  "shots": 4000,
+  "windows": 3,
+  "scales": [
+   1,
+   3,
+   5
+  ],
+  "seed": 0,
+  "orientation": "probe"
+ },
+ "jobs": {
+  "orient": {
+   "job": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5543f95e6838c8f545d3fb",
+   "counts": {
+    "10000000": 100
+   }
+  },
+  "cal0": {
+   "job": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544255e6838c8f545d42d",
+   "counts": {
+    "00000000": 4000
+   }
+  },
+  "cal1": {
+   "job": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544465e6838c8f545d457",
+   "counts": {
+    "11111111": 4000
+   }
+  }
+ },
+ "pending": {
+  "w0_s1": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55445d5e6838c8f545d470"
+ }
+}
