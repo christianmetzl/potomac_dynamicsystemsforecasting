@@ -1,0 +1,79 @@
+{
+ "mode": "hw",
+ "device": "qbraid:qbraid:sim:qir-sv",
+ "n": 8,
+ "layers": 20,
+ "shots": 4000,
+ "scales": [
+  1,
+  3,
+  5
+ ],
+ "readout_e0": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "readout_e1": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.01764575811595696,
+   0.05768454809327572
+  ],
+  "readout-mitigated": [
+   0.01764575811595696,
+   0.05768454809327572
+  ],
+  "+ ZNE linear": [
+   0.018465379556506727,
+   0.06785121475994252
+  ],
+  "+ ZNE Richardson": [
+   0.03095588817402861,
+   0.10424254561035848
+  ]
+ },
+ "improved": false,
+ "job_ids": [
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5543f95e6838c8f545d3fb",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55440f5e6838c8f545d416",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544255e6838c8f545d42d",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55443b5e6838c8f545d445",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544465e6838c8f545d457",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55445d5e6838c8f545d470",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55447d5e6838c8f545d495",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544a05e6838c8f545d4c6",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5544e25e6838c8f545d508",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5545255e6838c8f545d54d",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5545875e6838c8f545d5af",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5545e45e6838c8f545d60c",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5546055e6838c8f545d632",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5546285e6838c8f545d656",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5546695e6838c8f545d69b",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5546a25e6838c8f545d6d6",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5547045e6838c8f545d73e",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5547625e6838c8f545d79d",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5547835e6838c8f545d7c3",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5547a65e6838c8f545d7eb",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5547e75e6838c8f545d82e",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55482b5e6838c8f545d873",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55488c5e6838c8f545d8d4"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 1264.8
+}

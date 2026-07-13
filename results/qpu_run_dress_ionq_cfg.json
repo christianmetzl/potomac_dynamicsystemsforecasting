@@ -1,0 +1,68 @@
+{
+ "mode": "hw",
+ "device": "qbraid:qbraid:sim:qir-sv",
+ "n": 8,
+ "layers": 20,
+ "shots": 500,
+ "scales": [
+  1,
+  3,
+  5
+ ],
+ "readout_e0": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "readout_e1": [
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.03633863616807124,
+   0.1237214069669254
+  ],
+  "readout-mitigated": [
+   0.03633863616807124,
+   0.1237214069669254
+  ],
+  "+ ZNE linear": [
+   0.0420449144117154,
+   0.1422387816901481
+  ],
+  "+ ZNE Richardson": [
+   0.08445828716006583,
+   0.31672140696692425
+  ]
+ },
+ "improved": false,
+ "job_ids": [
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5548ed5e6838c8f545d937",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5548f85e6838c8f545d948",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55490e5e6838c8f545d960",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549255e6838c8f545d978",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55493d5e6838c8f545d995",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549625e6838c8f545d9ba",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55498d5e6838c8f545d9e9",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549a65e6838c8f545da04",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549c15e6838c8f545da23",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549e25e6838c8f545da48",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a5549fb5e6838c8f545da63",
+  "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a554a205e6838c8f545da8b"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 350.3
+}
