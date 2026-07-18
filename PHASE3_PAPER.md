@@ -190,7 +190,7 @@ are computational-basis-diagonal, so one S-shot set yields **all** n+C(n,2) obse
 | 12 | 760 | 240 | 78 | 2k–8k | ~1 min build |
 
 
-**QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / IBM** via qBraid — the
+**QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / Rigetti** via qBraid — the
 random-sparse Ising needs *fewer* two-qubit gates than an all-to-all reservoir, easing NISQ
 mapping — with **ZNE + measurement mitigation** and a classical cross-check per run. The submission path is
 **executable now** (`qbraid_submit.py`, `cli.py run qsubmit`): on a simulator it (i) reproduces
@@ -202,10 +202,19 @@ protocol ran on **Rigetti Cepheus-1-108q** (12 logged cloud jobs; little-endian 
 auto-detected; measured readout errors 2.3%/6.4%): after lattice routing the scale-1 circuit
 already exceeds the coherence budget (raw feature error 0.261 vs the 0.196 fully-depolarized
 limit), so folded ZNE cannot recover — measuring on metal exactly the accumulated two-qubit-gate
-cost §5.4 predicts; the routing-free trapped-ion run (IonQ Forte-1, all-to-all; hardware probe
-P(|1⟩⁸)=0.97) is queued (`results/qpu_hardware_findings.md`, with pre-registered predictions
-committed before execution). We thus characterize all four challenge axes: reservoir size,
-encoding density, shot budget, and noise.
+cost §5.4 predicts. A first **IQM Garnet** reservoir window replicates this regime on a second
+superconducting vendor (raw 0.238; readout 0.6%/3.6%), while cross-platform execution surfaced a
+**platform-level finding**: an RY(π)RY(−π) identity pair executed as **net RY(π)** on the IonQ
+route — the client-side IonQ JSON provably contained both signed rotations, so negative-angle
+gates are lost server-side, which would silently corrupt ZNE's negated fold gates. We hardened
+the emitter (angles mod 2π; diagonal-only |0…0⟩ calibration, exact under *any* subset of gates
+executing) and validated the fix on-device: P(|0⁸⟩)=0.996 vs 0.0 pre-fix, with trapped-ion
+readout ≈0.4%/qubit — the device-class contrast §5.4 anticipates. The full pre-registered
+4k-shot Garnet protocol and the decisive routing-free IonQ Forte-1 campaign are funded and in
+execution under a pre-committed manifest (per-job budget, abort rules:
+`results/qpu_campaign_manifest.md`; predictions committed before execution:
+`results/qpu_hardware_findings.md`). We thus characterize all four challenge axes: reservoir
+size, encoding density, shot budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
@@ -215,9 +224,9 @@ daily-proxy supporting studies (v2_research: cross-asset, COVID — same negativ
 (iii) Task-level noise is characterized via per-layer single-qubit channels (density-matrix, §5.4)
 and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is deferred to QPU runs.
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
-(v) Hardware execution (Rigetti, §6) is a **characterized negative** — scale-1 beyond the
-coherence budget after routing; mitigation *recovery* remains unvalidated on hardware
-(trapped-ion run queued).
+(v) Hardware execution (Rigetti + first Garnet window, §6) is a **characterized negative** —
+scale-1 beyond the coherence budget after routing; mitigation *recovery* remains unvalidated on
+hardware (trapped-ion campaign in execution).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they convert
 beyond the simulable frontier is open. A quantum-data probe (`results/quantum_data_crossover_findings.md`)
 shows the QRC natively reads nonlinear *state* functionals (purity, entanglement) a linear readout
