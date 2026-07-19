@@ -89,3 +89,27 @@ completed-but-miscompiled jobs, session-boundary recalibration.
 - Native devices confirmed ONLINE (Garnet queue depth 0, IonQ 2 at check time).
 - Checkpoint logic verified offline: replay is byte-identical with zero new backend calls;
   config changes invalidate the checkpoint explicitly.
+
+---
+
+## Amendment 1 (2026-07-19, committed before any further spend)
+
+**Budget context change, campaign plan unchanged.** The organizers topped the shared team-org
+pool up to 130k credits total; by agreement with the parallel project sharing the org, **this
+project's ceiling is 65,000 credits for all its computations**. Project-attributed spend is
+auditable via the per-job tags (`campaign=...`) each of our jobs embeds in the platform's
+records.
+
+Allocation under the 65k ceiling (execution order and configs identical to the original
+manifest; the approval gate before each campaign stands):
+
+| item | credits |
+|---|---|
+| Campaign A (Garnet, pre-registered 4k-shot config) | 6,755 |
+| Campaign B (IonQ smoke pair + 11 circuits at 500 shots) | 45,990 |
+| Contingency (per original manifest rules) | 6,255 |
+| Rigetti 4,000-shot replication (original manifest rule 5, now pre-funded) | 2,400 |
+| Reserve (unallocated; remains unspent absent a documented need) | 3,600 |
+| **Project ceiling** | **65,000** |
+
+Project spend to date against this ceiling: 44.5 (Campaign A orientation probe, reserved).
