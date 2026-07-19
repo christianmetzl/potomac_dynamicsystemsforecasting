@@ -12,6 +12,8 @@ We test whether a small quantum reservoir computer (QRC) — a *fixed, untrained
 
 ### 2.1 Hamiltonian
 
+*(Rendered versions: `docs/hamiltonian_light.png` / `docs/hamiltonian_dark.png`; LaTeX source: `docs/hamiltonian.tex`.)*
+
 Transverse-field Ising on a random graph:
 
     H = Σ_{i<j} J_ij Z_i Z_j + h_x Σ_i X_i        (h_z term available, set to 0)

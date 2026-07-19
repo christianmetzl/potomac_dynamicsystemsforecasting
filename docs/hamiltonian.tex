@@ -1,0 +1,21 @@
+% CHIMERA-QRC reservoir Hamiltonian (transverse-field Ising, random graph)
+% Matches qrc_engine.build_ising_hamiltonian / generate_coupling_matrix / qpu_run.base_ops (seed 0)
+
+H \;=\; \sum_{i<j} J_{ij}\, Z_i Z_j \;+\; h_x \sum_{i=1}^{n} X_i,
+\qquad
+J_{ij} = J_{ji} \sim
+\begin{cases}
+  \mathrm{Uniform}(0.5,\, 1.5) & \text{with probability } c = 0.5,\\[2pt]
+  0 & \text{otherwise,}
+\end{cases}
+
+% Parameters and reservoir map (as executed)
+h_x = 1, \qquad n = 8, \qquad U = e^{-iH\tau}, \qquad \tau = 2,
+\qquad
+\lvert \psi_{\mathrm{in}} \rangle \;=\; \bigotimes_{q=1}^{n} R_y(\pi w_q)\,\lvert 0 \rangle,
+\quad w_q \in [0,1]
+
+% Hardware form: first-order Trotter, L = 20 layers
+U \;\approx\; \Bigl[ \prod_{i<j} \mathrm{CX}_{ij}\, R_z^{(j)}(2 J_{ij}\, \delta t)\, \mathrm{CX}_{ij}
+\;\; \prod_{i} R_x^{(i)}(2 h_x\, \delta t) \Bigr]^{L},
+\qquad \delta t = \tau / L
