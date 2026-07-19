@@ -113,3 +113,9 @@ manifest; the approval gate before each campaign stands):
 | **Project ceiling** | **65,000** |
 
 Project spend to date against this ceiling: 44.5 (Campaign A orientation probe, reserved).
+
+**Scope note:** all hardware execution predating the first 60k allocation — the complete
+Rigetti Cepheus-1 protocol, cloud-simulator validation, and the OpenQuantum-route IonQ/Garnet
+work — was **privately funded on the PI's personal account (default org)** and does not count
+against this ceiling. The ceiling covers org-pool spend only, attributable via the per-job
+campaign tags.
