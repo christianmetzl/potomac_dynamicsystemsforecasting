@@ -330,7 +330,7 @@ class QbraidRunner:
                 self.on_submit(str(jid))                  # checkpoint pending submission
             t0 = time.time()
             while time.time() - t0 < poll_timeout:
-                st = QbraidJob(jid, client=self.provider.client).status()
+                st = self._poll_status(jid)
                 if st == JobStatus.COMPLETED:
                     for _ in range(30):                      # counts-propagation retry
                         try:
@@ -365,6 +365,20 @@ class QbraidRunner:
         raise RuntimeError(f"job failed after {submit_retries} submissions "
                            f"(qBraid platform issue - retry later)")
 
+    def _poll_status(self, jid):
+        """Job status with transient-network tolerance: container restarts can
+        briefly leave the egress proxy down; a status poll must survive that
+        instead of killing a mid-campaign runner (observed in production)."""
+        from qbraid.runtime.native import QbraidJob
+        last = None
+        for attempt in range(8):
+            try:
+                return QbraidJob(str(jid), client=self.provider.client).status()
+            except Exception as e:                        # network/proxy transient
+                last = e
+                time.sleep(15 * (attempt + 1))
+        raise last
+
     def fetch_counts(self, jid):
         """Fetch counts of an already-COMPLETED job (checkpoint reuse: pay once,
         resume across interrupted runs). Fresh handles, same propagation retry
@@ -391,7 +405,7 @@ class QbraidRunner:
         poll_timeout = getattr(self, "poll_timeout", 7200)
         t0 = time.time()
         while time.time() - t0 < poll_timeout:
-            st = QbraidJob(str(jid), client=self.provider.client).status()
+            st = self._poll_status(jid)
             if st == JobStatus.COMPLETED:
                 return self.fetch_counts(jid)
             if st in (JobStatus.FAILED, JobStatus.CANCELLED):
