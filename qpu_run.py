@@ -308,7 +308,21 @@ class QbraidRunner:
         poll_timeout = poll_timeout or getattr(self, "poll_timeout", 7200)
         submit_retries = submit_retries or getattr(self, "submit_retries", 3)
         for attempt in range(1, submit_retries + 1):
-            job = self.device.run(qasm, shots=shots)
+            # bind the pre-registered commitment to the job in the PLATFORM's
+            # timestamped records: a job created at server time T carrying the
+            # repo commit hash proves that exact repo content existed before T
+            # (hash preimage) - externally verifiable provenance, no trust in
+            # our git dates required.
+            tags = getattr(self, "job_tags", None)
+            if tags:
+                try:
+                    job = self.device.run(qasm, shots=shots, tags=tags)
+                except Exception:
+                    print("    (platform rejected job tags - submitting untagged)",
+                          flush=True)
+                    job = self.device.run(qasm, shots=shots)
+            else:
+                job = self.device.run(qasm, shots=shots)
             jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
             self.job_ids.append(str(jid))
             print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
@@ -461,6 +475,15 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
         runner = QbraidRunner(device)
         runner.poll_timeout = poll_timeout
         runner.submit_retries = submit_retries
+        try:
+            import subprocess
+            head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                                  text=True, timeout=10).stdout.strip()
+            if head:
+                runner.job_tags = {"commit": head[:12], "campaign": str(tag or "hw")}
+                print(f"job provenance tag: commit={head[:12]} campaign={tag or 'hw'}")
+        except Exception:
+            pass                                          # tags are best-effort
     state = {"reverse": False}
 
     # --- job-level checkpointing (hw only): every completed circuit's counts and
