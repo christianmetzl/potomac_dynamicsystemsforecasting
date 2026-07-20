@@ -1,0 +1,68 @@
+{
+ "mode": "hw",
+ "device": "aws:iqm:qpu:garnet",
+ "n": 8,
+ "layers": 20,
+ "shots": 4000,
+ "scales": [
+  1,
+  3,
+  5
+ ],
+ "readout_e0": [
+  0.0032500000000000003,
+  0.003,
+  0.0045000000000000005,
+  0.0045,
+  0.00725,
+  0.0025,
+  0.0025,
+  0.007
+ ],
+ "readout_e1": [
+  0.033,
+  0.019000000000000003,
+  0.04225000000000001,
+  0.02425,
+  0.037250000000000005,
+  0.012,
+  0.043500000000000004,
+  0.042249999999999996
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.23014704493520702,
+   0.5674779740139452
+  ],
+  "readout-mitigated": [
+   0.227530305890765,
+   0.5783636889793237
+  ],
+  "+ ZNE linear": [
+   0.22658108279508352,
+   0.56761053733762
+  ],
+  "+ ZNE Richardson": [
+   0.2303356240378377,
+   0.6132539413751495
+  ]
+ },
+ "improved": true,
+ "job_ids": [
+  "aws:iqm:qpu:garnet-4500-qjob-6a5bb22fd17a5abc1d707148",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d6524d17a5abc1d70b448",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d654dd17a5abc1d70b452",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d6599d17a5abc1d70b45b",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d65d2d17a5abc1d70b468",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d6617d17a5abc1d70b47b",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d6642d17a5abc1d70b487",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d667ad17a5abc1d70b493",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d66b5d17a5abc1d70b4a0",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d66f4d17a5abc1d70b4ad",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d672cd17a5abc1d70b4bd",
+  "aws:iqm:qpu:garnet-4500-qjob-6a5d6767d17a5abc1d70b4c6"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 22146.0
+}

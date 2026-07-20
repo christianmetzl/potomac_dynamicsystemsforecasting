@@ -20,10 +20,11 @@ drawdown (e.g. GPU/compute instances) belongs to the parallel project.
 
 | platform job ID | campaign tag | status | est. cr | billed cr |
 |---|---|---|---|---|
-| `aws:iqm:qpu:garnet-4500-qjob-6a5bb22fd17a5abc1d707148` | (probe; pre-dates tagging) | QUEUED | 44.5 | pending |
+| `aws:iqm:qpu:garnet-4500-qjob-6a5bb22fd17a5abc1d707148` + 11 campaign jobs (see results JSON) | `hw_garnet_native` | COMPLETED | 6,754.5 | 6,754.5 |
 | `qbraid:qbraid:sim:qir-sv-4500-qjob-6a5c26ded17a5abc1d708762` | `tag_test` | COMPLETED | 0.0 | 0.0 |
 
-**Project spend against the 65,000 ceiling: 44.5 reserved, 0 settled.**
+**Project spend against the 65,000 ceiling: 6,754.5 settled (Campaign A complete, 12 jobs —
+exactly the manifest budget; all 12 job IDs in `results/qpu_run_hw_garnet_native.json`).**
 
 Planned spend (pre-registered: `results/qpu_campaign_manifest.md` + Amendment 1): Campaign A
 (Garnet) ≈6,755 · Campaign B (IonQ) ≈45,990 · contingency 6,255 · Rigetti replication 2,400 ·

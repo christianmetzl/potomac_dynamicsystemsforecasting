@@ -50,10 +50,28 @@ predictions committed BEFORE the run (`results/qpu_hardware_predictions.md`).*
   the pre-registered success criterion — did not occur; the run is a characterized negative, not a
   demonstration of mitigation recovery. The trapped-ion run is the remaining test.
 
+## IQM Garnet — full protocol EXECUTED at the pre-registered 4k-shot config (2026-07-20)
+
+*12 jobs on `aws:iqm:qpu:garnet` (native route, provenance-tagged), 6,754.5 credits settled —
+exactly the manifest budget. Job IDs in `results/qpu_run_hw_garnet_native.json`.*
+
+| stage | mean err | notes |
+|---|---|---|
+| raw (scale 1) | **0.2301** | > depolarized limit 0.1958 → coherent/routing scrambling, **replicating the Rigetti regime on a second superconducting vendor** |
+| readout-mitigated | 0.2275 | small genuine reduction (readout measured 0.43%/3.17%, replicating the OQ-route cals 0.56%/3.55%) |
+| + ZNE linear | 0.2266 | best stage |
+| + ZNE Richardson | 0.2303 | recovery not monotone through Richardson |
+
+**Predictions scored:** (iii) **CONFIRMED** — measured raw 0.2301 exceeds the routing-free 0.171
+prediction, as committed. (i) **REFUTED on this device class** (strictly: Richardson ≥ raw),
+though unlike Rigetti a small real readout+linear improvement exists (0.2301 → 0.2266).
+(ii) now awaits only the IonQ half; the superconducting reference is 0.2301.
+The OQ-route single-window preview (0.238) is consistent with the full-protocol result.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
-| IonQ Forte-1 (36q) | trapped-ion | probe P(|1⟩⁸)=0.97; **full protocol queued** |
-| IQM Garnet (20q) | superconducting | probe P(|1⟩⁸)=0.78; full protocol queued (device window) |
-| Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed** (this document) |
+| IonQ Forte-1 (36q) | trapped-ion | probe P(|1⟩⁸)=0.97; hardened cal validated (0.996); **full campaign next (funded)** |
+| IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed |
+| Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed**: raw 0.2611, characterized negative |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
