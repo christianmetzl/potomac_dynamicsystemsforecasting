@@ -308,21 +308,7 @@ class QbraidRunner:
         poll_timeout = poll_timeout or getattr(self, "poll_timeout", 7200)
         submit_retries = submit_retries or getattr(self, "submit_retries", 3)
         for attempt in range(1, submit_retries + 1):
-            # bind the pre-registered commitment to the job in the PLATFORM's
-            # timestamped records: a job created at server time T carrying the
-            # repo commit hash proves that exact repo content existed before T
-            # (hash preimage) - externally verifiable provenance, no trust in
-            # our git dates required.
-            tags = getattr(self, "job_tags", None)
-            if tags:
-                try:
-                    job = self.device.run(qasm, shots=shots, tags=tags)
-                except Exception:
-                    print("    (platform rejected job tags - submitting untagged)",
-                          flush=True)
-                    job = self.device.run(qasm, shots=shots)
-            else:
-                job = self.device.run(qasm, shots=shots)
+            job = self._submit_with_retry(qasm, shots)
             jid = getattr(job, "id", None) or getattr(job, "job_id", "n/a")
             self.job_ids.append(str(jid))
             print(f"    submitted job {jid} ({shots} shots) - waiting...", flush=True)
@@ -364,6 +350,28 @@ class QbraidRunner:
                 raise TimeoutError(f"job {jid} not terminal within {poll_timeout}s")
         raise RuntimeError(f"job failed after {submit_retries} submissions "
                            f"(qBraid platform issue - retry later)")
+
+    def _submit_with_retry(self, qasm, shots):
+        """Job creation with transient-API tolerance (Runtime API 503s observed in
+        production). Provenance tags bind the repo commit hash into the platform's
+        timestamped records (hash preimage: the exact repo content provably
+        pre-dates the job); they are best-effort - dropped only if a tagged
+        attempt fails while an immediate untagged attempt succeeds."""
+        tags = getattr(self, "job_tags", None)
+        last = None
+        for attempt in range(8):
+            if attempt:
+                print(f"    (submission retry {attempt}/7 after transient API error)",
+                      flush=True)
+                time.sleep(20 * attempt)
+            for use_tags in ((True, False) if tags else (False,)):
+                try:
+                    if use_tags:
+                        return self.device.run(qasm, shots=shots, tags=tags)
+                    return self.device.run(qasm, shots=shots)
+                except Exception as e:
+                    last = e
+        raise last
 
     def _poll_status(self, jid):
         """Job status with transient-network tolerance: container restarts can
