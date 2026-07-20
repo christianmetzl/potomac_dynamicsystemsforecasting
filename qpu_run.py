@@ -630,7 +630,13 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
             F_scales_mit.append(features_from_probs(mitigate_probs(p, Minv), n))
         raw1.append(F_scales_raw[0])                     # unmitigated, scale 1
         mit1.append(F_scales_mit[0])                     # readout-mitigated, scale 1
-        lin, rich = zne_extrapolate(scales, F_scales_mit)
+        if len(scales) == 1:
+            # single-scale protocol (e.g. device gate ceiling < smallest fold):
+            # ZNE is not applicable; carry the mitigated features through so the
+            # chain stays well-defined and honestly labeled downstream.
+            lin, rich = F_scales_mit[0].copy(), F_scales_mit[0].copy()
+        else:
+            lin, rich = zne_extrapolate(scales, F_scales_mit)
         zlin.append(lin); zrich.append(rich)
         print(f"    window {wi+1}/{len(wins)} done", flush=True)
     raw1, mit1 = np.array(raw1), np.array(mit1)
