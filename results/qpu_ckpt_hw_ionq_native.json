@@ -1,0 +1,18 @@
+{
+ "config": {
+  "device": "aws:ionq:qpu:forte-1",
+  "n": 8,
+  "layers": 20,
+  "shots": 500,
+  "windows": 3,
+  "scales": [
+   1
+  ],
+  "seed": 0,
+  "orientation": "reverse"
+ },
+ "jobs": {},
+ "pending": {
+  "cal0": "aws:ionq:qpu:forte-1-4500-qjob-6a5ead6dd17a5abc1d711a74"
+ }
+}
