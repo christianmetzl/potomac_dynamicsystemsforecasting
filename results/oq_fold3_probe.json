@@ -1,0 +1,8 @@
+{
+ "outcome": "REJECTED_OR_FAILED",
+ "jobs": [
+  "openquantum:ionq:qpu:forte-1-bd52-qjob-6a5ead84d17a5abc1d711a81"
+ ],
+ "error": "job failed after 1 submissions (qBraid platform issue - retry later)",
+ "note": "consistent with the 2,000-gate IonQ ceiling binding on the OQ route too"
+}

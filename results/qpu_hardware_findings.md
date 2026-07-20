@@ -36,8 +36,8 @@ predictions committed BEFORE the run (`results/qpu_hardware_predictions.md`).*
    Exactly the failure mode our per-layer noise study (§5.4) predicted for accumulated
    two-qubit error — now measured on metal.
 3. **Prediction (ii)** (IonQ raw < superconducting raw) — pending: the all-to-all trapped-ion run
-   (no routing, 220 native two-qubit gates vs ~10³ routed) is queued on IonQ Forte-1 via
-   OpenQuantum; that is the device class where scale-1 signal should survive.
+   (no routing, 220 native two-qubit gates vs ~10³ routed) is in flight on IonQ Forte-1 via the
+   qBraid native route; that is the device class where scale-1 signal should survive.
 
 ## What this validates (and what it does not)
 - **Validated:** the entire hardware pipeline end-to-end on a real QPU — transport, transpilation,
@@ -68,10 +68,28 @@ though unlike Rigetti a small real readout+linear improvement exists (0.2301 →
 (ii) now awaits only the IonQ half; the superconducting reference is 0.2301.
 The OQ-route single-window preview (0.238) is consistent with the full-protocol result.
 
+## IonQ Forte-1 smoke gate (2026-07-20): 2,000-gate ceiling → scale-1-only campaign
+
+*Pre-registered smoke pair before the funded campaign (job IDs in `results/qpu_ionq_smoke.json`,
+830 credits total — the failed submissions billed 0).*
+
+- **Orientation probe:** REVERSED confirmed on the native route (98/100 shots at |00000001⟩),
+  matching the OpenQuantum-route finding — bit-order reversal is a property of the IonQ backend,
+  not of the routing layer.
+- **Gate ceiling measured:** fold-5 (4,140 expanded gates) rejected at validation on the native
+  route ("number of gates does not exceed 2,000"); fold-3 (2,484 gates) independently rejected
+  with the identical error on the **OpenQuantum route** (`results/oq_fold3_probe.json`, 0 credits)
+  — the 2,000-gate/circuit limit is a device-level IonQ constraint, binding on **both** access
+  routes. The ceiling sits between our scale-1 circuit (828 gates) and its first fold (2,484).
+- **Consequence (abort rule 1, pre-registered):** ZNE gate folding is infeasible on this device
+  for this circuit class. The funded campaign runs the disclosed fallback — **scale-1-only
+  protocol with readout mitigation, no ZNE** — so its chain reports raw and readout-mitigated
+  stages only.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
-| IonQ Forte-1 (36q) | trapped-ion | probe P(|1⟩⁸)=0.97; hardened cal validated (0.996); **full campaign next (funded)** |
+| IonQ Forte-1 (36q) | trapped-ion | probe P(|1⟩⁸)=0.97; hardened cal validated (0.996); smoke: orientation REVERSED, 2,000-gate ceiling → **scale-1 campaign in flight (funded)** |
 | IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed**: raw 0.2611, characterized negative |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
