@@ -145,3 +145,28 @@ validation rejections to date), fall back scales (1,3) → scale-1-only, disclos
 pattern. Scoring: `score_campaign.py` per-n extension (S1/S2/S4 at n=10/12, S3 on Emerald),
 committed with this amendment before execution. Projected reserve after the full program:
 ≈14,106 of the 65,000 ceiling.
+
+---
+
+## Amendment 3 (2026-07-21, committed before anchor execution)
+
+**Same-session n=8 anchor approved** (+6,754.5 est., tag `hw_garnet_n8_anchor`): the identical
+Campaign-A 12-job protocol at n=8, launched to run interleaved with / immediately adjacent to
+`hw_garnet_n12` in the same Garnet session, so the pair (n=8 anchor, n=12) shares one
+calibration epoch. Purpose: separate the size/instance effect from day-scale calibration drift
+in the n=10 S1 refutation. Same-machine claims are made at **calibration-fingerprint level**
+(per-qubit readout-error vectors measured by each campaign's own cal circuits, compared across
+the session's start and end), not machine-identity level — cloud access cannot prove silicon.
+
+**Pre-registered decision rule (committed before the anchor runs):**
+- Anchor n=8 raw **≥ 0.1958** (beyond its limit, as in Campaign A) while same-session n=10/n=12
+  results sit below their size-matched limits → **size/instance effect is real**, drift excluded
+  as the driver of the n=10 result.
+- Anchor n=8 raw **< 0.1958** → **calibration-day quality is the dominant driver**; the n=10
+  below-limit result is then a device-state finding, not a size effect, and will be reported as
+  such.
+- Intermediate/ambiguous (anchor within ±0.02 of the limit): report as unresolved; no stronger
+  claim than the disjunction.
+
+Ledger at approval: 36,723.25 settled + n=12 in flight (6,754.5 reserved). Projected reserve
+after anchor + Emerald: ≈7,352 of the 65,000 ceiling.
