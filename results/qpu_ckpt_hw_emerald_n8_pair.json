@@ -1,0 +1,18 @@
+{
+ "config": {
+  "device": "aws:iqm:qpu:emerald",
+  "n": 8,
+  "layers": 20,
+  "shots": 4000,
+  "windows": 3,
+  "scales": [
+   1
+  ],
+  "seed": 0,
+  "orientation": "reverse"
+ },
+ "jobs": {},
+ "pending": {
+  "cal0": "aws:iqm:qpu:emerald-bd52-qjob-6a5f861d85bb69de2641072e"
+ }
+}

@@ -1,0 +1,34 @@
+{
+ "config": {
+  "device": "aws:iqm:qpu:garnet",
+  "n": 8,
+  "layers": 20,
+  "shots": 4000,
+  "windows": 3,
+  "scales": [
+   1
+  ],
+  "seed": 0,
+  "orientation": "reverse"
+ },
+ "jobs": {
+  "cal0": {
+   "job": "aws:iqm:qpu:garnet-4500-qjob-6a5f861d85bb69de2641072b",
+   "counts": {
+    "00000000": 3875,
+    "10000000": 16,
+    "01000000": 19,
+    "00100000": 46,
+    "00010000": 16,
+    "00001000": 8,
+    "00000100": 6,
+    "00000010": 1,
+    "00100010": 1,
+    "00000001": 12
+   }
+  }
+ },
+ "pending": {
+  "cal1": "aws:iqm:qpu:garnet-4500-qjob-6a5f863c85bb69de26410735"
+ }
+}
