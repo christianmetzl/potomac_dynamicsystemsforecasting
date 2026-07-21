@@ -151,10 +151,46 @@ does recover — raw 0.2226 → Richardson 0.2165, a small but resolvable mean-e
 0.2199), so pre-registered statement (i) remains strictly refuted; recovery is marginal, far
 from converging to the classical cross-check, and appeared only with drift in its favor.
 
+## Scaling program, campaign 1 — Garnet n=10 EXECUTED: S1 REFUTED, signal-bearing (2026-07-21)
+
+*12 jobs on `aws:iqm:qpu:garnet` (provenance-tagged, commit `69680f747012`), 6,754.5 credits
+settled — exactly the Amendment-2 estimate. Job IDs in `results/qpu_run_hw_garnet_n10.json`.
+Same 4k-shot protocol as Campaign A at n=10 (55 observables; free qir-sv dress rehearsal passed
+first at 0.0167 cross-check error). Gate: free n=10 selftest + rehearsal both PASS.*
+
+| stage | mean err | notes |
+|---|---|---|
+| raw (scale 1) | **0.1590** | **< the n=10 depolarized limit 0.1790** (excess −0.0200) |
+| readout-mitigated | 0.1625 | slightly worse — inversion amplifies shot noise at 0.44%/2.55% readout |
+| + ZNE linear | 0.1620 | no recovery |
+| + ZNE Richardson | 0.1639 | no recovery (consistent with S4) |
+
+**Pre-registered statements scored (`results/qpu_scaling_outlook.md`):**
+- **(S1) REFUTED at n=10** — raw lands *below* the size-matched fully-depolarized limit: the
+  executed state retains circuit signal. By the outlook's own commitment ("any statement failing
+  is publishable news"), this is the **first signal-bearing superconducting execution** of this
+  reservoir — the upside scenario we pre-registered for Emerald materialized on Garnet at n=10.
+- **(S2) against, pending n=12** — the excess (raw − limit) *fell* from +0.0343 (n=8) to
+  −0.0200 (n=10) instead of growing with depth. Final S2 verdict requires the n=12 point.
+- **(S4) consistent** — no ZNE recovery at n=10.
+
+**Honest confound (disclosed before any interpretation is drawn):** the n=8 (0.2301, beyond
+limit) and n=10 (0.1590, inside limit) points were measured on **different days**, and the
+Rigetti replication measured day-scale drift of order 0.04 on this device class. Supporting a
+calibration-day contribution here: Garnet had just returned from an offline (likely
+recalibration) window, and measured readout P(0|1) improved 3.17% → 2.55% between campaigns.
+The full n=8→n=10 swing (−0.07, crossing the limit) exceeds the observed drift band — and runs
+*against* the direction of the added gate load (960 vs 440 pre-routing two-qubit gates) — so an
+instance/size effect beyond drift is likely but **not proven**: the per-n limits normalize
+feature magnitude, not noise sensitivity, and the seed-0 graph at n=10 has a different
+observable composition. The clean discriminator is a **same-session n=8 anchor** alongside a
+future campaign; until then we claim the below-limit measurement (solid, single-day fact) and
+flag the cross-size comparison as confounded.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
-| IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed |
+| IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed; **n=10: raw 0.1590 < limit 0.1790 — signal-bearing, S1 refuted** |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |

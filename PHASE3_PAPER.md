@@ -220,8 +220,13 @@ so per pre-registered abort rule the campaign ran scale-1-only (5 jobs, 500 shot
 superconducting 0.230/0.261: the **first signal-bearing hardware execution** of this reservoir
 (**prediction (ii) confirmed**, under our 0.149 forecast). One pre-registered circuit thus
 measures the coherence wall from both sides — routed superconducting lattices beyond the limit,
-the 220-gate all-to-all ion machine inside it (`results/qpu_hardware_findings.md`). We thus
-characterize all four challenge axes: reservoir size, encoding density, shot budget, and noise.
+the 220-gate all-to-all ion machine inside it (`results/qpu_hardware_findings.md`). A
+pre-registered **hardware scaling program** (`results/qpu_scaling_outlook.md`) then began: at
+**n=10** (same 4k-shot protocol) Garnet measured **raw 0.159 — below the 0.179 size-matched
+depolarized limit**, refuting our own statement S1 and giving the **first signal-bearing
+superconducting run** (day-scale drift is a disclosed confound for the cross-size comparison;
+the below-limit fact stands). We thus characterize all four challenge axes: reservoir size,
+encoding density, shot budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
@@ -231,9 +236,11 @@ daily-proxy supporting studies (v2_research: cross-asset, COVID — same negativ
 (iii) Task-level noise is characterized via per-layer single-qubit channels (density-matrix, §5.4)
 and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is deferred to QPU runs.
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
-(v) Superconducting execution (Rigetti twice + Garnet, §6) is a **characterized negative** —
-scale-1 beyond the coherence budget after routing on both days (raw 0.261→0.223 across a
-replication: day-scale drift exceeds shot noise; regime, not point value, is the robust claim).
+(v) Superconducting execution at n=8 (Rigetti twice + Garnet, §6) is a **characterized
+negative** — scale-1 beyond the coherence budget after routing on both days (raw 0.261→0.223
+across a replication: day-scale drift exceeds shot noise; regime, not point value, is the
+robust claim) — while Garnet at n=10 landed *inside* the limit, so the wall is calibration- and
+size-dependent, not absolute.
 The trapped-ion run is signal-bearing, but mitigation *recovery* on hardware is at best marginal
 (Richardson 0.223→0.217 on the replicate; the ion chain is flat — readout 0.08%/0.65% leaves
 nothing to correct, the gate ceiling forbids ZNE).
