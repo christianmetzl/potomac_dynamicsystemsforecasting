@@ -120,10 +120,41 @@ lattices (routing-inflated to ~10³ two-qubit gates) land *beyond* the depolariz
 routing) stays *inside* it (signal-bearing, 0.1042). That ordering was committed before any
 hardware ran.
 
+## Rigetti 4k-shot replication (2026-07-21): the negative replicates; drift measured
+
+*12 jobs on `aws:rigetti:qpu:cepheus-1-108q` (provenance-tagged, commit `9977eac83196`),
+2,234.25 credits settled — exactly as estimated. Job IDs in `results/qpu_run_hw_rigetti_rep.json`.
+Identical protocol to the original run at double the shots (4,000; floor 0.0158 vs 0.0224).*
+
+| stage | original (2k shots) | replicate (4k shots) |
+|---|---|---|
+| raw (scale 1) | 0.2611 | **0.2226** |
+| readout-mitigated | 0.2607 | 0.2199 |
+| + ZNE linear | 0.2646 | 0.2219 |
+| + ZNE Richardson | 0.2558 | 0.2165 |
+| readout errors | 2.26% / 6.39% | 1.74% / 5.74% |
+
+**What replicated (the claim that matters):** the regime. Raw error stays **beyond the 0.1958
+depolarized limit** on both days — the superconducting characterized negative is stable, and the
+cross-platform ordering is untouched (IonQ 0.1042 beats even Rigetti's better day by 2.1×).
+
+**What did not replicate (a finding in itself):** the point value. Raw moved 0.2611 → 0.2226
+(Δ = 0.039, far above the combined shot floors ≈0.027) alongside measurably better same-day
+readout calibration — i.e. **day-scale device drift on this class is real and larger than shot
+noise**. Single-run numbers on superconducting hardware carry a temporal-drift band of order
+±0.04; regime statements (which side of the depolarized limit) are the robust currency, point
+values are not. This is precisely what the replication was bought to measure.
+
+**First (marginal) mitigation recovery on hardware:** on the better-calibrated day the chain
+does recover — raw 0.2226 → Richardson 0.2165, a small but resolvable mean-error reduction
+(−0.0061 over 108 feature-window pairs). Not monotone through the linear stage (0.2219 >
+0.2199), so pre-registered statement (i) remains strictly refuted; recovery is marginal, far
+from converging to the classical cross-check, and appeared only with drift in its favor.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
 | IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed |
-| Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed**: raw 0.2611, characterized negative |
+| Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |

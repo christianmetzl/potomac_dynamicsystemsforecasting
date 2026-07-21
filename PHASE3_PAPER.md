@@ -201,8 +201,9 @@ extrapolation** under a depolarizing sweep. **Executed on real hardware:** the f
 protocol ran on **Rigetti Cepheus-1-108q** (12 logged cloud jobs; little-endian bit order
 auto-detected; measured readout errors 2.3%/6.4%): after lattice routing the scale-1 circuit
 already exceeds the coherence budget (raw feature error 0.261 vs the 0.196 fully-depolarized
-limit), so folded ZNE cannot recover — measuring on metal exactly the accumulated two-qubit-gate
-cost §5.4 predicts. The **full pre-registered
+limit; a 4k-shot replication measured 0.223 — the beyond-limit regime is stable under day-scale
+drift, ZNE recovering only marginally to 0.217) — measuring on metal exactly the accumulated
+two-qubit-gate cost §5.4 predicts. The **full pre-registered
 4k-shot Garnet protocol** then executed (12 jobs): raw 0.230 — beyond the 0.196 limit and above
 our routing-free 0.171 forecast (**prediction (iii) confirmed**; ZNE recovery non-monotone) —
 replicating this regime on a second superconducting vendor (readout 0.4%/3.2%). Cross-platform
@@ -230,10 +231,12 @@ daily-proxy supporting studies (v2_research: cross-asset, COVID — same negativ
 (iii) Task-level noise is characterized via per-layer single-qubit channels (density-matrix, §5.4)
 and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is deferred to QPU runs.
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
-(v) Superconducting execution (Rigetti + Garnet full protocols, §6) is a **characterized
-negative** — scale-1 beyond the coherence budget after routing. The trapped-ion run is
-signal-bearing, but mitigation *recovery* is still unvalidated on hardware: its chain is flat
-since readout error (0.08%/0.65%) leaves nothing to correct and the gate ceiling forbids ZNE.
+(v) Superconducting execution (Rigetti twice + Garnet, §6) is a **characterized negative** —
+scale-1 beyond the coherence budget after routing on both days (raw 0.261→0.223 across a
+replication: day-scale drift exceeds shot noise; regime, not point value, is the robust claim).
+The trapped-ion run is signal-bearing, but mitigation *recovery* on hardware is at best marginal
+(Richardson 0.223→0.217 on the replicate; the ion chain is flat — readout 0.08%/0.65% leaves
+nothing to correct, the gate ceiling forbids ZNE).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they convert
 beyond the simulable frontier is open. A quantum-data probe (`results/quantum_data_crossover_findings.md`)
 shows the QRC natively reads nonlinear *state* functionals (purity, entanglement) a linear readout
