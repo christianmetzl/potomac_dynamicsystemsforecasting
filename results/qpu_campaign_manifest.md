@@ -170,3 +170,37 @@ the session's start and end), not machine-identity level — cloud access cannot
 
 Ledger at approval: 36,723.25 settled + n=12 in flight (6,754.5 reserved). Projected reserve
 after anchor + Emerald: ≈7,352 of the 65,000 ceiling.
+
+---
+
+## Amendment 4 (2026-07-22, committed before execution): same-day cross-generation pair
+
+**Purpose:** close the last methodological gap — the S3 cross-generation comparison (Emerald
+0.1793 vs Garnet 0.2216–0.2301 at n=8) spans days, and our own Rigetti replication measured a
+day swing (0.0385) of the same order as the generation gap (0.042+). This pair puts both chips
+on the clock in the same window.
+
+**Design (lean, fit-for-purpose — the claim at issue is raw scale-1 regime only, disclosed):**
+per device, 5 jobs at 4,000 shots: 2 readout calibrations (fingerprints + readout stage) +
+3 RV windows at scale 1 (no ZNE; single-scale carry-through as validated in Campaign B′).
+Orientation probes skipped — both devices measured REVERSED twice each. Launched concurrently;
+platform job timestamps establish temporal adjacency, and actual execution windows will be
+disclosed as recorded (if one device queues far behind the other, adjacency is judged and
+reported honestly).
+
+| campaign | tag | est. credits |
+|---|---|---|
+| Garnet n=8 pair | `hw_garnet_n8_pair` | 3,050 (5 × 610) |
+| Emerald n=8 pair | `hw_emerald_n8_pair` | 3,350 (5 × 670) |
+| **total** | | **6,400** |
+
+**Pre-registered decision rule:**
+- Same-window Emerald raw < 0.1958 AND Garnet raw ≥ 0.1958 → generation effect **confirmed,
+  temporally controlled**; the days-spanning caveat is removed from findings and paper.
+- Both inside, or both beyond → **day effect dominates**; the S3 interpretation is revised
+  accordingly and reported as such.
+- Either raw within ±0.02 of 0.1958 → unresolved; only the disjunction is claimed.
+
+Ledger at approval: 57,648.25 settled of 65,000. Projected after pair: ≈64,048.25 (reserve
+≈952). This amendment spends from the reserve against a documented methodological need, per
+Amendment 1's reserve rule.
