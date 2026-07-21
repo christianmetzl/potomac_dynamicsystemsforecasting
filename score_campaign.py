@@ -87,9 +87,10 @@ def main(path):
         print(f"(S1)  wall persists at n={n} (raw >= limit {lim:.4f}): "
               f"{'CONFIRMED' if raw >= lim else 'REFUTED - signal-bearing superconducting run, publishable news'} "
               f"(raw {raw:.4f}, excess {excess:+.4f})")
+        tail = ("FINAL VERDICT: " + ("CONFIRMED" if excess > GARNET_N8_EXCESS else "REFUTED")
+                if n == 12 else "final S2 verdict needs n=12")
         print(f"(S2)  excess vs n=8 baseline {GARNET_N8_EXCESS:+.4f}: this n {excess:+.4f} "
-              f"({'grows with depth' if excess > GARNET_N8_EXCESS else 'does NOT grow - against S2'};"
-              f" final S2 verdict needs n=12)")
+              f"({'grows with depth' if excess > GARNET_N8_EXCESS else 'does NOT grow'}; {tail})")
         print(f"(S4)  ZNE recovery at n={n}: "
               f"{'ABSENT (consistent with S4)' if rich >= raw - 1e-12 else f'present (raw {raw:.4f} -> Richardson {rich:.4f}) - against S4'}")
     if kind == "emerald":

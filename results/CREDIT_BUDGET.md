@@ -28,13 +28,15 @@ drawdown (e.g. GPU/compute instances) belongs to the parallel project.
 | 12 replication jobs `...711eb7 … 71210d` (see results JSON) | `hw_rigetti_rep` | COMPLETED | 2,234.25 | 2,234.25 (probe 34.25 + 11 × 200) |
 | 24 dress-rehearsal jobs on `qbraid:qbraid:sim:qir-sv` (see results JSON) | `dress_n10` | COMPLETED | 0.0 | 0.0 (free device) |
 | 12 scaling jobs `...712974 … f18950` (see results JSON) | `hw_garnet_n10` | COMPLETED | 6,754.5 | 6,754.5 (probe 44.5 + 11 × 610) |
+| 12 scaling jobs `...f18957 … f189e7` (see results JSON) | `hw_garnet_n12` | COMPLETED | 6,754.5 | 6,754.5 (probe 44.5 + 11 × 610) |
+| 12 anchor jobs `...f18971 … f189e4` (see results JSON) | `hw_garnet_n8_anchor` | COMPLETED | 6,754.5 | 6,754.5 (probe 44.5 + 11 × 610) |
 | `qbraid:qbraid:sim:qir-sv-4500-qjob-6a5c26ded17a5abc1d708762` | `tag_test` | COMPLETED | 0.0 | 0.0 |
 
-**Project spend against the 65,000 ceiling: 36,723.25 settled** (Campaign A 6,754.5 + IonQ smoke
-gate 830 + Campaign B′ 20,150 + Rigetti replication 2,234.25 + Garnet n=10 6,754.5 — each at or
-under its pre-approved reservation; every failed/rejected submission billed 0). **Remaining
-headroom: 28,276.75** (of which the approved-but-unlaunched program remainder is n=12 6,754.5 +
-Emerald 7,416).
+**Project spend against the 65,000 ceiling: 50,232.25 settled** (Campaign A 6,754.5 + IonQ smoke
+gate 830 + Campaign B′ 20,150 + Rigetti replication 2,234.25 + Garnet n=10 6,754.5 + Garnet n=12
+6,754.5 + same-session n=8 anchor 6,754.5 (Amendment 3) — each at or under its pre-approved
+reservation; every failed/rejected submission billed 0). **Remaining headroom: 14,767.75** (of
+which the approved-but-unlaunched program remainder is Emerald n=8 ≈7,416).
 
 Planned-spend history (pre-registered: `results/qpu_campaign_manifest.md` + Amendment 1):
 Campaign B was re-scoped to B′ (scale-1-only, ≈20,150 instead of ≈45,990) after the smoke gate
@@ -48,14 +50,15 @@ an explicit go decision before launch.
 | | credits |
 |---|---|
 | granted | 130,000 |
-| → this project, settled (sum of tagged quantum jobs above, per-job verified via API) | **36,723.25** |
+| → this project, settled (sum of tagged quantum jobs above, per-job verified via API) | **50,232.25** |
 | → this project, ceiling | 65,000 |
 | → parallel project | whatever remains of the org drawdown after subtracting our tagged jobs (non-quantum compute; by elimination) |
 
 The wallet balance moves with both projects, so this file pins only what is mechanically ours:
 the per-job billed amounts fetched from qBraid's job records for every tagged job listed above
 (5 × 4,030 for `hw_ionq_native`, 830 for `hw_ionq_smoke`, 6,754.5 for `hw_garnet_native`,
-34.25 + 11 × 200 for `hw_rigetti_rep`, 44.5 + 11 × 610 for `hw_garnet_n10`).
+34.25 + 11 × 200 for `hw_rigetti_rep`, 44.5 + 11 × 610 each for `hw_garnet_n10`,
+`hw_garnet_n12`, and `hw_garnet_n8_anchor`).
 
 ## 4. Self-funded era (personal account — outside the ceiling)
 

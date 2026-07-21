@@ -187,10 +187,49 @@ observable composition. The clean discriminator is a **same-session n=8 anchor**
 future campaign; until then we claim the below-limit measurement (solid, single-day fact) and
 flag the cross-size comparison as confounded.
 
+## Scaling program, campaigns 2+3 — n=12 and the same-session n=8 anchor (2026-07-21):
+## the size effect is REAL, drift excluded by the pre-registered decision rule
+
+*Two 12-job campaigns on `aws:iqm:qpu:garnet`, launched concurrently so their jobs interleaved
+in the device queue — one session, one calibration epoch (fingerprints: n=12 readout
+0.54%/2.95% vs anchor 0.48%/2.88%, matching within shot noise). 6,754.5 credits each, settled
+exactly; job IDs in `results/qpu_run_hw_garnet_n12.json` / `..._n8_anchor.json`. Decision rule
+committed in manifest Amendment 3 BEFORE execution.*
+
+| campaign | raw | size-matched limit | verdict |
+|---|---|---|---|
+| **n=8 anchor** (same session) | **0.2216** | 0.1958 | **beyond** — scrambled, replicates Campaign A (0.2301) within the drift band |
+| **n=12** (same session) | **0.1897** | 0.2140 | **inside** — signal-bearing, S1 refuted at a second size |
+| n=10 (same day, hours earlier) | 0.1590 | 0.1790 | inside — signal-bearing |
+
+**Decision rule applied (Amendment 3, branch 1):** anchor n=8 raw ≥ 0.1958 while same-session
+n=12 (and same-day n=10) sit below their size-matched limits → **the size/instance effect is
+real; calibration-day drift is excluded as the driver** of the n=10/n=12 results. On one
+machine, in one session, with interleaved execution, the n=8 seed-0 instance scrambles beyond
+its depolarized limit while the larger instances retain signal.
+
+**Scaling statements, final:**
+- **(S1) REFUTED at both new sizes** (n=10 excess −0.0200; n=12 excess −0.0243) — two
+  signal-bearing superconducting executions, now drift-controlled.
+- **(S2) REFUTED (final verdict)** — the excess does not grow with depth: +0.0258 at n=8
+  (same-session anchor; +0.0343 in Campaign A) → −0.0243 at n=12, falling and changing sign
+  despite 3.5× the pre-routing two-qubit gates.
+- **(S4) held at n=10/n=12** (no ZNE recovery); the anchor showed the same marginal recovery as
+  the Rigetti replicate (0.2216 → 0.2153, non-monotone; (i) remains refuted).
+
+**Mechanism — honestly open.** Candidates, none established: (a) instance structure — the
+seed-0 coupling graph and feature composition differ per n (36/55/78 observables, growing share
+of pair correlators with small exact magnitudes); (b) embedding — larger circuits occupy a
+different subgraph of the 20q lattice, and the n=8 embedding may sit on worse qubits/couplers;
+(c) per-feature noise sensitivity is not normalized by the limit (which fixes magnitude only).
+What is excluded: calibration-day drift (this section) and shot noise (floor 0.0158). The
+paper claims the drift-controlled *fact*; the mechanism is flagged as the immediate research
+question.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
-| IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed; **n=10: raw 0.1590 < limit 0.1790 — signal-bearing, S1 refuted** |
+| IQM Garnet (20q) | superconducting | n=8: raw 0.2301 / same-session anchor 0.2216 — beyond limit, (iii) confirmed; **n=10: 0.1590 and n=12: 0.1897 — both inside their limits, signal-bearing, drift-controlled (S1, S2 refuted)** |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |

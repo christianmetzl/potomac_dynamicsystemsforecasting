@@ -221,11 +221,13 @@ superconducting 0.230/0.261: the **first signal-bearing hardware execution** of 
 (**prediction (ii) confirmed**, under our 0.149 forecast). One pre-registered circuit thus
 measures the coherence wall from both sides — routed superconducting lattices beyond the limit,
 the 220-gate all-to-all ion machine inside it (`results/qpu_hardware_findings.md`). A
-pre-registered **hardware scaling program** (`results/qpu_scaling_outlook.md`) then began: at
-**n=10** (same 4k-shot protocol) Garnet measured **raw 0.159 — below the 0.179 size-matched
-depolarized limit**, refuting our own statement S1 and giving the **first signal-bearing
-superconducting run** (day-scale drift is a disclosed confound for the cross-size comparison;
-the below-limit fact stands). We thus characterize all four challenge axes: reservoir size,
+pre-registered **hardware scaling program** (`results/qpu_scaling_outlook.md`) then executed on
+Garnet: **n=10 raw 0.159 < limit 0.179 and n=12 raw 0.190 < limit 0.214** — two
+**signal-bearing superconducting runs**, refuting our own statements S1/S2 — while a
+**same-session n=8 anchor** (interleaved jobs, matching calibration fingerprint) measured
+0.222 ≥ 0.196: by the decision rule pre-committed in the manifest *before* execution, the size
+effect is **real and drift-controlled**; the mechanism (instance structure vs lattice
+embedding) is honestly open. We thus characterize all four challenge axes: reservoir size,
 encoding density, shot budget, and noise.
 
 ## 7. Limitations (stated plainly)
@@ -239,8 +241,9 @@ and simulator shot noise (§6); combined noisy-circuit-plus-shot execution is de
 (v) Superconducting execution at n=8 (Rigetti twice + Garnet, §6) is a **characterized
 negative** — scale-1 beyond the coherence budget after routing on both days (raw 0.261→0.223
 across a replication: day-scale drift exceeds shot noise; regime, not point value, is the
-robust claim) — while Garnet at n=10 landed *inside* the limit, so the wall is calibration- and
-size-dependent, not absolute.
+robust claim) — while Garnet at n=10 and n=12 landed *inside* their limits with the
+same-session n=8 anchor beyond: the wall is size/instance-dependent, not absolute, with the
+mechanism unresolved.
 The trapped-ion run is signal-bearing, but mitigation *recovery* on hardware is at best marginal
 (Richardson 0.223→0.217 on the replicate; the ion chain is flat — readout 0.08%/0.65% leaves
 nothing to correct, the gate ceiling forbids ZNE).
