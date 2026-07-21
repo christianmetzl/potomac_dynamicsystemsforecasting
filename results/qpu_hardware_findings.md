@@ -226,10 +226,42 @@ What is excluded: calibration-day drift (this section) and shot noise (floor 0.0
 paper claims the drift-controlled *fact*; the mechanism is flagged as the immediate research
 question.
 
+## Scaling program, campaign 4 — Emerald n=8 (2026-07-22): S3b REFUTED HIGH,
+## signal-bearing at the size where Garnet scrambles
+
+*12 jobs on `aws:iqm:qpu:emerald` (54q, IQM's newer generation; provenance-tagged, commit
+`a6d5dde7500a`), 7,416 credits settled — exactly as estimated. Job IDs in
+`results/qpu_run_hw_emerald_n8.json`. Campaign-A config: n=8, 4k shots, scales 1/3/5. Readout
+errors 0.24%/1.82% — the best superconducting calibration measured in this program.*
+
+| stage | mean err | notes |
+|---|---|---|
+| raw (scale 1) | **0.1793** | **< the 0.1958 limit** — signal-bearing at n=8 |
+| readout-mitigated | 0.1752 | small real recovery |
+| + ZNE linear | 0.1751 | best stage |
+| + ZNE Richardson | 0.1814 | non-monotone; (i) remains refuted |
+
+**S3 scored (pre-registered):** (S3a) **CONFIRMED** — Emerald raw 0.1793 beats Garnet's n=8
+range (0.2216–0.2301 across two days) by 0.042+, beyond any intra-device variation we measured
+on Garnet at n=8 (0.0085 across days). (S3b) **REFUTED HIGH** — the outlook's named upside
+scenario: the newer generation lands *below* the depolarized limit at the very size where
+Garnet scrambles. The wall is therefore **generation-dependent at fixed size**, completing the
+program's third axis (size, day, generation). Caveat, stated: Garnet and Emerald points are
+from different days; the cross-generation gap exceeds every intra-device drift band we measured
+at n=8, but a same-day cross-device pair was not run.
+
+**Program synthesis — every pre-registered scaling statement resolved:**
+S1 refuted (n=10, n=12 signal-bearing, drift-controlled) · S2 refuted (excess falls and flips
+sign with depth) · S3a confirmed / S3b refuted high (generation crosses the wall at n=8) ·
+S4 held on Garnet at n=10/12 (no ZNE recovery; marginal recovery appeared only on
+well-calibrated Emerald/anchor/Rigetti-replicate days). Three of four headline statements
+falsified by controlled measurement — committed before execution, reported as measured.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
+| IQM Emerald (54q) | superconducting | **n=8: raw 0.1793 < limit 0.1958 — signal-bearing at fixed size (S3b refuted high)**; best mitigated 0.1751 |
 | IQM Garnet (20q) | superconducting | n=8: raw 0.2301 / same-session anchor 0.2216 — beyond limit, (iii) confirmed; **n=10: 0.1590 and n=12: 0.1897 — both inside their limits, signal-bearing, drift-controlled (S1, S2 refuted)** |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
