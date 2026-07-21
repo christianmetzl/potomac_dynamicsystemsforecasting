@@ -1,0 +1,20 @@
+{
+ "config": {
+  "device": "aws:rigetti:qpu:cepheus-1-108q",
+  "n": 8,
+  "layers": 20,
+  "shots": 4000,
+  "windows": 3,
+  "scales": [
+   1,
+   3,
+   5
+  ],
+  "seed": 0,
+  "orientation": "probe"
+ },
+ "jobs": {},
+ "pending": {
+  "orient": "aws:rigetti:qpu:cepheus-1-108q-4500-qjob-6a5ebbe0d17a5abc1d711eb7"
+ }
+}
