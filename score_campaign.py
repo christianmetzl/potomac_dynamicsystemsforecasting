@@ -24,10 +24,13 @@ PREDICTIONS = {
                "+ ZNE linear": 0.144, "+ ZNE Richardson": 0.122},
 }
 # Fixed references for interpretation.
-DEPOLARIZED_LIMIT = 0.1958          # mean |engine features| over the 3 RV windows
+DEPOLARIZED_LIMITS = {8: 0.1958, 10: 0.1790, 12: 0.2140}  # mean |engine features|, 3 RV windows
+DEPOLARIZED_LIMIT = DEPOLARIZED_LIMITS[8]
 RIGETTI_MEASURED_RAW = 0.2611       # committed characterized negative (2k shots)
+RIGETTI_REPLICATE_RAW = 0.2226      # 4k-shot replication (day-scale drift band ~0.04)
 GARNET_OQ_PREVIEW_RAW = 0.2382      # single-window OQ-route preview (4k shots)
-GARNET_NATIVE_RAW = 0.2301          # full protocol, native route, 4k shots (Campaign A)
+GARNET_NATIVE_RAW = 0.2301          # full protocol, native route, 4k shots (Campaign A, n=8)
+GARNET_N8_EXCESS = GARNET_NATIVE_RAW - DEPOLARIZED_LIMITS[8]  # 0.0343, the S2 baseline
 
 STAGES = ["raw (scale 1)", "readout-mitigated", "+ ZNE linear", "+ ZNE Richardson"]
 
@@ -37,7 +40,9 @@ def main(path):
     chain = out["chain"]
     device = str(out.get("device", path))
     kind = ("garnet" if "garnet" in device.lower()
+            else "emerald" if "emerald" in device.lower()
             else "ionq" if "ionq" in device.lower() else None)
+    n = out.get("n", 8)
     shots = out.get("shots")
     shot_floor = (1.0 / max(shots, 1)) ** 0.5 if shots else float("nan")
 
@@ -67,7 +72,7 @@ def main(path):
         print(f"      signal-bearing? raw {'<' if raw < DEPOLARIZED_LIMIT else '>='} "
               f"depolarized limit {DEPOLARIZED_LIMIT:.4f} -> "
               f"{'device retains signal at scale 1' if raw < DEPOLARIZED_LIMIT else 'noise-flattened/scrambled regime (as on superconducting)'}")
-    if kind == "garnet":
+    if kind == "garnet" and n == 8:
         print(f"(iii) Garnet measured raw exceeds the routing-free 0.171 prediction: "
               f"{'CONFIRMED' if raw > pred['raw (scale 1)'] else 'REFUTED'} "
               f"({raw:.4f} vs 0.171)")
@@ -75,6 +80,26 @@ def main(path):
               f"{'BEYOND (coherent/routing scrambling, as on Rigetti)' if raw > DEPOLARIZED_LIMIT else 'within (noise not yet fully scrambling)'}")
         print(f"      vs OQ-route single-window preview {GARNET_OQ_PREVIEW_RAW:.4f}: "
               f"full-protocol raw {raw:.4f}")
+    if kind == "garnet" and n in (10, 12):
+        lim = DEPOLARIZED_LIMITS[n]
+        excess = raw - lim
+        print(f"--- scaling program (qpu_scaling_outlook.md), n={n} ---")
+        print(f"(S1)  wall persists at n={n} (raw >= limit {lim:.4f}): "
+              f"{'CONFIRMED' if raw >= lim else 'REFUTED - signal-bearing superconducting run, publishable news'} "
+              f"(raw {raw:.4f}, excess {excess:+.4f})")
+        print(f"(S2)  excess vs n=8 baseline {GARNET_N8_EXCESS:+.4f}: this n {excess:+.4f} "
+              f"({'grows with depth' if excess > GARNET_N8_EXCESS else 'does NOT grow - against S2'};"
+              f" final S2 verdict needs n=12)")
+        print(f"(S4)  ZNE recovery at n={n}: "
+              f"{'ABSENT (consistent with S4)' if rich >= raw - 1e-12 else f'present (raw {raw:.4f} -> Richardson {rich:.4f}) - against S4'}")
+    if kind == "emerald":
+        lim = DEPOLARIZED_LIMITS.get(n, DEPOLARIZED_LIMIT)
+        print(f"--- scaling program (qpu_scaling_outlook.md), Emerald n={n} ---")
+        print(f"(S3a) newer chip below Garnet n=8 raw {GARNET_NATIVE_RAW:.4f}: "
+              f"{'CONFIRMED' if raw < GARNET_NATIVE_RAW else 'REFUTED'} (raw {raw:.4f})")
+        print(f"(S3b) still at/above the depolarized limit {lim:.4f}: "
+              f"{'CONFIRMED' if raw >= lim else 'REFUTED HIGH - first signal-bearing superconducting execution'} "
+              f"(raw {raw:.4f})")
 
     print("\n--- cross-platform table (findings-ready) ---")
     print(f"{'device':<26}{'type':<17}{'raw':>8}{'best mitigated':>16}")
@@ -83,8 +108,12 @@ def main(path):
     if kind != "garnet":
         print(f"{'IQM Garnet (20q)':<26}{'superconducting':<17}"
               f"{GARNET_NATIVE_RAW:>8.4f}{0.2266:>16.4f}")
-    label = {"garnet": "IQM Garnet (20q)", "ionq": "IonQ Forte-1 (36q)"}.get(kind, device)
-    typ = {"garnet": "superconducting", "ionq": "trapped-ion"}.get(kind, "?")
+    label = {"garnet": "IQM Garnet (20q)", "emerald": "IQM Emerald (54q)",
+             "ionq": "IonQ Forte-1 (36q)"}.get(kind, device)
+    if n != 8:
+        label += f" n={n}"
+    typ = {"garnet": "superconducting", "emerald": "superconducting",
+           "ionq": "trapped-ion"}.get(kind, "?")
     best = min(chain[s][0] for s in STAGES[1:])
     print(f"{label:<26}{typ:<17}{raw:>8.4f}{best:>16.4f}")
     print(f"\njob provenance: {len(out.get('job_ids', []))} job IDs in {path}")

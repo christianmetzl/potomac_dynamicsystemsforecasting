@@ -119,3 +119,29 @@ Rigetti Cepheus-1 protocol, cloud-simulator validation, and the OpenQuantum-rout
 work — was **privately funded on the PI's personal account (default org)** and does not count
 against this ceiling. The ceiling covers org-pool spend only, attributable via the per-job
 campaign tags.
+
+---
+
+## Amendment 2 (2026-07-21, committed before scaling-program execution)
+
+**The pre-registered scaling program (`results/qpu_scaling_outlook.md`, committed 2026-07-19
+before funding existed) is now approved and funded from remaining headroom.** Ledger at
+approval: 29,968.75 settled of 65,000 (`results/CREDIT_BUDGET.md`); statements S1–S4 and the
+per-n depolarized limits were committed in the outlook document before this amendment.
+
+| campaign | tag | config | est. credits |
+|---|---|---|---|
+| Garnet n=10 | `hw_garnet_n10` | identical 12-job protocol, 4k shots, scales 1/3/5 | 6,754.5 |
+| Garnet n=12 | `hw_garnet_n12` | identical 12-job protocol, 4k shots, scales 1/3/5 | 6,754.5 |
+| Emerald n=8 | `hw_emerald_n8` | Campaign-A config on `aws:iqm:qpu:emerald` (0.16 cr/shot) | 7,416 |
+| **program total** | | | **20,925** |
+
+Execution order n=10 → n=12 → Emerald, **explicit go decision before each campaign** (n=10
+authorized with this amendment). Gates, inherited from the original manifest: free qir-sv/local
+verification before each size (n=10 selftest PASS: Trotter 0.0286, fold identity 3e-12; n=12
+qir-sv is blocked by the documented simulator anomaly — the local exact cross-check
+substitutes); if a folded circuit is rejected at validation on the IQM route (billed 0, as all
+validation rejections to date), fall back scales (1,3) → scale-1-only, disclosed — abort rule 1
+pattern. Scoring: `score_campaign.py` per-n extension (S1/S2/S4 at n=10/12, S3 on Emerald),
+committed with this amendment before execution. Projected reserve after the full program:
+≈14,106 of the 65,000 ceiling.
