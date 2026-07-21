@@ -67,3 +67,38 @@ Approval gate before each campaign, per the standing operating rule.
 - [ ] `score_campaign.py` per-n extension.
 - [ ] n = 14, 16 limits via the sparse engine (`frontier_scaling.py` machinery).
 - [ ] Manifest amendment on funding.
+
+---
+
+## Post-challenge outlook, pre-registered 2026-07-22 (after the executed program; before any funding)
+
+*The executed program (S1–S4, all resolved — see `qpu_hardware_findings.md`) changes what the
+next experiments should be: Emerald retains circuit signal at n=8, so hardware-in-the-loop
+inference is no longer meaningless, and dissipation is the one mechanism our simulation study
+showed lifting autonomous prediction. Committed now, same discipline: config + falsifiable
+statement first, execution only if funded.*
+
+**(S5) End-to-end hardware-in-the-loop forecast (Emerald n=8, scale-1).** Replace simulated
+features with hardware features for every test window of the paper's nested-ridge protocol
+(one 4k-shot circuit per test window ≈ 670 cr each; the 2008 evaluation window at the paper's
+stride ⇒ order 100 circuits ≈ 70k credits — post-challenge funding scale). Method committed
+now: before any run, the expected degradation band is computed by injecting the *measured*
+same-window per-feature errors (raw 0.1690, `qpu_run_hw_emerald_n8_pair.json`) into the frozen
+ridge head. Falsifiable commitments: (S5a) the hardware-in-the-loop forecast lands inside that
+pre-computed band; (S5b) it does **not** beat HAR-X — hardware does not rescue the negative.
+(S5b failing would be the single most important result this program could produce; we consider
+it very unlikely and say so.)
+
+**(S6) Hardware-native dissipative reservoir.** Our simulation study
+(`results/dissipative_qrc_findings.md`) showed engineered memory-qubit damping tracing an
+inverted-U in damping rate and lifting autonomous VPT ≈+60%. On hardware, amplitude damping is
+free (T1 decay): insert calibrated idle delays (or mid-circuit resets where the route exposes
+them) on designated memory qubits. Prereqs (all free): per-route delay/reset emission audit +
+rehearsals. A 5-level damping sweep at Garnet-class pricing (5 × 3 windows + cals, scale-1)
+≈ 10.4k credits. Falsifiable commitments: (S6a) feature quality / autonomous VPT vs damping
+strength reproduces the **inverted-U on metal** — intermediate damping beats both zero and
+strong; (S6b) the optimum differs measurably between device classes (T1 and gate-time scales
+differ by orders of magnitude between superconducting and trapped-ion).
+
+Neither experiment is fundable from the remaining project reserve (4,301.75) and neither will
+be run before the Phase-3 deadline; they stand as the program's committed next chapter.
