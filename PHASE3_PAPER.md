@@ -228,9 +228,11 @@ on Garnet, **n=10 raw 0.159 < limit 0.179 and n=12 raw 0.190 < limit 0.214** —
 0.222 ≥ 0.196: by the decision rule pre-committed in the manifest *before* execution, the size
 effect is **real and drift-controlled**; the mechanism (instance structure vs lattice
 embedding) is honestly open. Finally, **IQM Emerald** (54q, newer generation) at n=8 measured
-**raw 0.179 < 0.196** — signal-bearing at the very size Garnet scrambles (S3b refuted high):
-the wall is also **generation-dependent at fixed size**. We thus characterize all four
-challenge axes: reservoir size, encoding density, shot budget, and noise.
+**raw 0.179 < 0.196** — signal-bearing at the very size Garnet scrambles (S3b refuted high) —
+and a pre-registered **same-window pair** (both chips on the clock simultaneously) reproduced
+the split, Emerald 0.169 vs Garnet 0.231: the wall is **generation-dependent at fixed size,
+temporally controlled**. We thus characterize all four challenge axes: reservoir size,
+encoding density, shot budget, and noise.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,

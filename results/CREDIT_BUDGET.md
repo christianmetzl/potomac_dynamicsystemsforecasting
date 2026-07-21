@@ -31,13 +31,27 @@ drawdown (e.g. GPU/compute instances) belongs to the parallel project.
 | 12 scaling jobs `...f18957 … f189e7` (see results JSON) | `hw_garnet_n12` | COMPLETED | 6,754.5 | 6,754.5 (probe 44.5 + 11 × 610) |
 | 12 anchor jobs `...f18971 … f189e4` (see results JSON) | `hw_garnet_n8_anchor` | COMPLETED | 6,754.5 | 6,754.5 (probe 44.5 + 11 × 610) |
 | 12 scaling jobs `...f18ac6 … 8aeeb9` (see results JSON) | `hw_emerald_n8` | COMPLETED | 7,416 | 7,416 (probe 46 + 11 × 670) |
+| 5 pair jobs `garnet-4500-...072b … 074b` (see results JSON) | `hw_garnet_n8_pair` | COMPLETED | 3,050 | 3,050 (5 × 610) |
+| 5+3 pair jobs `emerald-bd52-...072e … 0819` | `hw_emerald_n8_pair` | COMPLETED (3 transient FAILED billed 0) | 3,350 | **0 to org — billed to the personal account** (see §4 and the attribution anomaly note below) |
 | `qbraid:qbraid:sim:qir-sv-4500-qjob-6a5c26ded17a5abc1d708762` | `tag_test` | COMPLETED | 0.0 | 0.0 |
 
-**Project spend against the 65,000 ceiling: 57,648.25 settled** (Campaign A 6,754.5 + IonQ smoke
+**Project spend against the 65,000 ceiling: 60,698.25 settled** (Campaign A 6,754.5 + IonQ smoke
 gate 830 + Campaign B′ 20,150 + Rigetti replication 2,234.25 + Garnet n=10 6,754.5 + Garnet n=12
-6,754.5 + same-session n=8 anchor 6,754.5 + Emerald n=8 7,416 — each at or under its
-pre-approved reservation; every failed/rejected submission billed 0). **Remaining reserve:
-7,351.75. The pre-registered hardware program is COMPLETE; no further spend is planned.**
+6,754.5 + same-session n=8 anchor 6,754.5 + Emerald n=8 7,416 + Garnet pair 3,050 — each at or
+under its pre-approved reservation; every failed/rejected submission billed 0). **Remaining
+reserve: 4,301.75. The hardware program incl. Amendment 4 is COMPLETE; no further spend planned.**
+
+**Attribution anomaly (disclosed):** the Emerald half of the Amendment-4 pair
+(`hw_emerald_n8_pair`, 3,350 cr) was submitted with the same org API key and in the same shell
+environment as its Garnet twin, yet the platform created its jobs under the **personal account
+context** (job-ID fragment `-bd52-` vs `-4500-` for every org job; the jobs 403 under the org
+key and are readable only with the personal key; the 3,350 billed the personal wallet, 0 the
+org pool). Yesterday's full Emerald campaign (`hw_emerald_n8`) ran org-attributed on the same
+device, so the entitlement context evidently changed after Emerald's maintenance window. Our
+reconstruction — silent cross-context re-attribution when org device entitlement diverges — is
+documented as unconfirmed platform finding #3 in `results/platform_feedback_qbraid.md`. The
+3,350 is accounted in §4 (self-funded, outside the ceiling); the science is unaffected and the
+job records remain platform-timestamped and verifiable from the owning account.
 
 Planned-spend history (pre-registered: `results/qpu_campaign_manifest.md` + Amendment 1):
 Campaign B was re-scoped to B′ (scale-1-only, ≈20,150 instead of ≈45,990) after the smoke gate
@@ -68,6 +82,7 @@ the per-job billed amounts fetched from qBraid's job records for every tagged jo
 | Rigetti Cepheus-1 full protocol (12 jobs, 2,000 shots each) | ≈1,380 qBraid cr (≈$14) | job IDs in `results/qpu_run_hw_rigetti.json` |
 | qBraid cloud-simulator validation + cross-domain battery + dress rehearsals (60+ jobs) | 0 (free tier) | `results/qpu_run_cloudsim.json`, `results/hosted_runtime_check.json`, `results/qpu_run_dress_*.json` |
 | OpenQuantum-route IonQ/IQM work (probes, calibrations, first Garnet window; incl. the negative-angle discovery jobs) | ≈147 OpenQuantum cr | job IDs in `results/qpu_ckpt_hw_garnet_oq.json`, `results/platform_feedback_bundle/` |
+| `hw_emerald_n8_pair` (5 completed jobs @ 670; involuntary — platform attribution anomaly, see §2 note) | 3,350 qBraid cr | job IDs in `results/qpu_run_hw_emerald_n8_pair.json`; readable from the personal account |
 
 ## 5. How to verify independently (organizers)
 

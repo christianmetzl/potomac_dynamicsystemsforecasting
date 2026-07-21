@@ -77,5 +77,43 @@ only. After hardening: the 99.6% result above.
 
 ---
 
-*Both issues are documented with all artifacts in our Phase-3 submission repository; we're happy
-to provide QASM files, raw counts, or run reproductions on request.*
+## Finding 3 (2026-07-22, reconstruction from observables — not yet confirmed by qBraid):
+## silent cross-context job attribution and billing
+
+**Symptom.** Two campaigns were launched the same second, from the same shell, with the same
+**organization** API key exported: one on `aws:iqm:qpu:garnet`, one on `aws:iqm:qpu:emerald`.
+The Garnet jobs were created in the org context (`...garnet-4500-qjob-...`, readable with the
+org key, billed to the org pool: 3,050 cr). The Emerald jobs were created in the **personal**
+context (`...emerald-bd52-qjob-...`, HTTP 403 "You do not have permission to access this job"
+under the org key, readable with the personal key, and **3,350 cr billed to the personal
+wallet**) — with no error, warning, or indication at submission time.
+
+**Evidence.**
+- First jobs of both campaigns share the timestamp fragment `6a5f861d` (same-second creation,
+  same environment, same key).
+- Every org-context job across 8 prior campaigns carries the `-4500-` fragment; every job known
+  to be personal (including our earlier OpenQuantum-route jobs) carries `-bd52-`.
+- One day earlier, a full 12-job campaign on the **same Emerald device** with the same org key
+  was org-attributed (`...emerald-4500-qjob-...`, 7,416 cr billed to the org pool). The device
+  had an offline/maintenance window between the two campaigns.
+
+**Reconstruction (hypothesis).** After Emerald's maintenance window, the org's entitlement to
+the device apparently changed; a submission authenticated with the org key was then silently
+created under the user's personal context (which retained device access) and billed the
+personal wallet, rather than being rejected.
+
+**Impact.** Budget governance breaks silently: an organization believing it is spending from a
+managed pool can involuntarily bill a member's private wallet, with no submission-time signal.
+For funded programs with per-project ceilings and audit requirements (like this challenge),
+that is a significant integrity issue.
+
+**Suggestion.** The job-creation response should state the billed account context explicitly,
+and a submission whose requested context lacks device entitlement should hard-fail rather than
+fall through to another context.
+
+---
+
+*All issues are documented with artifacts in our Phase-3 submission repository (Finding 3:
+job IDs in `results/qpu_run_hw_emerald_n8_pair.json` and the ledger note in
+`results/CREDIT_BUDGET.md`); we're happy to provide QASM files, raw counts, job records, or run
+reproductions on request.*

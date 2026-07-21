@@ -246,9 +246,31 @@ range (0.2216–0.2301 across two days) by 0.042+, beyond any intra-device varia
 on Garnet at n=8 (0.0085 across days). (S3b) **REFUTED HIGH** — the outlook's named upside
 scenario: the newer generation lands *below* the depolarized limit at the very size where
 Garnet scrambles. The wall is therefore **generation-dependent at fixed size**, completing the
-program's third axis (size, day, generation). Caveat, stated: Garnet and Emerald points are
-from different days; the cross-generation gap exceeds every intra-device drift band we measured
-at n=8, but a same-day cross-device pair was not run.
+program's third axis (size, day, generation). The original days-spanning caveat was closed the
+next day by the Amendment-4 same-window pair (next section), which reproduced the split with
+both chips on the clock simultaneously.
+
+## Amendment-4 same-window cross-generation pair (2026-07-22): generation effect
+## CONFIRMED, temporally controlled
+
+*Two lean scale-1 campaigns (2 cals + 3 windows @ 4k shots each, probes skipped — orientation
+known), launched the same second (first jobs share timestamp prefix `6a5f861d`) with execution
+windows overlapping in the same hour. Garnet: 5 jobs, 3,050 cr (org), `hw_garnet_n8_pair`.
+Emerald: 5 completed jobs + 3 transient failures billed 0, 3,350 cr, `hw_emerald_n8_pair`
+(attribution anomaly: billed to the personal account despite org-key submission — see
+`CREDIT_BUDGET.md` §2 note and platform finding #3; scientific content unaffected).*
+
+| same window, n=8, scale-1 | raw | vs limit 0.1958 |
+|---|---|---|
+| IQM Garnet | **0.2307** | beyond — scrambled (third n=8 point: 0.2301 / 0.2216 / 0.2307) |
+| IQM Emerald | **0.1690** | **inside — signal-bearing** |
+
+**Decision rule applied (Amendment 4, branch 1, exactly):** same-window Emerald inside the
+limit AND Garnet beyond → **the generation effect is confirmed and temporally controlled**;
+day-scale drift cannot explain a 0.0617 same-window gap. Bonus reproducibility: Garnet's n=8
+raw has now been measured three times across three days within 0.009 of each other — the
+scrambled regime at that size/instance is rock-stable, which sharpens the contrast with the
+signal-bearing larger sizes on the same chip.
 
 **Program synthesis — every pre-registered scaling statement resolved:**
 S1 refuted (n=10, n=12 signal-bearing, drift-controlled) · S2 refuted (excess falls and flips
@@ -261,7 +283,7 @@ falsified by controlled measurement — committed before execution, reported as 
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
-| IQM Emerald (54q) | superconducting | **n=8: raw 0.1793 < limit 0.1958 — signal-bearing at fixed size (S3b refuted high)**; best mitigated 0.1751 |
-| IQM Garnet (20q) | superconducting | n=8: raw 0.2301 / same-session anchor 0.2216 — beyond limit, (iii) confirmed; **n=10: 0.1590 and n=12: 0.1897 — both inside their limits, signal-bearing, drift-controlled (S1, S2 refuted)** |
+| IQM Emerald (54q) | superconducting | **n=8: raw 0.1793 / same-window pair 0.1690 — signal-bearing at fixed size (S3b refuted high, temporally controlled)** |
+| IQM Garnet (20q) | superconducting | n=8: raw 0.2301 / anchor 0.2216 / same-window pair 0.2307 — beyond limit on three days, (iii) confirmed; **n=10: 0.1590 and n=12: 0.1897 — both inside their limits, signal-bearing, drift-controlled (S1, S2 refuted)** |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
