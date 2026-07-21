@@ -155,15 +155,27 @@ figures/  results/                      generated figures + findings write-ups
 - **MNIST** — fetched once from the public Keras `.npz` mirror; a seeded subset is cached in
   `data/mnist_subset.npz` for offline runs.
 
-## Hardware plan (Phase 3)
+## Hardware execution (Phase 3 — EXECUTED)
 
-Simulator-first: dense statevector ≤12 qubits, sparse/TN to ~16. The QPU submission path is
-**executable now** — `python3 cli.py run qsubmit` (`qbraid_submit.py`) runs the gate-Trotter
-circuit (≈380 native gates) on a simulator with a **shot-budget curve** (mean feature error
-0.046→0.0066 at 256→16k shots), a **ZNE** demonstration, and the **classical cross-check**
-(exact circuit vs engine = 3.9×10⁻¹⁶); it is one flag (`--device`) from a real **IonQ / IQM /
-IBM** backend via qBraid (pending credit allocation). *(QCi Dirac-3 is the separate
-optimization challenge's device, not this QRC track.)*
+**Ten provenance-tagged QPU campaigns across three vendors / four devices** (IonQ Forte-1,
+IQM Garnet, IQM Emerald, Rigetti Cepheus-1) — every campaign pre-registered (manifest +
+amendments with decision rules committed *before* execution), budget-audited to the credit
+(`results/CREDIT_BUDGET.md`), and scored against predictions committed in advance:
+
+- **IonQ Forte-1** (trapped-ion, n=8): raw feature error **0.104 — signal-bearing** (below the
+  0.196 depolarized limit; prediction (ii) confirmed). Bonus finding: a 2,000-gate/circuit
+  device ceiling measured on both access routes → ZNE infeasible there (disclosed fallback).
+- **IQM Garnet** n=10 / n=12: **0.159 / 0.190 — signal-bearing**, while a same-session n=8
+  anchor stayed scrambled (0.222) — size effect real, drift excluded (S1/S2 refuted).
+- **IQM Emerald** (newer generation) at n=8: **0.169–0.179 — signal-bearing at the very size
+  Garnet scrambles**, reproduced in a same-window two-chip pair (S3b refuted high).
+- **Garnet / Rigetti** at n=8: 0.222–0.261 across five runs and three days — the stable
+  **characterized negative** that anchors the contrast.
+
+Full detail: `results/qpu_hardware_findings.md` · pre-registration:
+`results/qpu_campaign_manifest.md`, `results/qpu_scaling_outlook.md`. The simulator path
+remains one command (`python3 cli.py run qsubmit`; exact circuit vs engine = 3.9×10⁻¹⁶).
+*(QCi Dirac-3 is the separate optimization challenge's device, not this QRC track.)*
 
 ## AI collaboration disclosure
 

@@ -9,6 +9,12 @@ recurrent ESN, RFF; HAC-DM; 8 seeds; two windows; Holm) the quantum reservoir sh
 significant forecasting advantage at simulable scale → H0 refuted**. What survives:
 competitiveness, lower seed variance than the ESN, measured kernel distinctness, and
 full-rank entanglement (classical-simulation hardness). We report this honestly.
+Hardware: **ten pre-registered QPU campaigns (3 vendors, 4 devices)** — signal-bearing
+executions on trapped-ion (0.104) and newer-generation superconducting hardware (0.169–0.190
+at n=8–12), with the coherence wall shown to be size-, instance- and generation-dependent
+under same-session/same-window controls, and the superconducting n=8 negative stable across
+three days. All scored against predictions committed before execution; three of four scaling
+statements refuted by our own controlled measurements — reported as measured.
 
 ## What's in the package
 - `PHASE3_PAPER.pdf` — the **5-page** write-up (11-pt Times New Roman, single-spaced).
