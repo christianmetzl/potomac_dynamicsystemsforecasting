@@ -2,7 +2,7 @@
 
 *Maintained for organizer audit. Every line is verifiable against qBraid's own job records via
 the job IDs and tags below — nothing here relies on our self-reporting. Last updated
-2026-07-19 (pre-Campaign-A execution); this file is refreshed at each campaign completion.*
+2026-07-21 (Campaigns A and B′ complete); this file is refreshed at each campaign completion.*
 
 ## 1. Funding structure
 
@@ -21,24 +21,34 @@ drawdown (e.g. GPU/compute instances) belongs to the parallel project.
 | platform job ID | campaign tag | status | est. cr | billed cr |
 |---|---|---|---|---|
 | `aws:iqm:qpu:garnet-4500-qjob-6a5bb22fd17a5abc1d707148` + 11 campaign jobs (see results JSON) | `hw_garnet_native` | COMPLETED | 6,754.5 | 6,754.5 |
+| `aws:ionq:qpu:forte-1-4500-qjob-6a5e3f3fd17a5abc1d70e7a0` (orientation, 100 shots) | `hw_ionq_smoke` | COMPLETED | 830.0 | 830.0 |
+| 3 fold-5 submissions (gate-limit rejections, see `results/qpu_ionq_smoke.json`) | `hw_ionq_smoke` | FAILED (validation) | 0.0 | 0.0 |
+| 5 campaign jobs `...711a74/711ac5/711bbc/711c42/711ce0` (see results JSON) | `hw_ionq_native` | COMPLETED | 20,150.0 | 20,150.0 (5 × 4,030) |
+| `openquantum:ionq:qpu:forte-1-bd52-qjob-6a5ead84d17a5abc1d711a81` (fold-3 probe) | `oq_fold3_probe` | FAILED (validation) | 0.0 | 0.0 |
 | `qbraid:qbraid:sim:qir-sv-4500-qjob-6a5c26ded17a5abc1d708762` | `tag_test` | COMPLETED | 0.0 | 0.0 |
 
-**Project spend against the 65,000 ceiling: 6,754.5 settled (Campaign A complete, 12 jobs —
-exactly the manifest budget; all 12 job IDs in `results/qpu_run_hw_garnet_native.json`).**
+**Project spend against the 65,000 ceiling: 27,734.5 settled** (Campaign A 6,754.5 + IonQ smoke
+gate 830 + Campaign B′ 20,150 — each exactly its pre-approved reservation; every failed/rejected
+submission billed 0). **Remaining headroom: 37,265.5.**
 
-Planned spend (pre-registered: `results/qpu_campaign_manifest.md` + Amendment 1): Campaign A
-(Garnet) ≈6,755 · Campaign B (IonQ) ≈45,990 · contingency 6,255 · Rigetti replication 2,400 ·
-reserve 3,600 — ceiling 65,000. Each campaign requires an explicit go decision before launch.
+Planned-spend history (pre-registered: `results/qpu_campaign_manifest.md` + Amendment 1):
+Campaign B was re-scoped to B′ (scale-1-only, ≈20,150 instead of ≈45,990) after the smoke gate
+measured IonQ's 2,000-gate/circuit ceiling — abort rule 1, disclosed in
+`results/qpu_hardware_findings.md`. Still pre-funded and unspent: Rigetti replication 2,400 ·
+reserve 3,600. Each campaign requires an explicit go decision before launch.
 
-## 3. Org-pool cross-check (wallet arithmetic at last update)
+## 3. Org-pool cross-check (wallet arithmetic)
 
 | | credits |
 |---|---|
 | granted | 130,000 |
-| wallet balance | ≈116,446 |
-| total drawn | ≈13,554 |
-| → this project (tagged quantum jobs above) | 44.5 (reserved) |
-| → parallel project (non-quantum compute, by elimination) | ≈13,509 |
+| → this project, settled (sum of tagged quantum jobs above, per-job verified via API) | **27,734.5** |
+| → this project, ceiling | 65,000 |
+| → parallel project | whatever remains of the org drawdown after subtracting our tagged jobs (non-quantum compute; by elimination) |
+
+The wallet balance moves with both projects, so this file pins only what is mechanically ours:
+the per-job billed amounts fetched from qBraid's job records for every tagged job listed above
+(5 × 4,030 for `hw_ionq_native`, 830 for `hw_ionq_smoke`, 6,754.5 for `hw_garnet_native`).
 
 ## 4. Self-funded era (personal account — outside the ceiling)
 

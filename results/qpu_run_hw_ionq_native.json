@@ -1,0 +1,59 @@
+{
+ "mode": "hw",
+ "device": "aws:ionq:qpu:forte-1",
+ "n": 8,
+ "layers": 20,
+ "shots": 500,
+ "scales": [
+  1
+ ],
+ "readout_e0": [
+  0.006,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0,
+  0.0
+ ],
+ "readout_e1": [
+  0.006,
+  0.006,
+  0.008,
+  0.008,
+  0.002,
+  0.006,
+  0.006,
+  0.01
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.10418102286784253,
+   0.31285983681027096
+  ],
+  "readout-mitigated": [
+   0.1043624448675101,
+   0.31351327402977947
+  ],
+  "+ ZNE linear": [
+   0.1043624448675101,
+   0.31351327402977947
+  ],
+  "+ ZNE Richardson": [
+   0.1043624448675101,
+   0.31351327402977947
+  ]
+ },
+ "improved": false,
+ "job_ids": [
+  "aws:ionq:qpu:forte-1-4500-qjob-6a5ead6dd17a5abc1d711a74",
+  "aws:ionq:qpu:forte-1-4500-qjob-6a5eae2fd17a5abc1d711ac5",
+  "aws:ionq:qpu:forte-1-4500-qjob-6a5eb1aed17a5abc1d711bbc",
+  "aws:ionq:qpu:forte-1-4500-qjob-6a5eb35cd17a5abc1d711c42",
+  "aws:ionq:qpu:forte-1-4500-qjob-6a5eb4ead17a5abc1d711ce0"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 2306.3
+}

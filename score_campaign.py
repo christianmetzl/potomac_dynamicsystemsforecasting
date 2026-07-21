@@ -27,6 +27,7 @@ PREDICTIONS = {
 DEPOLARIZED_LIMIT = 0.1958          # mean |engine features| over the 3 RV windows
 RIGETTI_MEASURED_RAW = 0.2611       # committed characterized negative (2k shots)
 GARNET_OQ_PREVIEW_RAW = 0.2382      # single-window OQ-route preview (4k shots)
+GARNET_NATIVE_RAW = 0.2301          # full protocol, native route, 4k shots (Campaign A)
 
 STAGES = ["raw (scale 1)", "readout-mitigated", "+ ZNE linear", "+ ZNE Richardson"]
 
@@ -60,10 +61,9 @@ def main(path):
           f"(raw {raw:.4f} -> Richardson {rich:.4f})")
     if kind == "ionq":
         print(f"(ii)  IonQ raw < superconducting raw: measured {raw:.4f} vs "
-              f"Rigetti {RIGETTI_MEASURED_RAW:.4f} (Garnet OQ preview "
-              f"{GARNET_OQ_PREVIEW_RAW:.4f}) -> "
-              f"{'CONFIRMED' if raw < min(RIGETTI_MEASURED_RAW, GARNET_OQ_PREVIEW_RAW) else 'REFUTED'}"
-              f" (finalize against the native Garnet number when both landed)")
+              f"Garnet {GARNET_NATIVE_RAW:.4f} / Rigetti {RIGETTI_MEASURED_RAW:.4f} -> "
+              f"{'CONFIRMED' if raw < min(RIGETTI_MEASURED_RAW, GARNET_NATIVE_RAW) else 'REFUTED'}"
+              f" (both full-protocol native-route numbers)")
         print(f"      signal-bearing? raw {'<' if raw < DEPOLARIZED_LIMIT else '>='} "
               f"depolarized limit {DEPOLARIZED_LIMIT:.4f} -> "
               f"{'device retains signal at scale 1' if raw < DEPOLARIZED_LIMIT else 'noise-flattened/scrambled regime (as on superconducting)'}")
@@ -80,6 +80,9 @@ def main(path):
     print(f"{'device':<26}{'type':<17}{'raw':>8}{'best mitigated':>16}")
     print(f"{'Rigetti Cepheus-1 (107q)':<26}{'superconducting':<17}"
           f"{RIGETTI_MEASURED_RAW:>8.4f}{0.2558:>16.4f}")
+    if kind != "garnet":
+        print(f"{'IQM Garnet (20q)':<26}{'superconducting':<17}"
+              f"{GARNET_NATIVE_RAW:>8.4f}{0.2266:>16.4f}")
     label = {"garnet": "IQM Garnet (20q)", "ionq": "IonQ Forte-1 (36q)"}.get(kind, device)
     typ = {"garnet": "superconducting", "ionq": "trapped-ion"}.get(kind, "?")
     best = min(chain[s][0] for s in STAGES[1:])

@@ -35,9 +35,9 @@ predictions committed BEFORE the run (`results/qpu_hardware_predictions.md`).*
    from. Readout mitigation is a no-op at this noise level (gate noise ≫ readout error).
    Exactly the failure mode our per-layer noise study (§5.4) predicted for accumulated
    two-qubit error — now measured on metal.
-3. **Prediction (ii)** (IonQ raw < superconducting raw) — pending: the all-to-all trapped-ion run
-   (no routing, 220 native two-qubit gates vs ~10³ routed) is in flight on IonQ Forte-1 via the
-   qBraid native route; that is the device class where scale-1 signal should survive.
+3. **Prediction (ii)** (IonQ raw < superconducting raw) — **CONFIRMED**, see the executed IonQ
+   campaign below: the all-to-all trapped-ion run (no routing, 220 native two-qubit gates vs
+   ~10³ routed) measured raw 0.1042, and scale-1 signal did survive on that device class.
 
 ## What this validates (and what it does not)
 - **Validated:** the entire hardware pipeline end-to-end on a real QPU — transport, transpilation,
@@ -48,7 +48,8 @@ predictions committed BEFORE the run (`results/qpu_hardware_predictions.md`).*
   **executed**, not pending.
 - **Not validated (honest):** mitigated-features-converging-to-cross-check on THIS device class —
   the pre-registered success criterion — did not occur; the run is a characterized negative, not a
-  demonstration of mitigation recovery. The trapped-ion run is the remaining test.
+  demonstration of mitigation recovery. The trapped-ion run was the remaining test — and it
+  resolved signal-bearing (see the executed IonQ campaign below).
 
 ## IQM Garnet — full protocol EXECUTED at the pre-registered 4k-shot config (2026-07-20)
 
@@ -86,10 +87,43 @@ The OQ-route single-window preview (0.238) is consistent with the full-protocol 
   protocol with readout mitigation, no ZNE** — so its chain reports raw and readout-mitigated
   stages only.
 
+## IonQ Forte-1 — scale-1 campaign EXECUTED: first signal-bearing hardware run (2026-07-21)
+
+*5 jobs on `aws:ionq:qpu:forte-1` (native route, provenance-tagged, commit `cf70473df7a5`),
+20,150 credits settled — exactly the reservation. Job IDs in `results/qpu_run_hw_ionq_native.json`.
+Scale-1-only protocol per abort rule 1 (2,000-gate ceiling, measured on both routes above);
+500 shots/circuit (shot-noise floor ≈0.0447); readout errors measured at 0.08% / 0.65%.*
+
+| stage | mean err | notes |
+|---|---|---|
+| raw (scale 1) | **0.1042** | **< depolarized limit 0.1958 → the device retains circuit signal** — first signal-bearing hardware execution of this reservoir |
+| readout-mitigated | 0.1044 | no-op within shot noise (Δ≈2·10⁻⁴ ≪ floor 0.045): at 0.08%/0.65% readout there is nothing to correct |
+| ZNE stages | 0.1044 | not applicable — carried through unchanged (scale-1-only; folding infeasible on this device) |
+
+**Predictions scored:**
+- **(ii) CONFIRMED** — trapped-ion raw 0.1042 vs superconducting 0.2301 (Garnet) / 0.2611
+  (Rigetti): 2.2–2.5× lower feature error, exactly the routing-free ordering we pre-registered.
+- Raw also lands **below the 0.149 pre-registered point forecast**, despite running at 500
+  shots instead of the 4,000 the forecast assumed (floor 0.045 vs 0.016) — the ion hardware is
+  cleaner than our model of it.
+- **(i) vacuously refuted** on this device: the chain is flat (0.1042 → 0.1044) because both
+  mitigation stages are inert here — readout error is negligible and ZNE is device-infeasible.
+  No recovery was possible, none was observed; we report the flat chain rather than claiming it.
+- **Error budget (approximate):** shot floor ≈0.045 and Trotter-20 systematic ≈0.04 together
+  account for roughly 0.06 of the 0.1042 in quadrature; the remainder is gate noise over 220
+  two-qubit gates. A higher-shot replicate would separate these cleanly.
+
+**The cross-platform story is now complete and coherent:** the same pre-registered circuit,
+executed on three vendors, measures the coherence-budget wall from both sides — superconducting
+lattices (routing-inflated to ~10³ two-qubit gates) land *beyond* the depolarized limit
+(scrambled, 0.2301/0.2611), while the all-to-all trapped-ion machine (220 two-qubit gates, no
+routing) stays *inside* it (signal-bearing, 0.1042). That ordering was committed before any
+hardware ran.
+
 ## Cross-platform hardware data collected so far
 | device | type | result |
 |---|---|---|
-| IonQ Forte-1 (36q) | trapped-ion | probe P(|1⟩⁸)=0.97; hardened cal validated (0.996); smoke: orientation REVERSED, 2,000-gate ceiling → **scale-1 campaign in flight (funded)** |
+| IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |
 | IQM Garnet (20q) | superconducting | **full protocol executed at 4k shots** (above): raw 0.2301, (iii) confirmed |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed**: raw 0.2611, characterized negative |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
