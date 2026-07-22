@@ -53,7 +53,8 @@ of why the honest negative is domain-, metric-, and architecture-general.
 `data/` (S&P 500 realized variance, NOAA weather stations, seeded MNIST subset — provenance
 below); every script runs offline from the repo root with only `requirements.txt` installed.
 No API keys, accounts, or external services are needed for reproduction. (Optional QPU
-re-execution via `qpu_run.py` is the one exception: it needs a qBraid API key and credits.)
+re-execution via `qpu_run.py` is the one exception: it needs a qBraid API key and credits;
+the `openquantum:` device route additionally needs a linked OpenQuantum account.)
 
 **Outputs:** each script prints its verdicts to stdout and writes (i) a `*_results.npy`
 array bundle and (ii) a human-readable `results/*_findings.md` with the headline numbers.
