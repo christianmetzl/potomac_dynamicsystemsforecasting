@@ -47,6 +47,38 @@ in this project (12+ rows: volatility, weather×5 stations, VPT static/recurrent
 efficiency frontier, noise, quantum-data) with its verdict and artifact — the one-page view
 of why the honest negative is domain-, metric-, and architecture-general.
 
+## Expected inputs & outputs
+
+**Inputs (all bundled or auto-fetched; nothing to configure):** public datasets ship in
+`data/` (S&P 500 realized variance, NOAA weather stations, seeded MNIST subset — provenance
+below); every script runs offline from the repo root with only `requirements.txt` installed.
+No API keys, accounts, or external services are needed for reproduction. (Optional QPU
+re-execution via `qpu_run.py` is the one exception: it needs a qBraid API key and credits.)
+
+**Outputs:** each script prints its verdicts to stdout and writes (i) a `*_results.npy`
+array bundle and (ii) a human-readable `results/*_findings.md` with the headline numbers.
+The committed `results/` files are the authoritative full-run numbers; `--quick` runs
+regenerate the same *verdicts* at reduced seeds/sizes in ~10 min. Hardware campaign outputs
+(`results/qpu_run_hw_*.json` + per-job IDs) are committed as executed — QPU runs are
+inherently non-rerunnable bit-for-bit, so judges verify them via the platform job records
+listed in `results/CREDIT_BUDGET.md`.
+
+## Known limitations & assumptions
+
+The paper's §7 states these plainly; the load-bearing ones:
+1. **No quantum advantage at simulable scale** — HAR-X (classical, linear) is the best
+   volatility model in every fair test; the QRC is competitive-not-better. This is the
+   honest headline, not a caveat.
+2. RV sample ends Feb-2020 (2008 in-sample, COVID just outside); broader assets/periods are
+   daily-proxy supporting studies (`v2_research/`, same negative), not 5-min RV.
+3. Simulation noise is per-layer single-qubit channels (depolarizing, amplitude damping,
+   readout); combined noisy-circuit-plus-shot execution lives in the hardware campaigns.
+4. Hardware point values carry measured day-scale drift (~0.04 on superconducting devices);
+   regime statements (signal-bearing vs scrambled vs the depolarized limit) are the robust
+   currency — see `results/qpu_hardware_findings.md`.
+5. Efficiency/capacity results assume the documented run configurations; the information-
+   processing-capacity gap g is regularization-dependent (qualitative, not quantitative).
+
 ---
 
 ## Headline results (all script-backed; honest, pre-registered)
