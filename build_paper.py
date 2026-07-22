@@ -84,6 +84,10 @@ def main():
             while i < len(lines) and lines[i].startswith(">"):
                 i += 1
             continue
+        if ln.strip() == "<!-- pagebreak -->":
+            doc.add_page_break()
+            i += 1
+            continue
         if ln.startswith("| "):            # table block
             tbl_lines = []
             while i < len(lines) and lines[i].startswith("|"):
@@ -186,7 +190,7 @@ def build_pdf(lines):
     h1 = ParagraphStyle("h1", parent=body, fontName=serif_b, fontSize=14,
                         leading=16, alignment=0, spaceAfter=2)
     h2 = ParagraphStyle("h2", parent=body, fontName=serif_b, fontSize=12,
-                        leading=14, alignment=0, spaceBefore=4, spaceAfter=2)
+                        leading=14, alignment=0, spaceBefore=3, spaceAfter=2)
     h3 = ParagraphStyle("h3", parent=body, fontName=serif_b, fontSize=11,
                         leading=13, alignment=0, spaceAfter=1)
     h4 = ParagraphStyle("h4", parent=h3, fontName=serif_bi)
@@ -200,6 +204,11 @@ def build_pdf(lines):
             i += 1
             while i < len(lines) and lines[i].startswith(">"):
                 i += 1
+            continue
+        if ln.strip() == "<!-- pagebreak -->":
+            from reportlab.platypus import PageBreak
+            story.append(PageBreak())
+            i += 1
             continue
         if ln.startswith("|"):
             tbl = []
@@ -217,8 +226,8 @@ def build_pdf(lines):
                     ("BACKGROUND", (0, 0), (-1, 0), colors.whitesmoke),
                     ("FONTNAME", (0, 0), (-1, 0), serif_b),
                     ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                    ("TOPPADDING", (0, 0), (-1, -1), 1.5),
-                    ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
+                    ("TOPPADDING", (0, 0), (-1, -1), 1),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
                 ]))
                 story.append(t); story.append(Spacer(1, 4))
             continue
@@ -249,7 +258,7 @@ def build_pdf(lines):
         elif ln.startswith("- "):
             story.append(Paragraph("&bull;&nbsp;" + _inline(ln[2:]), body))
         elif ln.strip() == "":
-            story.append(Spacer(1, 3))
+            story.append(Spacer(1, 2.5))
         else:
             story.append(Paragraph(_inline(ln), body))
         i += 1

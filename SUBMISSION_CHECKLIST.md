@@ -51,8 +51,10 @@ the same verdicts at reduced seeds/sizes.
    paste the cover page as page 1, export to PDF, replace `PHASE3_PAPER.pdf`, re-zip.
 2. **Re-verify the merged PDF's page count.** The body is exactly 5 pages; a
    Word/LibreOffice export can reflow text. After the cover-page merge, confirm
-   total = cover + 5 body pages (e.g. `python3 -c "import fitz;
-   print(fitz.open('PHASE3_PAPER.pdf').page_count)"` → 6).
+   total = cover + 5 body pages + 1 references page (e.g. `python3 -c "import fitz;
+   print(fitz.open('PHASE3_PAPER.pdf').page_count)"` → 7). The rules exclude references
+   from the 5-page limit, so References intentionally sit on their own page after the body;
+   after merging the cover, confirm the References heading still starts its own page.
 3. **Zip freshness check.** Build the zip AT THE FINAL COMMIT and confirm it contains
    the current paper: `bash package_submission.sh` prints the commit it archived —
    it must match `git rev-parse --short HEAD` and the latest `v*-submission` tag.
