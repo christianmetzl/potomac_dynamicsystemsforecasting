@@ -102,3 +102,19 @@ differ by orders of magnitude between superconducting and trapped-ion).
 
 Neither experiment is fundable from the remaining project reserve (4,301.75) and neither will
 be run before the Phase-3 deadline; they stand as the program's committed next chapter.
+
+**(S7) Mechanism isolation — embedding vs instance (added 2026-07-22, pre-registered).**
+The drift-controlled size effect (S1/S2 refutations) has no established mechanism; the two
+leading candidates make different predictions, so we commit the discriminating experiment:
+run the *same* seed-0 n=8 instance twice in one Garnet session — once with the default
+logical-to-physical assignment, once with the qubit labels permuted in the emitted QASM
+(lean scale-1 config, 5 jobs each; ≈3,050 cr per embedding; same-session cals as
+fingerprints). Committed hypothesis, falsifiable both ways: **(S7a)** if the permuted
+embedding's raw error differs from the default by more than the same-session band we measured
+(≈0.01), the effect is **embedding-dominant** (the n=8 default assignment happens to sit on
+worse qubits/couplers); **(S7b)** if it matches within the band while n=10/12 remain
+signal-bearing, the effect is **instance-dominant** (graph/feature structure, not placement).
+Caveat committed in advance: the platform transpiler may re-route a permuted circuit, so the
+executed assignment must be read back from the returned program metadata where exposed, and
+the claim is made at whichever layer the evidence supports. Not launched — pre-registered
+for remaining reserve (with organizer endorsement) or post-challenge execution.
