@@ -280,6 +280,15 @@ well-calibrated Emerald/anchor/Rigetti-replicate days). Three of four headline s
 falsified by controlled measurement — committed before execution, reported as measured.
 
 ## Cross-platform hardware data collected so far
+
+*Statistical hardening: multinomial bootstrap from each campaign's committed counts
+(`qpu_bootstrap_ci.py` → `results/qpu_bootstrap_ci.md`) re-derives every raw number below from
+the raw data and places **each regime claim 9.7–24σ beyond shot noise**; the engine-side limit
+check (documented limit = mean|F_exact| per n) is asserted in the same run. Shot noise is
+thereby excluded as an explanation for any regime verdict; day-scale drift remains the
+relevant uncertainty for cross-day point values, bounded by the replication/anchor/pair
+controls above.*
+
 | device | type | result |
 |---|---|---|
 | IonQ Forte-1 (36q) | trapped-ion | **full scale-1 protocol executed at 500 shots** (above): raw **0.1042**, signal-bearing, (ii) confirmed |

@@ -53,6 +53,7 @@ ACTIONS = {
     "noise_circuit":(["noisy_circuit_study.py"], "Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)", True),
     "qpu_dryrun":   (["qbraid_submit.py", "--dry-run"], "QPU readiness: print gate/shot/cost plan + validate device wiring (no credits needed)", False),
     "qpu_selftest": (["qpu_run.py", "--selftest"], "Verify the emitted QASM2 = the reservoir (independent interpreter; fold identity)", False),
+    "qpu_bootstrap": (["qpu_bootstrap_ci.py"], "Shot-noise bootstrap CIs for all 9 hardware campaigns from the committed counts (re-derives every paper number)", False),
     "qpu_rehearsal": (["qpu_run.py"], "FULL-DRESS offline QPU rehearsal: counts + readout mitigation + folding ZNE + cross-check (the exact credit-day pipeline)", True),
     "tensor_check": (["tensor_backend.py", "--check"], "Verify sparse backend matches dense engine", False),
 }

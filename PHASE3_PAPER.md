@@ -233,15 +233,17 @@ in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k 
 | IQM Garnet | superconducting | 8 | 0.222–0.231 (3 days) | 0.196 | scrambled — the stable control |
 | Rigetti Cepheus-1 | superconducting | 8 | 0.223–0.261 (2 days) | 0.196 | scrambled (drift band measured) |
 
-**Execution provenance (externally verifiable).** All ten campaigns were pre-registered in a
-committed manifest (budgets, abort and decision rules amended *before* each launch); every job
-embeds the repo commit hash and campaign tag in qBraid's timestamped records — a hash-preimage
-commitment that predictions predate data — and per-job billing matched estimates to the
-half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits; every rejected submission billed 0).
-Controls were bought exactly where claims needed them: a Rigetti replication (day-drift band),
-a same-session n=8 anchor (drift excluded from the size effect), a same-window two-chip pair
-(generation effect temporally controlled). The S5/S6 outlook (hardware-in-the-loop
-forecasting; hardware-native dissipation) is pre-committed the same way.
+**Execution provenance (externally verifiable).** Every campaign ran against pre-committed
+predictions — the ten funded ones under a committed manifest (budgets, abort and decision
+rules amended *before* each launch); every job embeds the repo commit hash and campaign tag
+in qBraid's timestamped records — a hash-preimage commitment that predictions predate data —
+and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits;
+every rejected submission billed 0). Multinomial bootstrap from the committed counts
+re-derives every number above and puts **each regime claim 9.7–24σ beyond shot noise**
+(`cli.py run qpu_bootstrap`). Controls were bought exactly where claims needed them: a Rigetti
+replication (day-drift band), a same-session n=8 anchor (drift excluded from the size
+effect), a same-window two-chip pair (generation effect temporally controlled). The S5/S6
+outlook is pre-committed the same way.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
