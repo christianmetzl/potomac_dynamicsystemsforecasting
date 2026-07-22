@@ -28,7 +28,15 @@ predictions committed BEFORE the run (`results/qpu_hardware_predictions.md`).*
    exceed our routing-free 0.171 prediction because we chose not to model SWAP routing. Measured:
    0.261 — and in fact **beyond the fully-depolarized limit (0.196)**: after lattice routing
    (~10³ native two-qubit gates at scale 1), the executed circuit is not merely noise-flattened
-   but systematically scrambled (coherent/routing error, not just depolarizing).
+   but systematically scrambled. A readout-corrected noise fingerprint (`qpu_noise_fingerprint.py`,
+   `cli.py run qpu_fingerprint`) separates the mechanisms directly from the counts: the best
+   affine shrink-and-bias model — which captures *any* depolarizing + amplitude-damping
+   combination — explains ≤8% of the measured ⟨Z_i⟩ pattern (R²≈0.00–0.08), leaving 77–99% as
+   coherent/structured residual. The scrambling is therefore **predominantly coherent (routing)
+   error**, with a **measurable but subdominant amplitude-damping bias** on the superconducting
+   chips (ground-state bias b≈+0.15–0.24 on Garnet; ≈0 on Rigetti). "Beyond the depolarized
+   limit" alone proves only *non-depolarizing*; the fingerprint is what earns the coherent
+   attribution.
 2. **Prediction (i) REFUTED on this device class:** no monotone mitigation recovery. The reason is
    structural and worth stating: **gate folding assumes scale 1 is inside the coherence budget**;
    here scale 1 is already beyond it, so scales 3/5 carry no additional signal to extrapolate
@@ -58,7 +66,7 @@ exactly the manifest budget. Job IDs in `results/qpu_run_hw_garnet_native.json`.
 
 | stage | mean err | notes |
 |---|---|---|
-| raw (scale 1) | **0.2301** | > depolarized limit 0.1958 → coherent/routing scrambling, **replicating the Rigetti regime on a second superconducting vendor** |
+| raw (scale 1) | **0.2301** | > depolarized limit 0.1958 → predominantly coherent scrambling (fingerprint: 87% coherent residual, damping bias b≈+0.16), **replicating the Rigetti regime on a second superconducting vendor** |
 | readout-mitigated | 0.2275 | small genuine reduction (readout measured 0.43%/3.17%, replicating the OQ-route cals 0.56%/3.55%) |
 | + ZNE linear | 0.2266 | best stage |
 | + ZNE Richardson | 0.2303 | recovery not monotone through Richardson |

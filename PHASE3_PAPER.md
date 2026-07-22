@@ -169,14 +169,13 @@ at their larger-budget plateaus):
 |---|---|---|---|
 | RMSE (°C) | 0.85 | 0.78 | 0.71 |
 
-*Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations, +0–78%
-unpredictability) and the autonomous **VPT** metric still show no advantage; the **recurrent** QRC is
-competitive-not-better — unitary evolution is non-dissipative, lacking the contraction behind ESN
-"generalized synchronization" (Ahmed–Tennie–Magri 2025). We then **demonstrated the mechanism by
-fixing it**: engineered memory-qubit damping shows the pre-registered inverted-U in the damping
-rate and lifts autonomous VPT ≈+60% (replicated on fresh starts), raising the recurrent QRC from
-clearly-behind to **statistical parity** with the size-matched ESN — not better
-(`results/dissipative_qrc_findings.md`).
+*Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations) and the
+autonomous **VPT** metric still show no advantage; the **recurrent** QRC is competitive-not-better
+— unitary evolution is non-dissipative, lacking the contraction behind ESN "generalized
+synchronization" (Ahmed–Tennie–Magri 2025). We then **demonstrated the mechanism by fixing
+it**: engineered memory-qubit damping shows the pre-registered inverted-U and lifts autonomous
+VPT ≈+60%, raising the recurrent QRC from clearly-behind to **statistical parity** with the
+size-matched ESN — not better (`results/dissipative_qrc_findings.md`).
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: statevector ≤12 qubits, sparse/TN to ≈16, GPU beyond.
@@ -210,8 +209,9 @@ net RY(π); the client-side JSON provably contained both) — corrupting ZNE's n
 gates. We hardened the emitter (angles mod 2π; diagonal-only calibrations) and validated
 on-device: P(|0⁸⟩)=0.996 vs 0.0 pre-fix. The decisive routing-free **IonQ Forte-1 campaign
 then executed** under the pre-committed manifest: a smoke gate measured a **2,000-gate/circuit
-device ceiling** on both access routes, so per abort rule it ran scale-1-only (500 shots,
-readout 0.08%/0.65%). **Raw 0.104 — below the 0.196 depolarized limit** and every
+device ceiling** on both access routes, so per abort rule it ran scale-1-only (500 shots — a
+disclosed, cost-forced deviation from the 4k config, s.e.≈0.004; readout 0.08%/0.65%).
+**Raw 0.104 — below the 0.196 depolarized limit** and every
 superconducting n=8 number: the **first signal-bearing hardware execution** of this reservoir
 (**prediction (ii) confirmed**, under our 0.149 forecast) — one pre-registered circuit
 measuring the coherence wall from both sides (`results/qpu_hardware_findings.md`). A
@@ -238,12 +238,12 @@ predictions — the ten funded ones under a committed manifest (budgets, abort a
 rules amended *before* each launch); every job embeds the repo commit hash and campaign tag
 in qBraid's timestamped records — a hash-preimage commitment that predictions predate data —
 and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits;
-every rejected submission billed 0). Multinomial bootstrap from the committed counts
-re-derives every number above and puts **each regime claim 9.7–24σ beyond shot noise**
-(`cli.py run qpu_bootstrap`). Controls were bought exactly where claims needed them: a Rigetti
-replication (day-drift band), a same-session n=8 anchor (drift excluded from the size
-effect), a same-window two-chip pair (generation effect temporally controlled). The S5/S6
-outlook is pre-committed the same way.
+every rejected submission billed 0). Bootstrap from the committed counts re-derives every
+number above and puts **each regime claim 9.7–24σ beyond shot noise**; a readout-corrected
+fingerprint attributes the scrambled regime to predominantly coherent error
+(`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where claims needed them: a Rigetti
+replication (day-drift band), a same-session n=8 anchor (size effect vs drift), a same-window
+two-chip pair (generation effect). S5–S7 are pre-committed.
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
@@ -270,13 +270,14 @@ hardware-native many-qubit inputs remain the one untested regime
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, risk limits and derivatives pricing — and we make the
-impact **concrete** (`cli.py run economics`): a vol-timing backtest sizing S&P-500 exposure by
-the one-step RV forecast **nearly halves the 2008 max drawdown (−61%→−32%)** — but a **plain
-HAR** captures it; the quantum reservoir adds **no** economic value (negative CE fees). The
-decision-useful lever is **vol-timing on a simple RV forecast, not quantum hardware**. **Milestone plan:** (i)–(v) — pre-registration, scaling/encoding sweeps,
-the adversarial HAR-X/ESN/RFF test, MNIST + noise, sparse/TN frontier — all ✓; (vi) QPU
-validation **executed on three vendors** (§6). **AI disclosure:** Claude (Anthropic) assisted
-with code and drafting under the team's direction; all decisions and results are the team's own.
+impact **concrete** (`cli.py run economics`): a vol-timing backtest on the one-step RV forecast
+**nearly halves the 2008 max drawdown (−61%→−32%)** — but a **plain HAR** captures it; the
+quantum reservoir adds **no** economic value (negative CE fees). The
+decision-useful lever is **vol-timing on a simple RV forecast, not quantum hardware**.
+**Milestone plan:** (i)–(v) pre-registration, sweeps, the adversarial test, MNIST+noise, and
+the sparse/TN frontier are ✓; (vi) QPU validation **executed on three vendors** (§6).
+**AI disclosure:** Claude (Anthropic) assisted with code and drafting under the team's
+direction; all decisions and results are the team's own.
 
 <!-- pagebreak -->
 
