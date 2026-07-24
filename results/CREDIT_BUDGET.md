@@ -1,8 +1,26 @@
 # Credit budget & spend attribution — Team EIGENNEXUS (Track A project)
 
-*Maintained for organizer audit. Every line is verifiable against qBraid's own job records via
-the job IDs and tags below — nothing here relies on our self-reporting. Last updated
-2026-07-21 (Campaigns A and B′ complete); this file is refreshed at each campaign completion.*
+*Maintained for organizer audit. Every line is verifiable two independent ways: (a) against
+qBraid's own job records via the job IDs and tags below, and (b) re-derived from published
+per-shot pricing by `credit_audit.py` (`cli.py run credit_audit`) — a self-contained check
+that needs no API key and asserts every campaign's cost and the ceiling. Nothing here relies on
+our self-reporting. **Program COMPLETE through 2026-07-22 (all campaigns + Amendment 4);
+last updated 2026-07-22.**
+
+## 0. Whole-program cost at a glance
+
+| bucket | account / currency | amount | note |
+|---|---|---|---|
+| **Org-pool hardware (this project)** | EIGENNEXUS org, qBraid cr | **60,698.25** | 10 tagged campaigns; ceiling 65,000 → **reserve 4,301.75** |
+| Involuntary personal charge | personal, qBraid cr | 3,350 | Emerald-pair platform attribution anomaly (§2, §4) — outside the ceiling |
+| **qBraid hardware total** | — | **64,048.25** | org + the anomaly charge |
+| Self-funded de-risking era | personal, qBraid cr | ≈1,380 (≈$14) | Rigetti full protocol; + free-tier sims/rehearsals (0) |
+| OpenQuantum-route work | personal, OpenQuantum cr | ≈147 OQ cr | separate free-tier/promotional currency; not qBraid credits |
+| Free re-analyses (bootstrap, fingerprint, audit) | — | 0 | committed-counts re-analysis, no hardware |
+
+*Distinct accounts and two currencies (qBraid cr vs OpenQuantum cr) are kept separate rather
+than summed into one misleading number. The organizer-relevant figure is the first row:
+**60,698.25 of the 65,000 org ceiling.***
 
 ## 1. Funding structure
 
@@ -57,23 +75,27 @@ Planned-spend history (pre-registered: `results/qpu_campaign_manifest.md` + Amen
 Campaign B was re-scoped to B′ (scale-1-only, ≈20,150 instead of ≈45,990) after the smoke gate
 measured IonQ's 2,000-gate/circuit ceiling — abort rule 1, disclosed in
 `results/qpu_hardware_findings.md`. The Rigetti replication executed at 2,234.25 of its 2,400
-envelope (165.75 released). Still pre-funded and unspent: reserve 3,600. Each campaign requires
-an explicit go decision before launch.
+envelope (165.75 released). **Final reserve remaining: 4,301.75 of the 65,000 ceiling**
+(65,000 − 60,698.25). Each campaign required an explicit go decision before launch.
 
 ## 3. Org-pool cross-check (wallet arithmetic)
 
 | | credits |
 |---|---|
 | granted | 130,000 |
-| → this project, settled (sum of tagged quantum jobs above, per-job verified via API) | **57,648.25** |
+| → this project, settled (sum of tagged org jobs above; per-job API-verified AND re-derived by `credit_audit.py`) | **60,698.25** |
 | → this project, ceiling | 65,000 |
+| → this project, reserve remaining | 4,301.75 |
 | → parallel project | whatever remains of the org drawdown after subtracting our tagged jobs (non-quantum compute; by elimination) |
 
 The wallet balance moves with both projects, so this file pins only what is mechanically ours:
 the per-job billed amounts fetched from qBraid's job records for every tagged job listed above
 (5 × 4,030 for `hw_ionq_native`, 830 for `hw_ionq_smoke`, 6,754.5 for `hw_garnet_native`,
 34.25 + 11 × 200 for `hw_rigetti_rep`, 44.5 + 11 × 610 each for `hw_garnet_n10`,
-`hw_garnet_n12`, and `hw_garnet_n8_anchor`, 46 + 11 × 670 for `hw_emerald_n8`).
+`hw_garnet_n12`, and `hw_garnet_n8_anchor`, 46 + 11 × 670 for `hw_emerald_n8`, 5 × 610 for
+`hw_garnet_n8_pair`). `credit_audit.py` re-derives every one of these from published per-shot
+pricing and asserts the 60,698.25 total and the 65,000 ceiling — reproduce with
+`cli.py run credit_audit`.
 
 ## 4. Self-funded era (personal account — outside the ceiling)
 

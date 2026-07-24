@@ -55,6 +55,7 @@ ACTIONS = {
     "qpu_selftest": (["qpu_run.py", "--selftest"], "Verify the emitted QASM2 = the reservoir (independent interpreter; fold identity)", False),
     "qpu_bootstrap": (["qpu_bootstrap_ci.py"], "Shot-noise bootstrap CIs for all 9 hardware campaigns from the committed counts (re-derives every paper number)", False),
     "qpu_fingerprint": (["qpu_noise_fingerprint.py"], "Readout-corrected coherent-vs-damping noise fingerprint of the scrambled regime from committed counts", False),
+    "credit_audit": (["credit_audit.py"], "Re-derive the whole-program QPU cost from published pricing; assert every campaign + the org ceiling (no API key needed)", False),
     "qpu_rehearsal": (["qpu_run.py"], "FULL-DRESS offline QPU rehearsal: counts + readout mitigation + folding ZNE + cross-check (the exact credit-day pipeline)", True),
     "tensor_check": (["tensor_backend.py", "--check"], "Verify sparse backend matches dense engine", False),
 }
