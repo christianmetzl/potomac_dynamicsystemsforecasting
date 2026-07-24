@@ -116,5 +116,36 @@ worse qubits/couplers); **(S7b)** if it matches within the band while n=10/12 re
 signal-bearing, the effect is **instance-dominant** (graph/feature structure, not placement).
 Caveat committed in advance: the platform transpiler may re-route a permuted circuit, so the
 executed assignment must be read back from the returned program metadata where exposed, and
-the claim is made at whichever layer the evidence supports. Not launched — pre-registered
-for remaining reserve (with organizer endorsement) or post-challenge execution.
+the claim is made at whichever layer the evidence supports.
+
+**S7 sharpened into two named, competing hypotheses (2026-07-24, committed before execution).**
+The size-effect refutations (S1/S2) rest on the seed-0 instance; the open question is *why*
+n=8 scrambles while n=10/12 are signal-bearing on the same chip. Two mechanisms, opposite
+predictions:
+
+- **H-INSTANCE** — the size effect is a property of the *reservoir circuit class at each n*
+  (its coupling-graph density and feature composition), not of the seed-0 instance or its
+  lattice placement. **Prediction:** on an **independent instance (seed 1)**, n=8 again
+  scrambles (raw ≥ its 0.196 limit) *and* n=10 is again signal-bearing (raw < its 0.179 limit)
+  — the size-dependent sign of (raw − limit) reproduces across instances.
+- **H-EMBED** — the n=8 scrambling is driven by seed-0's particular logical→physical
+  placement. **Prediction:** re-embedding the *same* seed-0 n=8 circuit (permuted qubit
+  labels, same session) shifts raw error by more than the measured same-session band (≈0.01).
+
+**Primary arm (transpiler-independent, executed): H-INSTANCE.** Same-session OpenQuantum-Garnet
+run (personal OQ credits, ~20 cr/campaign; abort/score identical to the funded program):
+seed-0 n=8 (same-session re-anchor), **seed-1 n=8**, **seed-1 n=10**. No code change (harness
+already parameterizes `--seed`, `--n`); no dependence on embedding control.
+
+**Decision rule (committed):**
+- seed-1 n=8 raw ≥ 0.196 **and** seed-1 n=10 raw < 0.179 → **H-INSTANCE supported**: the size
+  effect is instance-general, not a seed-0 artifact — the single-seed objection is answered.
+- seed-1 n=8 raw < 0.196 (signal-bearing at n=8 on a second instance) → **seed-0 was a
+  pathological instance**; the n=8 "scrambled" regime does not generalize, and S1/S2 must be
+  re-scoped to "instance-dependent." Reported as measured, either way.
+- Any raw within ±0.02 of its limit → unresolved for that point; only the disjunction is claimed.
+
+**Secondary arm (embedding, transpiler-caveated): H-EMBED** — attempted if OQ credits/time and
+the returned mapping permit a clean test; otherwise it remains pre-registered for later. Full
+S7 result folded into `qpu_hardware_findings.md`; provenance tags carry the commit that contains
+this text, so the prediction provably predates the data.

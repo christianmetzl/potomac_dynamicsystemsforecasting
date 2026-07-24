@@ -204,3 +204,17 @@ reported honestly).
 Ledger at approval: 57,648.25 settled of 65,000. Projected after pair: ≈64,048.25 (reserve
 ≈952). This amendment spends from the reserve against a documented methodological need, per
 Amendment 1's reserve rule.
+
+---
+
+## Amendment 5 (2026-07-24, committed before execution): S7 mechanism-isolation run (personal OQ)
+
+**S7 primary arm (H-INSTANCE) executed on the OpenQuantum route using personal OpenQuantum
+credits — outside the org ceiling and the org qBraid pool** (the 4,301.75 org reserve does not
+fit S7 at native rates; OQ-Garnet is ~0.001 cr/shot). Config: same-session Garnet, scale-1
+(2 cals + 3 windows, 4,000 shots), campaigns `hw_s7_garnet_seed0_n8`, `hw_s7_garnet_seed1_n8`,
+`hw_s7_garnet_seed1_n10`; est. ≈20 OQ cr each (~60 total, within the ~102 held). Hypotheses,
+predictions, and the decision rule are pre-registered in `results/qpu_scaling_outlook.md`
+(committed before launch; job tags carry that commit). Scored by `score_campaign.py` against
+the per-n limits {8: 0.196, 10: 0.179}. Personal-account spend, logged in `CREDIT_BUDGET.md`
+§4 (self-funded era), not against the 65,000 org ceiling.
