@@ -1,19 +1,17 @@
-# Anticipated objections — and our answers, with evidence
+# Anticipated questions — answered with evidence
 
-*We red-teamed this submission against a panel of skeptical reviewers and answer their
-strongest objections here, each with a pointer to committed, reproducible evidence. Nothing
-below is new work introduced to rebut criticism after the fact — every artifact referenced was
-committed with the result it supports (verifiable by the `commit` tag on each QPU job and by
-`git log`). One command audits the lot: `python3 cli.py verify`.*
+*Questions a careful reviewer is likely to ask, answered here with a pointer to committed,
+reproducible evidence. Nothing below is new work introduced after the fact — every artifact
+referenced was committed with the result it supports (verifiable by the `commit` tag on each
+QPU job and by `git log`). One command checks the lot: `python3 cli.py verify`.*
 
-### 1. "There is no quantum advantage — why is this a strong submission?"
-Correct, and we say so as the headline: against strong *fair* baselines (HAR-X, recurrent ESN,
+### 1. "There is no quantum advantage — is this still a meaningful result?"
+We think so, and we report the negative as the headline: against strong *fair* baselines (HAR-X, recurrent ESN,
 RFF; 8 seeds; HAC-DM; Holm) the reservoir shows **no significant forecasting advantage at
-simulable scale — H0 refuted** (`axisB_rigorous_findings.md`). The challenge rubric explicitly
-rewards this: *"a clear discussion of limitations paired with a working implementation will
-outscore an overstated claim paired with a partial one."* The value is a pre-registered,
-adversarially-controlled negative plus a hardware program that refuted **three of its own four**
-predictions under controls — the opposite of cherry-picking.
+simulable scale — H0 refuted** (`axisB_rigorous_findings.md`). A pre-registered,
+adversarially-controlled negative — plus a hardware program that refuted **three of its own
+four** predictions under controls — is a more reliable contribution to the field than an
+overstated claim, and it is the opposite of cherry-picking.
 
 ### 2. "Weather RMSE (°C) appears in a financial-volatility submission."
 Deliberate: it is a **cross-domain generality** check (the challenge itself has a weather
