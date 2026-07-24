@@ -64,6 +64,7 @@ ACTIONS = {
 GROUPS = {
     "headline": ["prereg", "scaling", "axisB_rig", "canonical", "mnist", "tensor"],   # Phase-3 story (axisB_rig = honest test)
     "phase2":   ["tests", "calm", "crisis", "kernel", "sdk"],            # Phase-2 reproduction
+    "verify":   ["tests", "qpu_selftest", "credit_audit", "qpu_bootstrap", "qpu_fingerprint"],  # one-command integrity audit (offline, all assert)
     "all":      list(ACTIONS.keys()),
     "reproduce": ["tests", "calm", "crisis", "kernel", "sdk", "qsubmit",
                   "baselines", "lstm", "prereg", "scaling", "axisB", "axisB_rig",

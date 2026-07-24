@@ -55,6 +55,13 @@ in this project (12+ rows: volatility, weather×5 stations, VPT static/recurrent
 efficiency frontier, noise, quantum-data) with its verdict and artifact — the one-page view
 of why the honest negative is domain-, metric-, and architecture-general.
 
+**One-command integrity audit:** `python3 cli.py verify` runs — and *asserts* — the full
+self-check suite offline: engine tests, QASM=reservoir self-test, whole-program credit
+reconciliation, shot-noise bootstrap CIs, and the coherent-vs-damping noise fingerprint. For
+the objections a skeptical reviewer will raise (weather in a finance paper, 500 vs 4k shots,
+the depolarized-limit argument, day-drift, data access, run authenticity), see
+`results/ANTICIPATED_OBJECTIONS.md` — each answered with a pointer to committed evidence.
+
 ## Expected inputs & outputs
 
 **Inputs (all bundled or auto-fetched; nothing to configure):** public datasets ship in
