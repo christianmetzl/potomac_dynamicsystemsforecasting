@@ -1,9 +1,15 @@
 # QPU run-book — executing CHIMERA-QRC on real quantum hardware
 
-The submission is **one command** from a real-hardware run. Everything except the QPU
+> **Status: EXECUTED.** This run-book was written pre-execution; the program it describes has
+> since run — **ten provenance-tagged QPU campaigns across three vendors / four devices** (IonQ,
+> IQM Garnet, IQM Emerald, Rigetti). Results and per-job records:
+> `results/qpu_hardware_findings.md`, `results/CREDIT_BUDGET.md`. The mechanics below are how
+> those runs were produced and how a reader reproduces the *offline* pipeline (no credits needed).
+
+The runner is **one command** from a real-hardware run. Everything except the QPU
 credits is built, wired, and — as of `qpu_run.py` — **rehearsed end-to-end offline with the
 identical hardware pipeline** (counts readout → readout-error mitigation → gate-folding ZNE
-→ classical cross-check). The only blocker is qBraid credits/API access.
+→ classical cross-check).
 
 ## The two runners (what each is for)
 
