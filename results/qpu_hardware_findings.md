@@ -86,10 +86,11 @@ The OQ-route single-window preview (0.238) is consistent with the full-protocol 
   matching the OpenQuantum-route finding — bit-order reversal is a property of the IonQ backend,
   not of the routing layer.
 - **Gate ceiling measured:** fold-5 (4,140 expanded gates) rejected at validation on the native
-  route ("number of gates does not exceed 2,000"); fold-3 (2,484 gates) independently rejected
-  with the identical error on the **OpenQuantum route** (`results/oq_fold3_probe.json`, 0 credits)
-  — the 2,000-gate/circuit limit is a device-level IonQ constraint, binding on **both** access
-  routes. The ceiling sits between our scale-1 circuit (828 gates) and its first fold (2,484).
+  route ("number of gates does not exceed 2,000"); fold-3 (2,484 gates) also failed at
+  submission on the **OpenQuantum route** (logged as a qBraid platform retry error rather than a
+  verbatim gate-count rejection, but consistent with the same ceiling) (`results/oq_fold3_probe.json`, 0 credits)
+  — the 2,000-gate/circuit limit is a device-level IonQ constraint, measured on the native
+  route and corroborated on the OpenQuantum route. The ceiling sits between our scale-1 circuit (828 gates) and its first fold (2,484).
 - **Consequence (abort rule 1, pre-registered):** ZNE gate folding is infeasible on this device
   for this circuit class. The funded campaign runs the disclosed fallback — **scale-1-only
   protocol with readout mitigation, no ZNE** — so its chain reports raw and readout-mitigated
@@ -304,3 +305,46 @@ controls above.*
 | IQM Garnet (20q) | superconducting | n=8: raw 0.2301 / anchor 0.2216 / same-window pair 0.2307 — beyond limit on three days, (iii) confirmed; **n=10: 0.1590 and n=12: 0.1897 — both inside their limits, signal-bearing, drift-controlled (S1, S2 refuted)** |
 | Rigetti Cepheus-1 (107q) | superconducting | **full protocol executed twice**: raw 0.2611 (2k shots) / 0.2226 (4k replicate) — characterized negative, regime stable under day-scale drift |
 | qBraid qir-sv (30q) | cloud simulator | full protocol + cross-domain battery at the shot floor |
+
+## S7 — mechanism isolation (cross-seed control) EXECUTED (2026-07-24): H-INSTANCE REFUTED — the n=8 wall is instance-specific, not size-driven
+
+*Three same-session scale-1 campaigns on `openquantum:iqm:qpu:garnet` (OpenQuantum route,
+personal credits, ~20 cr each; 4,000 shots, 2 cals + 3 windows). Job IDs in
+`results/qpu_run_hw_s7_garnet_seed0_n8.json`, `..._seed1_n8.json`, `..._seed1_n10.json`.
+Hypotheses, predictions, and the decision rule were pre-registered in
+`results/qpu_scaling_outlook.md`, committed at `89cce5f` **before launch** (hash-preimage:
+the prediction provably predates the data).*
+
+| campaign | n | raw | size-matched limit | excess | regime |
+|---|---|---|---|---|---|
+| seed-0 n=8 (same-session re-anchor) | 8 | **0.2284** | 0.1958 | +0.0326 | beyond — scrambled |
+| **seed-1 n=8** (independent instance) | 8 | **0.1594** | 0.1958 | −0.0364 | **inside — signal-bearing** |
+| seed-1 n=10 | 10 | **0.1455** | 0.1790 | −0.0335 | inside — signal-bearing |
+
+**Decision rule applied (branch 2, exactly as committed):** seed-1 n=8 raw 0.1594 sits **0.036
+below** its limit — beyond the ±0.02 unresolved band — so it is signal-bearing on a second
+instance. Therefore **H-INSTANCE is REFUTED**: the n=8 scrambling does **not** generalize across
+instances; the seed-0 n=8 instance is the outlier.
+
+**What this resolves (drift- and size-controlled).** In one session the re-anchor reproduces
+seed-0 n=8 scrambled (0.2284 — a **fourth** measurement of that instance: 0.2301 / 0.2216 /
+0.2307 / 0.2284, all within 0.009), while an **independent seed-1 instance at the identical
+size is signal-bearing** (0.1594). The raw gap is **0.069**, ≈4× the 4k-shot floor (0.016),
+measured in the **same session** (day-drift excluded) at **fixed size** (size excluded). The
+coherence-wall crossing at n=8 is therefore an **instance property** — seed-0's specific
+coupling graph and/or lattice embedding — **not a circuit-size property.** This is the
+same-session, cross-seed resolution of the mechanism the earlier campaigns flagged as "honestly
+open."
+
+**Consequence for S1/S2 (re-scoped exactly as the rule required):** the earlier "size effect"
+(seed-0 n=8 scrambled vs seed-0 n=10/n=12 signal-bearing) is real for that seed but **confounded
+with instance**; the clean statement is that seed-0's n=8 instance scrambles while other
+instances (seed-1 n=8) and larger sizes retain signal. A fifth pre-registered prediction
+falsified by controlled measurement, reported exactly as measured.
+
+**H-EMBED (secondary arm):** not separately run — the transpiler-independent H-INSTANCE arm
+already answers the size-vs-instance question; H-EMBED (default vs permuted embedding of the
+*same* instance, to further split graph-structure from lattice-placement) remains pre-registered
+for future work. (Statistical note: S7 stores chains, not raw counts, so no multinomial bootstrap
+is computed here; the 0.069 same-session cross-seed gap at ≈4× the shot floor is the robustness
+basis, not a σ from committed counts.)

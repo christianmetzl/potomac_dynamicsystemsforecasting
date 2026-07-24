@@ -3,7 +3,7 @@
 *Cross-cutting synthesis of the whole project — V1 (Track A, realized-volatility submission), V2
 (Track-A extensions), V3 (Track B, weather), and the methodological probes (capacity, frontier
 scaling, noise, recurrence). Every claim below is tied to a script + saved artifact in this repo.
-This document is a synthesis. The submitted Track-A paper is the latest `v*-submission` tag — `v1.5-submission` as of this update (the
+This document is a synthesis. The submitted Track-A paper is the latest `v*-submission` tag (the
 original zero-defect baseline is recoverable at `v1-submission`; later tags surgically fold a few
 fully-traceable supporting results — efficiency, recurrent mechanism, domain-generality — into it).*
 

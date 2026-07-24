@@ -42,7 +42,7 @@ classical controls, isolating quantum-vs-classical. Four mechanisms extend the c
 τ-bank; RZ measurement feedback; regime-adaptive Ising↔Heisenberg via BOCPD; dissipation-as-
 feature); Phase 3 adds an **encoding-density / data-re-uploading path** (§5.2) and a
 **sparse/tensor backend** (§5.5). The engine is pure NumPy; an explicit PennyLane circuit
-reproduces it to 3.9×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
+reproduces it to ≈5×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
 one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph.
 
 ![**Figure 1.** CHIMERA-QRC pipeline: lagged log-RV (and, in Axis B, realized-measure) inputs are angle-encoded onto qubits, evolved under a fixed random-coupled Ising Hamiltonian, and read out as single/pairwise Pauli-Z expectations into a ridge head fused with a linear block of the same inputs; a BOCPD detector selects the Hamiltonian for regime adaptivity.](figures/fig_architecture.png)
@@ -209,7 +209,7 @@ net RY(π); the client-side JSON provably contained both) — corrupting ZNE's n
 gates. We hardened the emitter (angles mod 2π; diagonal-only calibrations) and validated
 on-device: P(|0⁸⟩)=0.996 vs 0.0 pre-fix. The decisive routing-free **IonQ Forte-1 campaign
 then executed** under the pre-committed manifest: a smoke gate measured a **2,000-gate/circuit
-device ceiling** on both access routes, so per abort rule it ran scale-1-only (500 shots — a
+device ceiling** on the native route (corroborated by an OpenQuantum-route probe), so per abort rule it ran scale-1-only (500 shots — a
 disclosed, cost-forced deviation from the 4k config, s.e.≈0.004; readout 0.08%/0.65%).
 **Raw 0.104 — below the 0.196 depolarized limit** and every
 superconducting n=8 number: the **first signal-bearing hardware execution** of this reservoir
@@ -217,9 +217,9 @@ superconducting n=8 number: the **first signal-bearing hardware execution** of t
 measuring the coherence wall from both sides (`results/qpu_hardware_findings.md`). A
 pre-registered **hardware scaling program** (`results/qpu_scaling_outlook.md`) then refuted
 our own statements on metal (table below): Garnet turns **signal-bearing at n=10/n=12** while
-a **same-session n=8 anchor** stays scrambled — the size effect is **real and
-drift-controlled** by the manifest's pre-committed decision rule (mechanism honestly open:
-instance structure vs lattice embedding) — and the newer-generation **Emerald is
+the **same-session seed-0 n=8 anchor** stays scrambled — but a pre-registered cross-seed
+control (**S7**) found an **independent seed-1 n=8 instance signal-bearing** in the same session,
+so the n=8 scrambling is **instance-specific, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
 signal-bearing at the very size Garnet scrambles**, reproduced in a **same-window two-chip
 pair**: generation-dependent at fixed size, temporally controlled. We thus characterize all
 four challenge axes — reservoir size, encoding density, shot budget, noise — with the program
@@ -230,20 +230,20 @@ in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k 
 | IonQ Forte-1 | trapped-ion | 8 | **0.104** | 0.196 | **signal-bearing** (prediction (ii) ✓) |
 | IQM Emerald | supercond., newer gen | 8 | **0.169–0.179** | 0.196 | **signal-bearing** (S3b refuted high; same-window pair) |
 | IQM Garnet | superconducting | 10 / 12 | **0.159 / 0.190** | 0.179 / 0.214 | **signal-bearing** (S1/S2 refuted; anchor-controlled) |
-| IQM Garnet | superconducting | 8 | 0.222–0.231 (3 days) | 0.196 | scrambled — the stable control |
+| IQM Garnet | superconducting | 8 | 0.222–0.231 (4 sessions) | 0.196 | scrambled — seed-0-instance-specific (S7) |
 | Rigetti Cepheus-1 | superconducting | 8 | 0.223–0.261 (2 days) | 0.196 | scrambled (drift band measured) |
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
-predictions — the ten funded ones under a committed manifest (budgets, abort and decision
-rules amended *before* each launch); every job embeds the repo commit hash and campaign tag
+predictions — the ten funded ones under a committed manifest (abort/decision
+rules fixed *before* each launch); every job embeds the repo commit hash and campaign tag
 in qBraid's timestamped records — a hash-preimage commitment that predictions predate data —
-and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits;
-every rejected submission billed 0). Bootstrap from the committed counts re-derives every
+and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits).
+Bootstrap from the committed counts re-derives every
 number above and puts **each regime claim 9.7–24σ beyond shot noise**; a readout-corrected
 fingerprint attributes the scrambled regime to predominantly coherent error
-(`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where claims needed them: a Rigetti
-replication (day-drift band), a same-session n=8 anchor (size effect vs drift), a same-window
-two-chip pair (generation effect). S5–S7 are pre-committed.
+(`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where needed: a Rigetti
+replication (day-drift), a same-session n=8 anchor (drift), a same-window
+two-chip pair (generation). S5–S6 pre-committed; S7 executed (above).
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
@@ -255,29 +255,28 @@ shot noise; combined noisy-plus-shot execution is measured in the QPU campaigns 
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
 (v) Superconducting n=8 execution is a **characterized negative** (§6 table; measured
 day-scale drift exceeds shot noise, so *regime* — not point value — is the robust claim),
-while n=10/n=12 and the newer generation land inside their limits: the wall is size/instance-
-and generation-dependent, not absolute, mechanism unresolved. Mitigation *recovery* on
+while n=10/n=12 and the newer generation land inside their limits: the wall is instance-
+and generation-dependent, not absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation *recovery* on
 hardware is at best marginal (ZNE 0.223→0.217 on the Rigetti replicate; the ion chain is flat
 — readout 0.08%/0.65% leaves nothing to correct, the gate ceiling forbids ZNE).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they
 convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively
 reads nonlinear *state* functionals (purity, entanglement) a linear readout cannot — but the
-proper baseline, **classical shadows** (Huang–Kueng–Preskill 2020), run head-to-head at
-matched per-state budgets with an ensemble-prior guard, **wins wherever real information is
-extracted**, including the shadows-hard Tr(ρ³): **closed negatively at simulable scale**;
+proper baseline, **classical shadows** (Huang–Kueng–Preskill 2020), at matched per-state
+budgets, **wins wherever real information is extracted**, including the shadows-hard Tr(ρ³): **closed negatively at simulable scale**;
 hardware-native many-qubit inputs remain the one untested regime
 (`results/shadows_hard_findings.md`).
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-Volatility forecasts feed hedging, risk limits and derivatives pricing — and we make the
-impact **concrete** (`cli.py run economics`): a vol-timing backtest on the one-step RV forecast
-**nearly halves the 2008 max drawdown (−61%→−32%)** — but a **plain HAR** captures it; the
-quantum reservoir adds **no** economic value (negative CE fees). The
-decision-useful lever is **vol-timing on a simple RV forecast, not quantum hardware**.
-**Milestone plan:** (i)–(v) pre-registration, sweeps, the adversarial test, MNIST+noise, and
-the sparse/TN frontier are ✓; (vi) QPU validation **executed on three vendors** (§6).
-**AI disclosure:** Claude (Anthropic) assisted with code and drafting under the team's
-direction; all decisions and results are the team's own.
+Volatility forecasts feed hedging, risk limits and pricing; we make the impact **concrete**
+(`cli.py run economics`): a vol-timing backtest on the RV forecast **nearly halves the 2008 max
+drawdown (−61%→−32%)** — but a **plain HAR** captures it, so the decision-useful lever is
+**vol-timing on a simple RV forecast, not quantum hardware** (the reservoir adds no economic
+value; negative CE fees).
+**Milestone plan:** (i)–(v) pre-registration, sweeps, adversarial test, MNIST+noise, sparse/TN
+frontier ✓; (vi) QPU validation **executed on three vendors** (§6).
+**AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results
+are the team's own.
 
 <!-- pagebreak -->
 

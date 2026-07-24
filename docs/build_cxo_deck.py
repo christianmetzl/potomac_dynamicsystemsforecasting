@@ -321,6 +321,6 @@ text(s, 0.9, 5.35, 11.5, 1.3,
      spacing=1.2, space_after=5)
 footer(s, 9)
 
-OUT = "docs/EIGENNEXUS_CxO_Deck.pptx"  # was: "/tmp/claude-0/-home-user-potomac-dynamicsystemsforecasting/18b96fc3-dc5d-5cfe-8e1f-f43ea31e1e35/scratchpad/EIGENNEXUS_Deck_v2.pptx"
+OUT = "docs/EIGENNEXUS_CxO_Deck.pptx"
 prs.save(OUT)
 print("wrote", OUT)

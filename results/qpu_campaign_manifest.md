@@ -209,8 +209,11 @@ Amendment 1's reserve rule.
 
 ## Amendment 5 (2026-07-24, committed before execution): S7 mechanism-isolation run (personal OQ)
 
-**S7 primary arm (H-INSTANCE) executed on the OpenQuantum route using personal OpenQuantum
-credits — outside the org ceiling and the org qBraid pool** (the 4,301.75 org reserve does not
+**S7 primary arm (H-INSTANCE) EXECUTED on the OpenQuantum route using personal OpenQuantum
+credits — outside the org ceiling and the org qBraid pool** (2026-07-24; verdict: seed-1 n=8
+signal-bearing 0.159 and seed-1 n=10 signal-bearing 0.146 while the seed-0 n=8 anchor stays
+scrambled 0.228 → **H-INSTANCE refuted; the n=8 wall is instance-specific**; folded into
+`qpu_hardware_findings.md` §S7) (the 4,301.75 org reserve does not
 fit S7 at native rates; OQ-Garnet is ~0.001 cr/shot). Config: same-session Garnet, scale-1
 (2 cals + 3 windows, 4,000 shots), campaigns `hw_s7_garnet_seed0_n8`, `hw_s7_garnet_seed1_n8`,
 `hw_s7_garnet_seed1_n10`; est. ≈20 OQ cr each (~60 total, within the ~102 held). Hypotheses,

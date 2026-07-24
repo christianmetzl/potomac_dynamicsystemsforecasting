@@ -43,10 +43,15 @@ shot noise (`qpu_bootstrap_ci.md`). The size effect is drift-controlled by a **s
 anchor** and the generation effect by a **same-window two-chip pair** — both pre-registered.
 
 ### 6. "The n=10/n=12 signal-bearing results rest on single seed-0 instances."
-Acknowledged in the paper (mechanism "honestly open"). We pre-registered the discriminating
-experiment, **S7** (`qpu_scaling_outlook.md`): the same instance re-embedded on a permuted qubit
-subset, one session — falsifiable both ways (embedding-dominant vs instance-dominant). Committed
-before execution; unrun only because it is post-ceiling/post-deadline.
+Acknowledged in the paper. We pre-registered the discriminating experiment, **S7**
+(`qpu_scaling_outlook.md`, committed at `89cce5f` before launch), and **executed its primary
+H-INSTANCE arm** (same-session Garnet, free personal OpenQuantum credits). Scored by the
+committed decision rule: an **independent seed-1 instance at n=10 is signal-bearing** (raw 0.146
+< 0.179) — the n=10 result **reproduces off the seed-0 instance**, directly answering this
+objection for the signal-bearing sizes; and **seed-1 n=8 is signal-bearing** (0.159 < 0.196)
+while the same-session seed-0 n=8 anchor stays scrambled (0.228), so the n=8 scrambling is
+**seed-0-instance-specific, not a size law** — H-INSTANCE refuted, mechanism localized. See
+`qpu_hardware_findings.md` (§S7).
 
 ### 7. "Can judges actually reproduce this, and is the data accessible?"
 Yes — verified. The full reproduction runs **offline** with no qBraid account, credits, or

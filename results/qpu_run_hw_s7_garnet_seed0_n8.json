@@ -1,0 +1,60 @@
+{
+ "mode": "hw",
+ "device": "openquantum:iqm:qpu:garnet",
+ "n": 8,
+ "layers": 20,
+ "shots": 4000,
+ "scales": [
+  1
+ ],
+ "readout_e0": [
+  0.0035,
+  0.0095,
+  0.0045000000000000005,
+  0.00425,
+  0.0045,
+  0.0025,
+  0.00575,
+  0.00625
+ ],
+ "readout_e1": [
+  0.03375,
+  0.027250000000000003,
+  0.019750000000000004,
+  0.017750000000000002,
+  0.023250000000000003,
+  0.027500000000000004,
+  0.02225,
+  0.05900000000000001
+ ],
+ "chain": {
+  "raw (scale 1)": [
+   0.22840130010737525,
+   0.48774784442888386
+  ],
+  "readout-mitigated": [
+   0.22474294181866133,
+   0.48415982797896795
+  ],
+  "+ ZNE linear": [
+   0.22474294181866133,
+   0.48415982797896795
+  ],
+  "+ ZNE Richardson": [
+   0.22474294181866133,
+   0.48415982797896795
+  ]
+ },
+ "improved": true,
+ "job_ids": [
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63d27c26df04c895265372",
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63d37b26df04c8952653dd",
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63d43326df04c895265425",
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63d56f26df04c8952654a9",
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63d68226df04c895265519",
+  "openquantum:iqm:qpu:garnet-bd52-qjob-6a63e0d126df04c8952659d2"
+ ],
+ "p_gate": 0.004,
+ "p_read": 0.02,
+ "wall_clock_s": 3915.2
+}

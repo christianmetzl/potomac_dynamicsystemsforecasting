@@ -34,8 +34,8 @@ seeded MNIST subset), so it runs **offline**. The core engine is pure NumPy.
 
 | Action | What it shows | Expected headline |
 |---|---|---|
-| `tests` | engine correctness | 23 passed, 0 failed |
-| `kernel` | quantum kernel distinctness | g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control |
+| `tests` | engine correctness | 24 passed, 0 failed |
+| `kernel` | quantum kernel distinctness | g(ESN→CHIMERA) ≈ 64 vs ≈ 3.7 control |
 | `crisis` | regime-transition tracking (Phase-2) | CHIMERA-3scale MZ R² 0.591 vs *plain* HAR 0.559 — a tracking property, NOT a win (HAR-X test in §`axisB_rig` shows no advantage) |
 | `prereg` | pre-registered H0/H1/H4 thresholds | printed, fixed before running |
 | `axisB` | encoding-density mechanism | informed qubits restore g (52→158), D_eff (1.5→3.1) vs idle |
@@ -62,10 +62,11 @@ from tensor_backend import chimera_features_sparse   # exact to ~1e-14 vs dense,
 F = chimera_features_sparse(X, n=14, tau=2.0, seed=0)
 ```
 
-## Hardware (Phase-3 plan)
+## Hardware (executed on real QPUs — Phase 3)
 
-Simulator-first (dense statevector ≤12q; sparse/TN to ~16q). QPU validation uses the
-gate-Trotter circuit in `sdk_demo.py` (~380 native gates) on IonQ / IQM / IBM via
-qBraid, with ZNE (Mitiq) + measurement mitigation (mthree) and a classical
-cross-check for every hardware run. (QCi Dirac-3 is for the separate optimization
+Simulator-first (dense statevector ≤12q; sparse/TN to ~16q). QPU validation **ran** the
+gate-Trotter circuit in `sdk_demo.py` (~380 native gates) on **IonQ Forte-1, IQM Garnet,
+IQM Emerald, and Rigetti Cepheus-1** via qBraid — ten provenance-tagged campaigns with ZNE +
+measurement mitigation and a classical cross-check for every hardware run (scored results:
+`results/qpu_hardware_findings.md`). (QCi Dirac-3 is for the separate optimization
 challenge, not this QRC track.)

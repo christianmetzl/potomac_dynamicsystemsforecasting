@@ -155,7 +155,7 @@ not sufficient* condition for true classical hardness — the precondition any b
 advantage would need; no advantage is observed at the simulable scale here.)
 
 ### 5. Phase-2 results (reproduced)
-`python3 cli.py run phase2` (+ `crisis`) — kernel geometry g(ESN→CHIMERA) ≈ 62 vs ≈ 4 control;
+`python3 cli.py run phase2` (+ `crisis`) — kernel geometry g(ESN→CHIMERA) ≈ 64 vs ≈ 3.7 control;
 explicit PennyLane circuit matches the engine to ≈ 5×10⁻¹⁶. CHIMERA-3scale tracks the crisis
 regime on forecast efficiency (MZ R² 0.591 vs **plain** HAR 0.559) — *but note this is vs
 feature-poor HAR; the decisive HAR-X test (§1) shows no significant advantage*, so this is a

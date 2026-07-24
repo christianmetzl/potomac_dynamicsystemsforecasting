@@ -97,9 +97,15 @@ Probe-calibrated depolarizing+readout stand-in models predicted the full chains 
 
 ### 7.3 Executed so far — results and findings
 
+> **Historical (mid-program) snapshot.** §7.3–7.4 were written during execution and describe an
+> intermediate state. The **full program has since completed** — ten provenance-tagged campaigns
+> across IonQ Forte-1, IQM Garnet, IQM Emerald, and Rigetti Cepheus-1 — with the authoritative,
+> scored results in `results/qpu_hardware_findings.md`. Individual stale lines below are retained
+> for provenance.
+
 - **Rigetti Cepheus-1-108q (full protocol, 12 jobs):** raw 0.261 > depolarized limit 0.196 — after lattice routing (~10³ native 2q gates at scale 1) the circuit is *coherently scrambled*, not merely noise-flattened; readout mitigation is a no-op (gate ≫ readout error); ZNE cannot recover because scale 1 already exceeds the budget. **(iii)-analog confirmed, (i) refuted on this class** — a characterized negative that measures exactly what the §4-#6 noise study predicted.
 - **IQM Garnet (first window, checkpointed):** raw 0.238 — same regime, second superconducting vendor; completion (8 circuits) funded and queued.
-- **IonQ Forte-1:** the **negative-angle platform finding**: an RY(π)RY(−π) identity pair executed as **net RY(π)** (94.8% |1⁸⟩) while the client-side IonQ JSON provably contained both signed rotations — negative-angle rotations are lost server-side. Global-phase-equivalent hardening (mod-2π emission + diagonal calibration) validated on-device: 99.6% |0⁸⟩. Reported to qBraid with reproduction bundle (`results/platform_feedback_bundle/`) — **vendor confirmation pending**. Full 11-circuit campaign (500-shot config, a disclosed cost deviation from the 4k prediction config) awaits its slot after Garnet.
+- **IonQ Forte-1:** the **negative-angle platform finding**: an RY(π)RY(−π) identity pair executed as **net RY(π)** (94.8% |1⁸⟩) while the client-side IonQ JSON provably contained both signed rotations — negative-angle rotations are lost server-side. Global-phase-equivalent hardening (mod-2π emission + diagonal calibration) validated on-device: 99.6% |0⁸⟩. Reported to qBraid with reproduction bundle (`results/platform_feedback_bundle/`) — **vendor confirmation pending**. The full scale-1 campaign (500-shot config, a disclosed cost deviation from the 4k prediction config) subsequently executed — raw 0.104, signal-bearing (`results/qpu_hardware_findings.md`).
 - Also documented: qir-sv cloud simulator reproducibly deviates at n=12 (~9× shot floor) while n≤10 is exact — reported, confirmation pending.
 
 ### 7.4 Current campaign state (as of writing)

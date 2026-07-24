@@ -28,6 +28,12 @@ Emerald n=8: 0.16 cr/shot ⇒ ≈7,420 cr. The limit values are exact means of |
 3 pre-registered RV windows at each n; note the limit is **non-monotonic in n** while the gate
 count more than triples — that separation is what gives the measurements discriminating power.)
 
+*Gate-count convention: the "2q gates" columns count **CX gates after the IsingZZ→CX·RZ·CX
+decomposition** (440 at n=8). The paper's §6 resource table quotes the underlying **IsingZZ
+interaction** count — 220/480/760 at n=8/10/12, exactly half — and on all-to-all trapped-ion each
+interaction is a single native two-qubit gate, so IonQ executes 220. Same circuit, different gate
+basis.*
+
 ## Pre-registered falsifiable statements (committed now)
 
 We deliberately commit ordering/threshold statements rather than fitted point forecasts: the
@@ -132,7 +138,7 @@ predictions:
   placement. **Prediction:** re-embedding the *same* seed-0 n=8 circuit (permuted qubit
   labels, same session) shifts raw error by more than the measured same-session band (≈0.01).
 
-**Primary arm (transpiler-independent, executed): H-INSTANCE.** Same-session OpenQuantum-Garnet
+**Primary arm (transpiler-independent, EXECUTED 2026-07-24 — H-INSTANCE REFUTED): H-INSTANCE.** Same-session OpenQuantum-Garnet
 run (personal OQ credits, ~20 cr/campaign; abort/score identical to the funded program):
 seed-0 n=8 (same-session re-anchor), **seed-1 n=8**, **seed-1 n=10**. No code change (harness
 already parameterizes `--seed`, `--n`); no dependence on embedding control.
@@ -146,6 +152,9 @@ already parameterizes `--seed`, `--n`); no dependence on embedding control.
 - Any raw within ±0.02 of its limit → unresolved for that point; only the disjunction is claimed.
 
 **Secondary arm (embedding, transpiler-caveated): H-EMBED** — attempted if OQ credits/time and
-the returned mapping permit a clean test; otherwise it remains pre-registered for later. Full
-S7 result folded into `qpu_hardware_findings.md`; provenance tags carry the commit that contains
-this text, so the prediction provably predates the data.
+the returned mapping permit a clean test; otherwise it remains pre-registered for later. **The S7
+result is folded into** `qpu_hardware_findings.md` (executed 2026-07-24): seed-1 n=8 raw 0.159
+(signal-bearing) **refutes H-INSTANCE** — the n=8 scrambling is seed-0-instance-specific, not
+size-driven; seed-1 n=10 raw 0.146 (signal-bearing) independently reproduces the n=10 result while
+the same-session seed-0 n=8 anchor stays scrambled (0.228). Provenance tags carry the commit that
+contains this text, so the prediction provably predates the data.
