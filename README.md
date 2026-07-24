@@ -33,10 +33,18 @@ python3 cli.py headline --quick   # the Phase-3 story: prereg → decisive test 
 
 **Full reproduction:**
 ```bash
+python3 reproduce.py             # full Phase-2 + Phase-3 reproduction (~1-2 hr)
+python3 reproduce.py --quick     # fast full pass; python3 reproduce.py headline --quick = the 10-min check
 python3 cli.py list              # all reproducible actions (agent-executable Skill)
-python3 cli.py reproduce         # full Phase-2 + Phase-3 reproduction (~1-2 hr)
 ```
-or run any script directly, e.g. `python3 scaling_sweep_axisB.py`.
+`reproduce.py` is a thin wrapper over `cli.py` (the Skill driver); either works, or run any
+script directly, e.g. `python3 scaling_sweep_axisB.py`.
+
+**Everything reproduces offline** — all datasets required for the results are committed under
+`data/` and `v{2,3}_research/` (provenance below), so no qBraid account, credits, or network are
+needed to reproduce. The real-QPU campaigns are committed *evidence* (job IDs + counts, verified
+via qBraid's platform records and re-derived by `cli.py run credit_audit` / `qpu_bootstrap`),
+not re-executed by reproduction.
 
 The **qBraid Skill** (`cli.py` + `qbraid_skill.yaml` + `SKILL.md`) is the agent-executable
 interface required by the brief: an AI agent can enumerate actions, configure the reservoir,
