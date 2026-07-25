@@ -57,7 +57,10 @@ of why the honest negative is domain-, metric-, and architecture-general.
 
 **One-command integrity audit:** `python3 cli.py verify` runs — and *asserts* — the full
 self-check suite offline: engine tests, QASM=reservoir self-test, whole-program credit
-reconciliation, shot-noise bootstrap CIs, and the coherent-vs-damping noise fingerprint. For
+reconciliation, shot-noise bootstrap CIs, and the coherent-vs-damping noise fingerprint.
+Prefer not to run it? Open `docs/verify_replay.html` in any browser — a self-contained, offline
+replay of an *actual* `cli.py verify` run (28 numbered checks, each with its real measured value <
+threshold; 28/28 PASS) plus the paper's core findings. Nothing hand-typed. For
 the objections a skeptical reviewer will raise (weather in a finance paper, 500 vs 4k shots,
 the depolarized-limit argument, day-drift, data access, run authenticity), see
 `results/ANTICIPATED_OBJECTIONS.md` — each answered with a pointer to committed evidence.
