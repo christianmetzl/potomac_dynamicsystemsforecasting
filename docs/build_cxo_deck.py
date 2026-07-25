@@ -100,17 +100,19 @@ text(s, 0.9, 6.2, 11.5, 1.0,
 
 # ---------------------------------------------------------------- 2 · TL;DR
 s = slide()
-title_row(s, "The three sentences that matter", "What we found — and can prove")
+title_row(s, "The instrument first, then the verdict", "What we built — and what it proves")
 cards = [
-    ("$0", GOOD, "for quantum volatility forecasting today",
-     "Across every fair, pre-registered test, a plain classical formula (HAR-X) still wins. "
-     "Parity at best, never advantage — the avoided-cost result your risk committee needs in writing."),
-    ("3 devices", CYAN, "retained quantum signal on real hardware",
+    ("1 command", CYAN, "reproduces the entire audit — offline, no credits",
+     "A pre-registered instrument: engine tests + hardware bootstrap + noise fingerprint, re-run in "
+     "~2 minutes with the network cut. Every hardware prediction was hash-committed to a prior commit "
+     "before the data existed. This machine — not any single number — is the durable asset."),
+    ("3 devices", GOOD, "retained quantum signal on real hardware",
      "Trapped-ion (IonQ) and two superconducting chips (IQM Garnet at n=10/12, IQM Emerald) executed our "
-     "reservoir with signal intact — refuting our own pre-registered predictions, under controls."),
-    ("9.7–23.9σ", AMBER, "margin on every hardware regime claim",
-     "Bootstrap re-analysis of the committed raw counts re-derives every number and puts each verdict "
-     "far beyond shot noise. Billing audited to the half-credit across ≈64k credits."),
+     "reservoir with signal intact — each verdict 9.7–23.9σ beyond shot noise, refuting our own "
+     "pre-registered predictions under controls. Billing audited to the half-credit across ≈64k credits."),
+    ("$0", AMBER, "of quantum advantage for vol-forecasting today — proven",
+     "Across every fair, pre-registered test a plain classical formula (HAR-X) still wins: parity at "
+     "best, never advantage — the avoided-cost result your risk committee needs in writing, with receipts."),
 ]
 for i, (stat, col, head, body) in enumerate(cards):
     x = 0.6 + i * 4.15

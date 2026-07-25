@@ -9,6 +9,22 @@ Christian Metzl (Lead / Architect) · Fares Eldibani (Data Science) · Juan Manu
 
 ---
 
+## The one-paragraph version
+
+We built the **evaluation instrument** most quantum-ML work is missing — pre-registered,
+adversarially-controlled, and **reproducible offline in one command** (`python3 cli.py verify`), with
+every hardware prediction **hash-committed to a prior commit before the data existed**. Run across
+**four devices from three QPU vendors** (IonQ, IQM, Rigetti), it yields two measurement assets that
+stand on their own — an empirical **quantum-complexity metric** (`χ_eff ≈ 2^(n/2)`, marking the
+classical-simulability boundary) and a cross-platform **coherence-budget wall** that separates
+coherent circuit error from depolarizing/damping noise — and one honest verdict: **at
+classically-simulable scale (≤16 qubits) the quantum reservoir is *distinct but not more accurate*
+than the strongest fair baseline, HAR-X**, robust across a second (Heisenberg) reservoir family and a
+second (weather) domain. Our own program **falsified four of its own pre-registered predictions**
+under controls. The negative is the finding; the reusable audit machinery and the two instruments are
+the assets. *A browser replay of the whole audit, plus these core findings, is in
+[`docs/verify_replay.html`](docs/verify_replay.html).*
+
 ## What this is
 
 CHIMERA-QRC is a delay-embedding **quantum reservoir**: lagged log realized-variance

@@ -5,15 +5,22 @@
 > placed after the required GIC_2026 cover page. Every number is produced by a script in this
 > repository and reproducible via `python3 cli.py run <action>` (fast path: `--quick`).*
 
-**Abstract.** A pre-registered, adversarially-controlled study: at classically-simulable scale
-(≤16 qubits) the quantum reservoir is *distinct but not more accurate* than the strongest fair
-baselines — **HAR-X**, size-matched ESN/RFF, under HAC-DM + Holm + MCS (H0 refuted; robust across a
-second **Heisenberg** reservoir family, so the negative is not Ising-specific). Our positive
-contribution is a **pre-registered, multi-vendor hardware characterization of the coherence-budget
-wall** (Fig. 3): the same circuit is signal-bearing on trapped-ion and newer/larger superconducting
-chips but scrambled on the **seed-0 n=8 instance** — a same-session cross-seed control refutes a
-*size* law (an independent seed-1 n=8 instance is signal-bearing at that size). **Desk takeaway:** vol-time a simple RV forecast (≈halves the 2008 drawdown);
-quantum adds no economic value here. Reproduces offline in one command (`cli.py verify`).
+**Abstract.** We contribute a **pre-registered, adversarially-controlled evaluation instrument**
+for quantum reservoir computing — reproducible **offline in one command** (`cli.py verify`), with
+every hardware prediction bound to a prior commit by a **hash-preimage commitment** — and apply it
+to S&P 500 realized-volatility forecasting across **four devices from three QPU vendors** (IonQ,
+IQM, Rigetti). Two measurements stand on their own: an empirical **quantum-complexity metric** (the
+reservoir's MPS bond dimension is essentially full, **χ_eff ≈ 2^(n/2)**, marking the
+classical-simulability boundary) and a cross-platform **coherence-budget wall** (Fig. 3) whose
+readout-corrected fingerprint separates **coherent circuit routing from depolarizing/damping
+noise**, each regime verdict **9.7–23.9σ** beyond shot noise. Applied honestly, the instrument
+returns a **well-characterized negative**: at simulable scale (≤16 qubits) the reservoir is
+*distinct but not more accurate* than the strongest fair baselines — **HAR-X**, size-matched
+ESN/RFF, under HAC-DM + Holm + MCS (**H0 refuted**) — robust across a second **Heisenberg** reservoir
+family (not Ising-specific) and a second (weather) domain, and our program **falsified four of its
+own pre-registered predictions** under controls (a same-session cross-seed control shows the n=8
+scrambling is *seed-0-instance-specific, not a size law*). **Desk takeaway:** vol-timing a simple RV
+forecast ≈halves the 2008 drawdown; quantum adds no economic value at this scale.
 
 ## 1. Focus, track selection, and problem framing
 We target **Track A: financial volatility** — one-step-ahead forecasting of S&P 500 **realized
