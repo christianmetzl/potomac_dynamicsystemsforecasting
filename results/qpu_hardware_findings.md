@@ -326,9 +326,12 @@ the prediction provably predates the data).*
 | seed-1 n=10 | 10 | 1 | **0.1455** | **0.1693** | −0.0238 | inside — signal-bearing |
 
 > **Self-correction — comparator robustness (found and applied by us, 2026-07-25, pre-submission).**
-> The S7 decision rule was pre-registered (`qpu_scaling_outlook.md`, committed `89cce5f` before
-> launch, and **byte-identical today** — verify with
-> `git show 89cce5f:results/qpu_scaling_outlook.md`) against the **seed-0** limits 0.196 / 0.179.
+> The S7 decision rule was pre-registered (`qpu_scaling_outlook.md`, committed `89cce5f` at
+> 2026-07-24 20:59 UTC — **before** the S7 job records, first committed 22:25 UTC) against the
+> **seed-0** limits 0.196 / 0.179. The **decision-rule text is byte-identical to that pre-launch
+> commit**; the surrounding file has since been annotated with the *outcome* (and a gate-count
+> convention note), so diff the rule specifically:
+> `diff <(git show 89cce5f:results/qpu_scaling_outlook.md | sed -n '/Decision rule (committed)/,/unresolved for that point/p') <(sed -n '/Decision rule (committed)/,/unresolved for that point/p' results/qpu_scaling_outlook.md)`.
 > Strictly, that is the wrong comparator for a seed-1 run: the fully-depolarized limit is
 > `mean|F_exact|`, a property of the *instance* (the seeded coupling graph), not of `n` alone.
 > The instance-matched limits are **0.1806** (n=8 seed-1) and **0.1693** (n=10 seed-1) — computed

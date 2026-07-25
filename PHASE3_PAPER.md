@@ -73,12 +73,11 @@ matched classical reservoir: **g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli
 per-n *feature-matched* ESNs it is larger but **non-monotonic** (≈125/158/88 at n=8/10/12; fixed
 ridge — the qualitative separation, not the value, is the claim).
 At ≤12–16 qubits the map stays classically simulable, so distinctness is **necessary, not
-sufficient** — which we now *measure*: over **30 seeded n=8 instances**, per-instance entanglement is
-**uncorrelated** with forecast error (r=−0.19, p=0.32) and **0/30 beat HAR-X** on crisis *and* calm.
-Nor does instance quality **transfer** — crisis/calm rankings are unrelated (Spearman +0.01, p=0.96;
-the crisis-best instance ranks 19/30 on calm) — so best-of-N seed selection is selection on noise.
-Detectable |r|≳0.5, so we exclude a *strong* link, not a weak one
-(`expressivity_accuracy_findings.md`, exploratory).
+sufficient** — which we now *measure*: over **30 seeded n=8 instances**, per-instance entanglement
+shows **no detectable correlation** with forecast error (r=−0.19, p=0.32) and **0/30 beat HAR-X** on
+crisis *and* calm. Nor does instance quality **transfer** — crisis/calm rankings are unrelated
+(Spearman +0.01, p=0.96) — so best-of-N seed selection is selection on noise. Detectable |r|≳0.5, so
+we exclude a *strong* link, not a weak one (`expressivity_accuracy_findings.md`, exploratory).
 
 ## 4. Data modeling strategy
 **Datasets (all bundled in-repo).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
