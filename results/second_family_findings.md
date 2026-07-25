@@ -7,6 +7,14 @@ of the QRC approach at this scale?" We swap the reservoir Hamiltonian to **Heise
 and re-run the SAME decisive test (nested HAR-X readout, 8 seeds) and the SAME kernel diagnostic
 on the SAME Oxford-Man S&P 500 RV data. Everything else identical to the headline pipeline.*
 
+> **STATUS — EXPLORATORY (post-hoc), NOT pre-registered.** This analysis was designed and run
+> *after* the hardware and forecasting data existed. It is reported to the same evidentiary
+> standard as the rest of the repository (deterministic, offline, re-derivable) but it carries
+> **none of the hash-preimage guarantee** that the pre-registered predictions (H0/H1/H4, S1–S7)
+> carry — those were committed to `git` before their data was collected and can be checked with
+> `git show`. We keep the two categories visibly separate on purpose: the value of a
+> pre-registration claim depends entirely on not quietly widening it after the fact.
+
 ## Decisive forecasting test (RMSE log-RV, nested HAR-X readout, 8 seeds)
 
 | model | RMSE(log-RV) | vs HAR-X |

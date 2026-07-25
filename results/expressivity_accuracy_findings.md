@@ -4,6 +4,14 @@
 n=8 instances, crisis window, the paper's own Axis-B protocol (identical inputs, HAR-X linear
 block nested in the ridge head, train-only scaling). Offline — no hardware, no credits.*
 
+> **STATUS — EXPLORATORY (post-hoc), NOT pre-registered.** This analysis was designed and run
+> *after* the hardware and forecasting data existed. It is reported to the same evidentiary
+> standard as the rest of the repository (deterministic, offline, re-derivable) but it carries
+> **none of the hash-preimage guarantee** that the pre-registered predictions (H0/H1/H4, S1–S7)
+> carry — those were committed to `git` before their data was collected and can be checked with
+> `git show`. We keep the two categories visibly separate on purpose: the value of a
+> pre-registration claim depends entirely on not quietly widening it after the fact.
+
 ## The question
 
 The paper argues that kernel distinctness and full-rank entanglement are **necessary but not
@@ -27,6 +35,23 @@ entangled** ones should forecast **better**. This file tests that directly.
 | entanglement S_ent | -0.187 | 0.323 | no detectable relationship |
 | coupling density | +0.166 | 0.382 | no detectable relationship |
 | depolarized limit | -0.294 | 0.115 | no detectable relationship |
+
+## The "best seed" does not transfer
+
+If instances differed in real quality, the good ones on one regime would be good on another.
+They do not:
+
+| | value |
+|---|---|
+| corr(crisis RMSE, calm RMSE) over 30 instances | Pearson **-0.074** (p=0.696), Spearman **+0.010** (p=0.956) |
+| best instance on crisis (seed 20) | ranks **19/30** on calm |
+| best instance on calm (seed 7) | ranks **17/30** on crisis |
+| beating HAR-X | **0/30** crisis, **0/30** calm |
+
+The instance-to-instance spread is **not a property of the instance** — it does not replicate out
+of regime. Selecting a reservoir seed on one window therefore buys nothing on another; reporting a
+best-of-N seed would be selection on noise. This closes the last escape hatch for the negative:
+it is not that we drew a bad reservoir, and there is no better one to find.
 
 ## What this establishes
 

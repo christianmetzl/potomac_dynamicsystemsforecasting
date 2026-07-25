@@ -4,6 +4,14 @@
 over 30 seeded reservoir instances at n=8, connectivity=0.5, 3 RV windows.
 **No hardware, no shots, no sampling** — every number below is deterministic and re-derivable.*
 
+> **STATUS — EXPLORATORY (post-hoc), NOT pre-registered.** This analysis was designed and run
+> *after* the hardware and forecasting data existed. It is reported to the same evidentiary
+> standard as the rest of the repository (deterministic, offline, re-derivable) but it carries
+> **none of the hash-preimage guarantee** that the pre-registered predictions (H0/H1/H4, S1–S7)
+> carry — those were committed to `git` before their data was collected and can be checked with
+> `git show`. We keep the two categories visibly separate on purpose: the value of a
+> pre-registration claim depends entirely on not quietly widening it after the fact.
+
 ## Why this exists
 
 S7 (`qpu_hardware_findings.md` §S7) compared two n=8 instances on the same chip in the same
@@ -27,19 +35,23 @@ unusually cheap circuit against an unusually expensive one?* This file answers i
 | **seed-0** | 0.2284 | scrambled | 11 | 13th | 0.1958 | 10th |
 | **seed-1** | 0.1594 | signal-bearing | 18 | 90th | 0.1806 | 7th |
 
-## The density scissors — and why it does *not* let you skip measuring
+## Does density couple expressivity to fragility? Partly — and weakly
 
-One knob, coupling density, moves quantum expressivity **up** and hardware feasibility **down**
-at the same time:
+We tested whether one knob — coupling density — raises quantum expressivity while lowering
+hardware feasibility. **Only the cost side survives at n=30:**
 
 | relationship | Pearson r (n=30) | p | reading |
 |---|---|---|---|
-| density → entanglement S_ent | **+0.648** | 0.0001 | denser instances are **more** entangled — more quantum-useful |
+| density → entanglement S_ent | **+0.341** | 0.0651 | denser instances are **more** entangled — more quantum-useful |
 | density → depolarized limit | **-0.399** | 0.0287 | denser instances face a **tighter** signal-bearing bar |
-| entanglement → depolarized limit | -0.226 | 0.2292 | same direction, **not significant** — stated as such |
+| entanglement → depolarized limit | -0.068 | 0.7197 | same direction, **not significant** — stated as such |
 
-So the direction that buys expressivity charges twice on hardware: **more two-qubit gates to
-accumulate error in, and a tighter bar to clear.**
+**Honest reading.** Denser instances demonstrably face a **tighter bar** (significant). The
+density→expressivity leg is *suggestive but not significant* at this sample size, and entanglement
+itself is **unrelated** to the bar. So we claim the **cost** side of the trade-off, not a full
+"scissors". (An earlier draft of this file reported +0.65 for the first row; that came from a
+3-state entanglement estimator. The 64-real-state estimator gives +0.34, and we report the weaker,
+correct number.)
 
 **But the tendency does not predict individual instances — and our own hardware inverts it.**
 The two instances we actually measured on metal run *opposite* to the structural expectation:

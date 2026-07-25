@@ -27,19 +27,33 @@ from qrc_engine import generate_coupling_matrix
 from qbraid_submit import engine_features, real_rv_windows
 
 N, CONN, K_WINDOWS, N_SEEDS = 8, 0.5, 3, 30      # matches the hardware protocol config
+ENT_SAMPLE = 64                                  # real training states for the entanglement estimate
 MEASURED = {0: ("seed-0", 0.2284, "scrambled"), 1: ("seed-1", 0.1594, "signal-bearing")}
 
 
 def build():
+    """Per-instance structure. Entanglement is estimated from ENT_SAMPLE *real training states*,
+    not from the 3 protocol windows: a 3-state average is far too noisy an estimator, and using
+    it inflates the density->entanglement correlation (+0.65 vs the correct +0.34). We use the
+    robust estimator and report the weaker, honest number."""
+    import pandas as pd
     from tensor_backend import entanglement_of_states
+    import feature_pool as fp
+
     wins = real_rv_windows(N, k=K_WINDOWS)
-    X = np.clip(np.array(wins), 0, 1)
+    d = fp.build_rich()
+    dts = pd.to_datetime(d["dates"])
+    tr = np.where(dts < pd.Timestamp("2007-01-01"))[0]
+    pool_s = fp.scale_pool(d["pool"], tr)
+    idx = np.linspace(0, len(tr) - 1, ENT_SAMPLE).astype(int)
+    Xent = np.clip(pool_s[tr][idx][:, :N], 0, 1)
+
     rows = []
     for seed in range(N_SEEDS):
         J = generate_coupling_matrix(N, CONN, seed=seed)
         edges = int(np.count_nonzero(np.triu(J, 1)))
         F = np.array([engine_features(N, seed)(w) for w in wins])
-        S, _chi, _cm = entanglement_of_states(X, N, seed=seed, sample=len(X))
+        S, _chi, _cm = entanglement_of_states(Xent, N, seed=seed, sample=ENT_SAMPLE)
         rows.append({"seed": seed, "edges": edges,
                      "limit": float(np.abs(F).mean()), "S_ent": float(S)})
     return rows
@@ -117,6 +131,14 @@ def main():
 over {N_SEEDS} seeded reservoir instances at n={N}, connectivity={CONN}, {K_WINDOWS} RV windows.
 **No hardware, no shots, no sampling** — every number below is deterministic and re-derivable.*
 
+> **STATUS — EXPLORATORY (post-hoc), NOT pre-registered.** This analysis was designed and run
+> *after* the hardware and forecasting data existed. It is reported to the same evidentiary
+> standard as the rest of the repository (deterministic, offline, re-derivable) but it carries
+> **none of the hash-preimage guarantee** that the pre-registered predictions (H0/H1/H4, S1–S7)
+> carry — those were committed to `git` before their data was collected and can be checked with
+> `git show`. We keep the two categories visibly separate on purpose: the value of a
+> pre-registration claim depends entirely on not quietly widening it after the fact.
+
 ## Why this exists
 
 S7 (`qpu_hardware_findings.md` §S7) compared two n={N} instances on the same chip in the same
@@ -141,10 +163,10 @@ unusually cheap circuit against an unusually expensive one?* This file answers i
         for lab, raw, regime, ed, pe, lim, pl in lines:
             fh.write(f"| **{lab}** | {raw:.4f} | {regime} | {ed} | {pe:.0f}th | {lim:.4f} | {pl:.0f}th |\n")
         fh.write(f"""
-## The density scissors — and why it does *not* let you skip measuring
+## Does density couple expressivity to fragility? Partly — and weakly
 
-One knob, coupling density, moves quantum expressivity **up** and hardware feasibility **down**
-at the same time:
+We tested whether one knob — coupling density — raises quantum expressivity while lowering
+hardware feasibility. **Only the cost side survives at n={N_SEEDS}:**
 
 | relationship | Pearson r (n={N_SEEDS}) | p | reading |
 |---|---|---|---|
@@ -152,8 +174,12 @@ at the same time:
 | density → depolarized limit | **{r_el:+.3f}** | {p_el:.4f} | denser instances face a **tighter** signal-bearing bar |
 | entanglement → depolarized limit | {r_sl:+.3f} | {p_sl:.4f} | same direction, **not significant** — stated as such |
 
-So the direction that buys expressivity charges twice on hardware: **more two-qubit gates to
-accumulate error in, and a tighter bar to clear.**
+**Honest reading.** Denser instances demonstrably face a **tighter bar** (significant). The
+density→expressivity leg is *suggestive but not significant* at this sample size, and entanglement
+itself is **unrelated** to the bar. So we claim the **cost** side of the trade-off, not a full
+"scissors". (An earlier draft of this file reported +0.65 for the first row; that came from a
+3-state entanglement estimator. The 64-real-state estimator gives +0.34, and we report the weaker,
+correct number.)
 
 **But the tendency does not predict individual instances — and our own hardware inverts it.**
 The two instances we actually measured on metal run *opposite* to the structural expectation:

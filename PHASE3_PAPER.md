@@ -69,15 +69,16 @@ window, not reservoir recurrence — a recurrent variant is probed in `v3_resear
 (d) **Hamiltonian as inductive bias**.
 The central, falsifiable mechanism is **expressivity scaling**, which we measure directly via
 the geometric difference (Huang et al. 2021). The quantum kernel is poorly reproducible by a
-matched classical reservoir: against the name-matched ESN-108 reference,
-**g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli.py run kernel`); against per-n *feature-matched*
-ESNs the gap is larger but **non-monotonic** (g ≈125 at n=8, peaking ≈158 at n=10, falling ≈88 at
-n=12). (g is at fixed ridge regularization; the qualitative separation, not the exact value, is the claim.)
+matched classical reservoir: **g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli.py run kernel`); against
+per-n *feature-matched* ESNs it is larger but **non-monotonic** (≈125/158/88 at n=8/10/12; fixed
+ridge — the qualitative separation, not the value, is the claim).
 At ≤12–16 qubits the map stays classically simulable, so distinctness is **necessary, not
 sufficient** — which we now *measure*: over **30 seeded n=8 instances**, per-instance entanglement is
-**uncorrelated** with forecast error (r=−0.19, p=0.32; density r=+0.17, p=0.38) and **0/30 beat
-HAR-X** (best still +0.0088 worse). The design detects |r|≳0.5, so we exclude a *strong*
-structure→accuracy link, not a weak one (`expressivity_accuracy_findings.md`).
+**uncorrelated** with forecast error (r=−0.19, p=0.32) and **0/30 beat HAR-X** on crisis *and* calm.
+Nor does instance quality **transfer** — crisis/calm rankings are unrelated (Spearman +0.01, p=0.96;
+the crisis-best instance ranks 19/30 on calm) — so best-of-N seed selection is selection on noise.
+Detectable |r|≳0.5, so we exclude a *strong* link, not a weak one
+(`expressivity_accuracy_findings.md`, exploratory).
 
 ## 4. Data modeling strategy
 **Datasets (all bundled in-repo).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
@@ -248,11 +249,11 @@ nonlinear *state* functionals a linear readout cannot, but the proper baseline �
 including the shadows-hard Tr(ρ³): closed negatively at simulable scale (`shadows_hard_findings.md`).
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-**The durable asset is the audit instrument** — and our data shows it is *necessary*. Coupling density
-buys expressivity (→entanglement r=+0.65, p<0.001) while raising gate cost **and tightening** the bar
-(→limit r=−0.40, p=0.03); yet that prior **mis-ranks the two instances we measured** — denser,
-tighter-bar seed-1 was signal-bearing, sparser seed-0 scrambled (`instance_ensemble_findings.md`).
-Structure gives a tendency; measurement gives the answer. Hence **trust in a quantum yes/no**: a pre-registered,
+**The durable asset is the audit instrument** — and our data shows it is *necessary*. Denser
+instances face a **tighter** bar (r=−0.40, p=0.03), yet structure **mis-ranks the two instances we
+measured**: denser, tighter-bar seed-1 was signal-bearing while sparser seed-0 scrambled; and the
+density→entanglement link is only suggestive (r=+0.34, p=0.07). Structure does not give the answer;
+measurement does (`instance_ensemble_findings.md`, exploratory). Hence **trust in a quantum yes/no**: a pre-registered,
 vendor-neutral **workload→QPU qualification** earned by an instrument that **falsifies its own
 predictions** — it split our runs **five signal-bearing, two scrambled** (Fig. 3) at ≈$70–$205 per
 campaign. Target profiles only; no customers or LOIs claimed. **Desk impact** (`cli.py run economics`): vol-timing the GFC window **halves max drawdown
