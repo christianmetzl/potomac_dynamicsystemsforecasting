@@ -76,6 +76,12 @@ prediction, as committed. (i) **REFUTED on this device class** (strictly: Richar
 though unlike Rigetti a small real readout+linear improvement exists (0.2301 → 0.2266).
 (ii) now awaits only the IonQ half; the superconducting reference is 0.2301.
 The OQ-route single-window preview (0.238) is consistent with the full-protocol result.
+*(Provenance note: `results/qpu_ckpt_hw_garnet_oq.json` carries one **pending** entry, `w0_s3` —
+the scale-3 ZNE fold of that preview. The preview was abandoned mid-campaign once the full
+native-route protocol was funded, so that fold was submitted but never retrieved. The 0.238 above
+comes from the **completed** scale-1 job in the same checkpoint. No published number, figure, or
+`cli.py verify` check reads this file; it is committed for provenance only. We leave the entry
+as-is rather than delete it, so the record shows what was actually run.)*
 
 ## IonQ Forte-1 smoke gate (2026-07-20): 2,000-gate ceiling → scale-1-only campaign
 
