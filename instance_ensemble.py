@@ -120,6 +120,7 @@ def main():
         lines.append((lab, raw, regime, r["edges"], pe, r["limit"], pl))
 
     e0, e1 = rows[0]["edges"], rows[1]["edges"]
+    s0, s1 = rows[0]["S_ent"], rows[1]["S_ent"]
     print(f"\n  VERDICT: the instance that SCRAMBLED (seed-0) carries {e0} two-qubit couplings; the one "
           f"that stayed\n  signal-bearing (seed-1) carries {e1}. Entangling-gate count does not explain "
           f"the wall —\n  on these two measured instances it anti-predicts it.")
@@ -138,6 +139,12 @@ over {N_SEEDS} seeded reservoir instances at n={N}, connectivity={CONN}, {K_WIND
 > carry — those were committed to `git` before their data was collected and can be checked with
 > `git show`. We keep the two categories visibly separate on purpose: the value of a
 > pre-registration claim depends entirely on not quietly widening it after the fact.
+>
+> **Multiplicity.** These are exploratory correlations on a single 30-row dataset and the
+> p-values below are **raw and uncorrected**. Across the 8 correlations in this family, Holm
+> adjustment leaves **none significant** (smallest raw p=0.029 → adjusted 0.23). Holm and the
+> Model Confidence Set used elsewhere in this project are scoped to the **pre-registered**
+> forecasting family only. Directions here are suggestive, not established.
 
 ## Why this exists
 
@@ -174,7 +181,10 @@ hardware feasibility. **Only the cost side survives at n={N_SEEDS}:**
 | density → depolarized limit | **{r_el:+.3f}** | {p_el:.4f} | denser instances face a **tighter** signal-bearing bar |
 | entanglement → depolarized limit | {r_sl:+.3f} | {p_sl:.4f} | same direction, **not significant** — stated as such |
 
-**Honest reading.** Denser instances demonstrably face a **tighter bar** (significant). The
+**Honest reading.** Denser instances face a **tighter bar** — the strongest of the three
+associations, but at raw p=0.029 it does **not** survive Holm across this 8-test family
+(adjusted 0.23), and the direction is in any case physically expected (a denser graph scrambles
+the exact state, lowering mean|F_exact|). The
 density→expressivity leg is *suggestive but not significant* at this sample size, and entanglement
 itself is **unrelated** to the bar. So we claim the **cost** side of the trade-off, not a full
 "scissors". (An earlier draft of this file reported +0.65 for the first row; that came from a
@@ -183,9 +193,11 @@ correct number.)
 
 **But the tendency does not predict individual instances — and our own hardware inverts it.**
 The two instances we actually measured on metal run *opposite* to the structural expectation:
-seed-1 is denser ({e1} couplings), more entangled, and faced the tighter limit — and it was
-**signal-bearing**; seed-0 is sparser ({e0}), less entangled, had the looser limit — and it
-**scrambled**. A structural prior would have ranked them the other way round.
+seed-1 is denser ({e1} couplings) and faced the **tighter** limit — and it was **signal-bearing**;
+seed-0 is sparser ({e0}) with the **looser** limit — and it **scrambled**. (Entanglement runs the
+other way on this pair — seed-0 {s0:.3f} vs seed-1 {s1:.3f} — which is itself a reminder that
+density and entanglement are only loosely coupled here, r=+0.34.) A structural prior on cost or on
+the bar would have ranked these two the wrong way round.
 
 **This is the scientific case for measuring rather than inferring.** Per-workload empirical
 qualification is not a convenience or a service upsell — on this evidence it is the *only*

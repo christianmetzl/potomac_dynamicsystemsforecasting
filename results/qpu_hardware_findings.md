@@ -378,6 +378,27 @@ four-item list is the whole-program scope used on every reader-facing surface.)*
 **H-EMBED (secondary arm):** not separately run — the transpiler-independent H-INSTANCE arm
 already answers the size-vs-instance question; H-EMBED (default vs permuted embedding of the
 *same* instance, to further split graph-structure from lattice-placement) remains pre-registered
-for future work. (Statistical note: S7 stores chains, not raw counts, so no multinomial bootstrap
-is computed here; the 0.069 same-session cross-seed gap at ≈4× the shot floor is the robustness
-basis, not a σ from committed counts.)
+for future work.
+
+> **Statistical note — corrected, and the correction is against us.** An earlier version of this
+> note said S7 "stores chains, not raw counts, so no multinomial bootstrap is computed here."
+> **That was false.** `results/qpu_ckpt_hw_s7_*.json` hold full per-window counts (3 × 4,000 shots),
+> the same schema the nine-campaign table uses; S7 was absent only because
+> `qpu_bootstrap_ci.campaign_ci()` hardcodes the seed-0 instance. We wrote the seed-aware version
+> (`s7_bootstrap_ci.py`, `cli.py run s7_bootstrap`), ran it, and report the result:
+>
+> | campaign | raw | 95% shot CI | P(inside ±0.02 band), **pre-registered** comparator | P(inside band), **instance-matched** comparator |
+> |---|---|---|---|---|
+> | seed-1 n=8 | 0.1594 | [0.1571, 0.1627] | **0.000** | **0.317** |
+> | seed-1 n=10 | 0.1455 | [0.1432, 0.1485] | **0.000** | 0.005 |
+> | seed-0 n=8 anchor | 0.2284 | [0.2258, 0.2318] | 0.000 | 0.000 |
+>
+> Under the **pre-registered** rule (seed-0 limits, as committed) both seed-1 verdicts are fully
+> shot-noise robust. Under the **stricter instance-matched** comparator we introduced ourselves, the
+> n=10 arm holds but the **n=8 band test does not** — ≈32% of shot-noise realizations would return
+> *unresolved*. **We withdraw any suggestion that the n=8 band test is robust under that comparator.**
+> What survives untouched is the limit-independent contrast: seed-1 n=8 **0.1594** vs the
+> same-session seed-0 anchor **0.2284**, a gap of **0.069 ± 0.002 = 33σ** of shot noise at fixed
+> size on one chip in one session. H-INSTANCE remains refuted on (a) the pre-registered rule, (b)
+> that 33σ contrast, and (c) the n=10 arm under both comparators — not on the n=8 band test.
+> Full detail: `results/s7_bootstrap_ci.md`.

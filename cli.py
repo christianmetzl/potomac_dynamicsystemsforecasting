@@ -53,6 +53,7 @@ ACTIONS = {
     "second_family": (["second_family_robustness.py"], "Second reservoir family (Heisenberg XXZ): the no-advantage negative is not Ising-specific", False),
     "instance_ensemble": (["instance_ensemble.py"], "Locate the two hardware-measured n=8 instances in a 30-instance ensemble (exact, offline)", False),
     "expressivity": (["expressivity_vs_accuracy.py"], "Does entanglement predict forecast accuracy? 30-instance test of necessary-not-sufficient", False),
+    "s7_bootstrap": (["s7_bootstrap_ci.py"], "Shot-noise bootstrap for the three S7 cross-seed campaigns, incl. the band-test robustness that weakens our own n=8 arm", False),
     "noise_circuit":(["noisy_circuit_study.py"], "Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)", True),
     "qpu_dryrun":   (["qbraid_submit.py", "--dry-run"], "QPU readiness: print gate/shot/cost plan + validate device wiring (no credits needed)", False),
     "qpu_selftest": (["qpu_run.py", "--selftest"], "Verify the emitted QASM2 = the reservoir (independent interpreter; fold identity)", False),

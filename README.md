@@ -104,7 +104,7 @@ The paper's §7 states these plainly; the load-bearing ones:
 1. **No quantum advantage at simulable scale** — HAR-X (classical, linear) is the best
    volatility model in every fair test; the QRC is competitive-not-better. This is the
    honest headline, not a caveat.
-2. RV sample ends Feb-2020 (2008 in-sample, COVID just outside); broader assets/periods are
+2. RV sample ends Feb-2020 (the 2008 GFC is in the crisis *test* split; COVID just outside); broader assets/periods are
    daily-proxy supporting studies (`v2_research/`, same negative), not 5-min RV.
 3. Simulation noise is per-layer single-qubit channels (depolarizing, amplitude damping,
    readout); combined noisy-circuit-plus-shot execution lives in the hardware campaigns.
@@ -140,8 +140,8 @@ comparison is significant.** An earlier draft reported "CHIMERA beats HAR (p=0.0
 adversarial review found that was an artifact of comparing against a *feature-poor* HAR; the
 gain came from the encoded realized measures (a known SHAR/HARQ effect), **not** from quantum
 nonlinearity. **By our pre-registered criteria, H0 is refuted — we report this honestly.**
-What survives for the quantum reservoir: it is *competitive* (within ≈0.8–2.1% RMSE), **more stable
-than the ESN** (lower seed variance), and beats the recurrent ESN on the calm window (raw
+What survives for the quantum reservoir: it is *competitive* (within ≈0.8–2.1% RMSE), **lower seed variance
+than the ESN in 3 of 4 cells** (no cell individually significant), and beats the recurrent ESN on the calm window (raw
 p=0.018). The encoding-density *mechanism* is real (informed qubits restore g 52→158, D_eff
 1.5→3.1 vs idle), but distinctness is **necessary, not sufficient** for advantage.
 
@@ -224,7 +224,7 @@ figures/  results/                      generated figures + findings write-ups
 
 ## Hardware execution (Phase 3 — EXECUTED)
 
-**Ten provenance-tagged QPU campaigns across three vendors / four devices** (IonQ Forte-1,
+**Thirteen executed (ten org-funded + three free-credit S7) provenance-tagged QPU campaigns across three vendors / four devices** (IonQ Forte-1,
 IQM Garnet, IQM Emerald, Rigetti Cepheus-1) — every campaign pre-registered (manifest +
 amendments with decision rules committed *before* execution), budget-audited to the credit
 (`results/CREDIT_BUDGET.md`), and scored against predictions committed in advance:
@@ -240,8 +240,9 @@ amendments with decision rules committed *before* execution), budget-audited to 
 - **Instance ensemble (`cli.py run instance_ensemble`)**: across 30 seeded n=8 instances, the
   **scrambled** seed-0 graph is among the *sparsest* (11 two-qubit couplings, 13th pctile) while
   **signal-bearing** seed-1 is among the *densest* (18, 90th) and faced a *tighter* limit —
-  **entangling-gate count anti-predicts the wall.** Exact and offline; an ensemble
-  characterization, not extra hardware (`results/instance_ensemble_findings.md`).
+  on the two instances measured on metal, **entangling-gate count anti-predicted the outcome**. Exact and offline; an ensemble
+  characterization, not extra hardware — **exploratory, post-hoc, not pre-registered**
+  (`results/instance_ensemble_findings.md`).
 - **Garnet / Rigetti** at n=8: 0.222–0.261 across six runs and four days — the **characterized
   negative** that anchors the contrast. It is stable *for the seed-0 instance*: an independent
   **seed-1 n=8 instance on the same chip, same session, is signal-bearing at 0.159** (S7), which

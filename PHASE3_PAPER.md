@@ -75,9 +75,10 @@ ridge — the qualitative separation, not the value, is the claim).
 At ≤12–16 qubits the map stays classically simulable, so distinctness is **necessary, not
 sufficient** — which we now *measure*: over **30 seeded n=8 instances**, per-instance entanglement
 shows **no detectable correlation** with forecast error (r=−0.19, p=0.32) and **0/30 beat HAR-X** on
-crisis *and* calm. Nor does instance quality **transfer** — crisis/calm rankings are unrelated
-(Spearman +0.01, p=0.96) — so best-of-N seed selection is selection on noise. Detectable |r|≳0.5, so
-we exclude a *strong* link, not a weak one (`expressivity_accuracy_findings.md`, exploratory).
+crisis *and* calm (bounding the beat-rate at ≤9.5%, exact one-sided 95%). Nor does instance quality
+detectably **transfer** — crisis/calm rankings are unrelated (Spearman +0.01) — so best-of-N seed
+selection is selection on noise. These detect only |r|≳0.5, so we exclude *strong* links, not weak
+ones (`expressivity_accuracy_findings.md`; exploratory, uncorrected).
 
 ## 4. Data modeling strategy
 **Datasets (all bundled in-repo).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
@@ -90,7 +91,8 @@ the pipeline is leakage-free (all features lagged ≥1 day; train-only scaling).
 HAR, **HAR-X**, GARCH(1,1), GJR-GARCH, AR(3), persistence, ESN (matched + 4×, recurrent), RFF
 kernel, LSTM. **Metrics:** RMSE(log-RV), QLIKE (Patton 2011), Mincer–Zarnowitz R²; significance
 by **Diebold–Mariano with a Newey–West HAC variance** (HLN-corrected), **Holm**-adjusted across
-the comparison family, and the Model Confidence Set (Hansen–Lunde–Nason 2011).
+the comparison family, and the Model Confidence Set (Hansen–Lunde–Nason 2011). Holm/MCS are scoped to this
+**pre-registered** family; §3/§8 correlations are exploratory, **uncorrected**, and none survives Holm.
 
 ## 5. Phase-3 execution — concrete results
 **Pre-registration (honesty).** Before running, we fixed the confirm/refute thresholds in
@@ -215,7 +217,7 @@ size, encoding density, shot budget and noise; Fig. 3 collects the hardware verd
 mean|F_exact| — so the bar is **instance**-matched (signal magnitude is a circuit property, not an
 n property) and the test transfers to any quantum feature map:
 
-![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip and session — refutes a *size* law. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 (§6).](figures/fig_coherence_wall.png)
+![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs signal-bearing, two scrambled. The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip and session — refutes a *size* law. Seed-0 limits 0.196/0.179/0.214; seed-1 carries its own 0.1806 (§6).](figures/fig_coherence_wall.png)
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
 predictions — the ten funded ones under a committed manifest (abort/decision
@@ -225,39 +227,37 @@ and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: �
 Bootstrap from the committed counts re-derives every
 number above and puts **each of the nine bootstrapped regime claims 9.7–23.9σ beyond shot noise**; a readout-corrected
 fingerprint attributes the scrambled regime to predominantly coherent error
-(`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where needed: a Rigetti
-replication (day-drift), a same-session n=8 anchor (drift), a same-window
-two-chip pair (generation). S5–S6 pre-committed; S7 executed (above).
+(`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where needed: a Rigetti replication (day-drift), a same-session n=8 anchor,
+and a same-window two-chip pair (generation). S5–S6 pre-committed; S7 executed (above).
 
 ## 7. Limitations (stated plainly)
 (i) **No quantum advantage** is demonstrated at the ≤16-qubit simulable scale; HAR-X (classical,
 linear) is the best model on this task. (ii) The RV sample ends Feb-2020 (COVID just outside); broader assets/periods are daily-proxy
 supporting studies (v2_research — same negative), not 5-min RV.
 (iii) Task-level noise: per-layer channels (§5.4) and shot noise; combined noisy-plus-shot execution is measured in the QPU campaigns (§6).
-(iv) g is regularization- and configuration-dependent (qualitative gap only).
-(v) Superconducting n=8 execution is a **characterized negative** (Fig. 3; day-scale drift
-exceeds shot noise, so *regime* — not point value — is the robust claim), while n=10/n=12 and the
-newer generation land inside their limits: the wall is instance- and generation-dependent, not
+(iv) g is regularization- and configuration-dependent (qualitative only).
+(v) Superconducting n=8 execution is a **characterized negative** (Fig. 3; day-drift exceeds shot
+noise, so *regime*, not point value, is the robust claim), while n=10/n=12 and the newer generation
+land inside their limits: the wall is instance- and generation-dependent, not
 absolute (n=8 scrambling is seed-0-instance-specific — S7; and in a 30-instance ensemble the
 scrambled instance is among the *sparsest*, so gate count **anti-predicts** the wall — §8). Mitigation recovery on hardware is at
 best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat).
-(vi) Distinctness and full-rank entanglement are *necessary, not sufficient* (measured: §3, r≈0 vs accuracy over 30 instances); whether they convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
+(vi) Distinctness and full-rank entanglement are *necessary, not sufficient* (measured, §3); whether they convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
 nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical shadows**
 (Huang–Kueng–Preskill 2020) at matched budgets — **wins wherever real information is extracted**,
 including the shadows-hard Tr(ρ³): closed negatively at simulable scale (`shadows_hard_findings.md`).
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-**The durable asset is the audit instrument** — and our data shows it is *necessary*. Denser
-instances face a **tighter** bar (r=−0.40, p=0.03), yet structure **mis-ranks the two instances we
-measured**: denser, tighter-bar seed-1 was signal-bearing while sparser seed-0 scrambled; and the
-density→entanglement link is only suggestive (r=+0.34, p=0.07). Structure does not give the answer;
-measurement does (`instance_ensemble_findings.md`, exploratory). Hence **trust in a quantum yes/no**: a pre-registered,
+**The durable asset is the audit instrument** — and our data shows it is *necessary*. Structure
+**mis-ranked both instances we measured on metal**, and across 30 instances no structural quantity
+survives multiplicity correction as a predictor of the hardware bar, nor predicts accuracy at all.
+Structure does not give the answer; measurement does (`instance_ensemble_findings.md`, exploratory). Hence **trust in a quantum yes/no**: a pre-registered,
 vendor-neutral **workload→QPU qualification** earned by an instrument that **falsifies its own
 predictions** — it split our runs **five signal-bearing, two scrambled** (Fig. 3) at ≈$70–$205 per
 campaign. Target profiles only; no customers or LOIs claimed. **Desk impact** (`cli.py run economics`): vol-timing the GFC window **halves max drawdown
 (−61%→−32%)** and lifts Sharpe **0.00→0.14** net of costs — risk control, not alpha — but **plain HAR**
 captures it (CE fee −25bp/yr): the lever is **a simple RV forecast, not quantum hardware**.
-**Milestone plan:** (i)–(vi) ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are ours.
+**AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are the team's own. Milestones (i)–(vi) all ✓ (§6).
 
 <!-- pagebreak -->
 

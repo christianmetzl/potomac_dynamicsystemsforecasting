@@ -27,7 +27,7 @@ bars = [
 ]
 GREEN, RED, INK, GREY = "#2e8b57", "#c0392b", "#222222", "#888888"
 
-fig, ax = plt.subplots(figsize=(10.6, 1.62))
+fig, ax = plt.subplots(figsize=(10.6, 1.50))
 for i, (lab, raw, lim, sig) in enumerate(bars):
     ax.bar(i, raw, width=0.66, color=(GREEN if sig else RED), alpha=0.9, zorder=3)
     ax.plot([i - 0.36, i + 0.36], [lim, lim], color=INK, lw=2.6, zorder=5)   # limit tick

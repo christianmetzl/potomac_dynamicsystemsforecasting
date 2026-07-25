@@ -11,6 +11,10 @@ on the SAME Oxford-Man S&P 500 RV data and the SAME nested HAR-X readout as the 
 Everything else is identical to `vol_fair_benchmark` / `kernel_analysis`.
 
 Result is reported as measured. Reproduce: `python3 second_family_robustness.py`
+
+STATUS: EXPLORATORY (post-hoc), NOT pre-registered. Designed and run after the forecasting data
+existed; it carries none of the hash-preimage guarantee that H0/H1/H4 and S1-S7 carry.
+Note: this script prints only -- results/second_family_findings.md is transcribed from stdout.
 """
 import time
 import numpy as np

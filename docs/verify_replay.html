@@ -180,8 +180,7 @@
         fails to beat HAR-X. The negative is <b>not Ising-specific</b>.</p></div>
       <div class="fcard c"><div class="lab">Hardware · coherence wall</div>
         <div class="stat">0.104 <span class="op">&lt;</span> 0.196</div>
-        <p>The wall measured <b>from both sides</b> across 4 devices: trapped-ion <b>signal-bearing</b>,
-        routed superconducting <b>scrambled</b>. Every regime claim <b>9.7–23.9σ</b> beyond shot noise.</p></div>
+        <p>The wall measured <b>from both sides</b> across 4 devices: trapped-ion and newer/larger superconducting <b>signal-bearing</b>; the routed seed-0 n=8 instance <b>scrambled</b>. Every <b>bootstrapped</b> regime claim (9 campaigns with committed counts) <b>9.7–23.9σ</b> beyond shot noise.</p></div>
       <div class="fcard c"><div class="lab">Hardware · mechanism (S7)</div>
         <div class="stat">0.159 <span class="op">vs</span> 0.228</div>
         <p>Same chip, same session: an independent <b>seed-1</b> n=8 instance is signal-bearing while
@@ -209,7 +208,7 @@
     CIs, noise fingerprint) that re-derive the hardware claims from committed data. Every value is captured
     subprocess output — nothing hand-typed. The right bracket is the <b>real measured wall-clock</b> for a
     check, or a hardware campaign's <b>bootstrap σ margin</b>. The animation is time-compressed (the
-    bootstrap genuinely took <b>127&nbsp;s</b>). The run touches <b>no network, no quantum credits, no API
+    bootstrap genuinely took <b>105&nbsp;s</b>). The run touches <b>no network, no quantum credits, no API
     key</b>. Reproduce it: <code>python3 cli.py verify</code>.
   </div>
 </div>

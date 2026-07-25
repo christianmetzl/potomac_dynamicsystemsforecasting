@@ -1,6 +1,6 @@
 # Second reservoir family — the negative is not Ising-specific
 
-*Regenerate: `python3 second_family_robustness.py` (≈60 s, offline). Addresses the referee
+*Regenerate: `python3 second_family_robustness.py` (~20 min offline; kernel block ~2.5 min). Addresses the referee
 question "is the no-advantage result a property of the transverse-field **Ising** reservoir, or
 of the QRC approach at this scale?" We swap the reservoir Hamiltonian to **Heisenberg (XXZ)** —
 `H = Σ J_ij (X_iX_j + Y_iY_j + Δ Z_iZ_j) + h Σ Z_i`, a genuinely different entangling dynamics —
@@ -35,8 +35,10 @@ on the SAME Oxford-Man S&P 500 RV data. Everything else identical to the headlin
 ## Verdict
 Both families are **kernel-distinct** from a matched classical reservoir (g ≈ 55–64, ~15× the
 classical control), yet **neither beats HAR-X** on the decisive forecasting test. A genuinely
-different entangling Hamiltonian reproduces the headline pattern exactly: *distinct but not more
-accurate*. **The no-advantage negative is therefore a property of the unitary-QRC approach at
-simulable scale, not of the specific transverse-field Ising reservoir** — closing the "you just
-picked a weak Hamiltonian" objection. (Heisenberg is marginally closer to HAR-X than Ising but
-still loses and still shows no significant edge; reported as measured.)
+different entangling Hamiltonian reproduces the headline pattern qualitatively: *distinct but not
+more accurate*. **The no-advantage negative is therefore not specific to the transverse-field Ising
+reservoir** — which answers the "you just picked a weak Hamiltonian" objection. Two families is not
+a general result about unitary QRC, and we do not claim one. (Heisenberg is marginally closer to
+HAR-X than Ising but still loses on the point estimate; **no significance test is applied to this
+robustness check** — the gap 0.0083 is within the per-seed sd 0.0099 — so we claim only that it
+does not beat HAR-X.)

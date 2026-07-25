@@ -137,6 +137,12 @@ block nested in the ridge head, train-only scaling). Offline — no hardware, no
 > carry — those were committed to `git` before their data was collected and can be checked with
 > `git show`. We keep the two categories visibly separate on purpose: the value of a
 > pre-registration claim depends entirely on not quietly widening it after the fact.
+>
+> **Multiplicity.** These are exploratory correlations on a single 30-row dataset and the
+> p-values below are **raw and uncorrected**. Across the 8 correlations in this family, Holm
+> adjustment leaves **none significant** (smallest raw p=0.029 → adjusted 0.23). Holm and the
+> Model Confidence Set used elsewhere in this project are scoped to the **pre-registered**
+> forecasting family only. Directions here are suggestive, not established.
 
 ## The question
 

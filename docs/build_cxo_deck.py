@@ -101,7 +101,7 @@ text(s, 0.9, 6.2, 11.5, 1.0,
 
 # ---------------------------------------------------------------- 2 · TL;DR
 s = slide()
-title_row(s, "The instrument first, then the verdict", "What we built — and what it proves")
+title_row(s, "The instrument first, then the verdict", "What we built — and what it shows")
 cards = [
     ("1 command", CYAN, "reproduces the entire audit — offline, no credits",
      "A pre-registered instrument: engine tests + hardware bootstrap + noise fingerprint, re-run in "
@@ -205,8 +205,8 @@ impl = [
      "On like-for-like accuracy (lower-is-better RMSE), the quantum reservoir saturates worst. Parity is the only surviving edge."),
     ("03", "The readiness buffer just shrank",
      "Signal-bearing execution arrived on three devices — the pre-registered upside (S3 failing high) that we said would materially upgrade the outlook, and it did. Move from ignore to monitor."),
-    ("04", "Spec-sheet procurement is falsified",
-     "Gate-count heuristics failed on real metal — instance structure dominates. Qualify hardware per workload, empirically (the embedding arm, H-EMBED, is pre-registered and unrun)."),
+    ("04", "Spec-sheet procurement is unreliable",
+     "Gate-count heuristics mis-ranked both instances we measured on metal (n=2). Qualify hardware per workload, empirically — the mechanism is still open (H-EMBED pre-registered, unrun)."),
     ("05", "Certainty is the product",
      "A pre-registered audit converts hype into policy at a known, small cost — and it is repeatable on demand."),
 ]
@@ -228,7 +228,7 @@ steps = [
     ("Pre-register", "Predictions, budgets, abort and decision rules committed to the repo before execution — amendments timestamped per campaign."),
     ("Tag every job", "Each QPU job in every funded campaign embeds the repo commit hash in qBraid's records: a hash-preimage proof that predictions predate data."),
     ("Audit every credit", "60,698.25 org credits across 10 funded campaigns (64,048.25 incl. a disclosed personal-account anomaly), each at or under its pre-approved reservation; organizer-grade ledger with per-job IDs."),
-    ("Re-derive everything", "Bootstrap from committed raw counts reproduces every published number and quantifies every claim (9.7–23.9σ)."),
+    ("Re-derive everything", "Bootstrap from committed raw counts re-derives the nine campaigns with committed counts (9.7–23.9σ)."),
 ]
 for i, (head, body) in enumerate(steps):
     x = 0.6 + i * 3.22
@@ -277,7 +277,7 @@ footer(s, 7)
 
 # ---------------------------------------------------- 8 · audit-as-a-service
 s = slide()
-title_row(s, "The commercial artifact", "We sell trust in a quantum yes/no — proven by an instrument that falsifies itself")
+title_row(s, "The commercial artifact", "We sell trust in a quantum yes/no — evidenced by an instrument that falsifies itself")
 # offering (left)
 box(s, 0.6, 1.9, 5.0, 4.6, fill=CARD, round_=True)
 text(s, 0.92, 2.15, 4.4, 0.4, [[("THE OFFERING", {"size": 11, "bold": True, "color": CYAN})]])
@@ -286,7 +286,7 @@ text(s, 0.92, 2.6, 4.4, 3.6,
       [("• pre-registered predictions + decision rules, committed before any run", {"size": 12, "color": INK2})],
       [("• controlled measurement across vendors (same-session / same-window)", {"size": 12, "color": INK2})],
       [("• a report of what each QPU can and cannot do — every number re-derivable from raw data", {"size": 12, "color": INK2})],
-      [("• proof it works: our own program qualified 5 configs signal-bearing, 2 scrambled — on the SAME circuit (chart, slide 3); a ~$70 single-device test that pre-empts a six-figure wrong build", {"size": 12, "color": INK2})]],
+      [("• proof it works: our own program qualified 5 configs signal-bearing, 2 scrambled — on the SAME circuit (chart, slide 3); a ~$70 single-device test run before you commit to a build", {"size": 12, "color": INK2})]],
      spacing=1.15, space_after=8)
 # pricing (middle) — REAL cost basis from our measured spend
 box(s, 5.8, 1.9, 3.4, 4.6, fill=CARD2, round_=True)
@@ -323,7 +323,7 @@ text(s, 0.9, 2.75, 11.5, 1.6,
 text(s, 0.9, 5.35, 11.5, 1.3,
      [[("Team EIGENNEXUS — Christian Metzl · Fares Eldibani · Juan Manuel Aguiar Hualde", {"size": 13, "bold": True})],
       [("Full evidence: submission repository (paper, findings, ledgers, job IDs, reproduction in one command).", {"size": 11.5, "color": INK2})],
-      [("Every claim in this deck is committed, timestamped, and re-derivable from raw data.", {"size": 11.5, "color": MUTED, "italic": True})]],
+      [("Every number here is re-derivable from committed data; the pre-registered claims are additionally hash-committed in advance.", {"size": 11.5, "color": MUTED, "italic": True})]],
      spacing=1.2, space_after=5)
 footer(s, 9)
 

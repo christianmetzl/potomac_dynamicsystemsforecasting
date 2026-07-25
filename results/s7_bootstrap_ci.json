@@ -1,0 +1,47 @@
+{
+ "hw_s7_garnet_seed0_n8": {
+  "n": 8,
+  "seed": 0,
+  "raw": 0.22840130010737525,
+  "lo": 0.22582192367559914,
+  "hi": 0.23180876544275558,
+  "sd": 0.0015235683956576782,
+  "shots": 4000,
+  "limit_prereg": 0.1958,
+  "limit_instance": 0.1958,
+  "limit_recomputed": 0.1957517755089048,
+  "errs_mean": 0.22883523901260774,
+  "p_inside_band_prereg": 0.0,
+  "p_inside_band_instance": 0.0
+ },
+ "hw_s7_garnet_seed1_n8": {
+  "n": 8,
+  "seed": 1,
+  "raw": 0.15940790385215553,
+  "lo": 0.1571051340808417,
+  "hi": 0.1626857404270024,
+  "sd": 0.0014207901436478674,
+  "shots": 4000,
+  "limit_prereg": 0.1958,
+  "limit_instance": 0.1806,
+  "limit_recomputed": 0.180641117920053,
+  "errs_mean": 0.15993325421777374,
+  "p_inside_band_prereg": 0.0,
+  "p_inside_band_instance": 0.3171
+ },
+ "hw_s7_garnet_seed1_n10": {
+  "n": 10,
+  "seed": 1,
+  "raw": 0.14545201973058225,
+  "lo": 0.14321993647357606,
+  "hi": 0.14852702706553433,
+  "sd": 0.0013537225632889935,
+  "shots": 4000,
+  "limit_prereg": 0.179,
+  "limit_instance": 0.1693,
+  "limit_recomputed": 0.16933965442199633,
+  "errs_mean": 0.14587802797984079,
+  "p_inside_band_prereg": 0.0,
+  "p_inside_band_instance": 0.00515
+ }
+}

@@ -30,7 +30,7 @@ damping (T1) also biases ⟨Z⟩ and could exceed the limit."
 A fair, precise objection — and we settle it with data, not assertion
 (`qpu_noise_fingerprint.md`, `cli.py run qpu_fingerprint`). A readout-corrected affine
 shrink-and-bias fit (which captures *any* depolarizing + damping mix) explains ≤8% of the
-measured ⟨Z_i⟩ pattern; **77–99% is coherent residual** → predominantly coherent routing error.
+measured ⟨Z_i⟩ pattern **on the four beyond-limit campaigns**; **77–99% is coherent residual** there → predominantly coherent routing error.
 The objection is partly right: Garnet shows a real but **subdominant** damping bias (b ≈
 +0.15–0.24); Rigetti shows ≈0. "Beyond the limit" alone proves only *non-depolarizing*; the
 fingerprint earns the coherent attribution. Wording corrected accordingly.
@@ -38,8 +38,9 @@ fingerprint earns the coherent attribution. Wording corrected accordingly.
 ### 5. "Hardware point values drift day-to-day, so the numbers aren't reproducible."
 True, and we measured it rather than hiding it: a 4k-shot Rigetti replication showed ~0.04
 day-scale drift (> shot noise). The robust currency is therefore the **regime** (which side of
-the size-matched limit), not the point value — and every **bootstrapped** regime verdict — the nine campaigns with committed counts — sits
-**9.7–23.9σ** beyond shot noise (`qpu_bootstrap_ci.md`). The size effect is drift-controlled by a **same-session n=8
+the size-matched limit), not the point value — and every regime verdict in the nine-campaign bootstrap sits **9.7–23.9σ** beyond shot noise
+(`qpu_bootstrap_ci.md`); the three S7 campaigns are bootstrapped separately in
+`s7_bootstrap_ci.md`, including the band-test result that weakens our own n=8 arm. The size effect is drift-controlled by a **same-session n=8
 anchor** and the generation effect by a **same-window two-chip pair** — both pre-registered.
 
 ### 6. "The n=10/n=12 signal-bearing results rest on single seed-0 instances."
@@ -54,8 +55,12 @@ while the same-session seed-0 n=8 anchor stays scrambled (0.228), so the n=8 scr
 We also re-scored both seed-1 runs against the **stricter instance-matched** limits (0.1806 /
 0.1693 — the pre-registered rule used the seed-0 values): the margins shrink to −0.021 / −0.024
 but **both verdicts are unchanged**, and the decisive raw-vs-raw contrast (0.159 vs 0.228, same
-chip and session, fixed size) needs no limit at all. Disclosed in full — see
-`qpu_hardware_findings.md` (§S7, "Self-correction").
+chip and session, fixed size) needs no limit at all. We also bootstrapped S7 from its committed
+counts (`s7_bootstrap_ci.md`): under the pre-registered comparator both verdicts are shot-noise
+robust (P(unresolved)=0.000), but under the **stricter** instance-matched comparator the n=8 band
+test is **not** (≈32% of draws land inside the ±0.02 band) — so the refutation rests on the
+pre-registered rule, the n=10 arm, and the limit-independent 33σ raw contrast, not on that band
+test. Disclosed in full — see `qpu_hardware_findings.md` (§S7) and `s7_bootstrap_ci.md`.
 
 ### 7. "Can judges actually reproduce this, and is the data accessible?"
 Yes — verified. The full reproduction runs **offline** with no qBraid account, credits, or
@@ -69,8 +74,9 @@ bit-for-bit rerunnable).
 Independently verifiable three ways: (a) every job in every funded campaign (job tagging was added 2026-07-19, before the funded program; earlier de-risking jobs predate it) embeds the **repo commit hash** in qBraid's
 timestamped records — a hash-preimage commitment that predictions predate data; (b) per-job
 billing reconciles to the half-credit and is **re-derived from published pricing** by
-`credit_audit.py` (no API key needed); (c) some job records are **public** on the OpenQuantum
-dashboard. Whole-program spend: 60,698.25 of the 65,000 org ceiling, fully attributed
+`credit_audit.py` (no API key needed); (c) every campaign's per-window raw counts are committed,
+so the bootstrap CIs are re-derivable without us. Org-pool spend: 60,698.25 of the 65,000 ceiling (whole-program qBraid hardware 64,048.25 incl.
+the disclosed 3,350 personal-account charge), fully attributed
 (`CREDIT_BUDGET.md`).
 
 ### 9. "The platform findings are unconfirmed."
