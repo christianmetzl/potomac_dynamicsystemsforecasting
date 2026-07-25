@@ -108,7 +108,7 @@ cards = [
     ("3 devices", CYAN, "retained quantum signal on real hardware",
      "Trapped-ion (IonQ) and two superconducting chips (IQM Garnet at n=10/12, IQM Emerald) executed our "
      "reservoir with signal intact — refuting our own pre-registered predictions, under controls."),
-    ("9.7–24σ", AMBER, "margin on every hardware regime claim",
+    ("9.7–23.9σ", AMBER, "margin on every hardware regime claim",
      "Bootstrap re-analysis of the committed raw counts re-derives every number and puts each verdict "
      "far beyond shot noise. Billing audited to the half-credit across ≈64k credits."),
 ]
@@ -132,7 +132,7 @@ bars = [
     ("Emerald n=8\nsame-window", 0.169, 0.196, True, ""),
     ("Emerald\nn=8",      0.179, 0.196, True,  ""),
     ("Garnet\nn=12",      0.190, 0.214, True,  ""),
-    ("Garnet n=8\n(3 runs)", 0.231, 0.196, False, "0.222–0.231"),
+    ("Garnet n=8\nseed-0 (4 runs)", 0.231, 0.196, False, "0.222–0.231"),
     ("Rigetti n=8\n(2 runs)", 0.261, 0.196, False, "0.223–0.261"),
 ]
 x0, y_base, bw, gap, hmax = 1.05, 5.55, 1.30, 0.34, 3.1  # hmax inches at err=0.28
@@ -160,7 +160,7 @@ box(s, 9.05, leg_y + 0.33, 0.24, 0.035, fill=INK)
 text(s, 9.36, leg_y + 0.21, 3.6, 0.3, [[("size-matched depolarized limit", {"size": 11, "color": INK2})]])
 text(s, 0.6, 6.45, 12.1, 0.55,
      [[("Bars: raw feature error vs the exact simulation (4,000 shots; IonQ 500). Below the white tick, the device retains the circuit's signal; "
-        "above it, the output is statistically indistinguishable from a fully scrambled state. Every verdict sits 9.7–24σ from its tick.", {"size": 11.5, "color": INK2})]],
+        "above it, the output is statistically indistinguishable from a fully scrambled state. Every verdict sits 9.7–23.9σ from its tick.", {"size": 11.5, "color": INK2})]],
      spacing=1.1)
 footer(s, 3)
 
@@ -184,8 +184,8 @@ for head, what, why, col in rows:
     y += 1.53
 text(s, 0.6, y + 0.03, 12.1, 0.5,
      [[("Scorecard of our own pre-registered statements:  ", {"size": 12.5, "color": INK2}),
-       ("S1 refuted · S2 refuted · S3b refuted high · S4 held", {"size": 12.5, "bold": True}),
-       (" — three of four falsified by our own controlled measurements, committed first, reported as measured.", {"size": 12.5, "color": INK2})]],
+       ("S1 · S2 · S3b refuted · S7 cross-seed refuted · S4 held", {"size": 12.5, "bold": True}),
+       (" — four of our own pre-registered predictions falsified by controlled measurement, committed first, reported as measured.", {"size": 12.5, "color": INK2})]],
      spacing=1.05)
 footer(s, 4)
 
@@ -222,7 +222,7 @@ steps = [
     ("Pre-register", "Predictions, budgets, abort and decision rules committed to the repo before execution — amendments timestamped per campaign."),
     ("Tag every job", "Each QPU job embeds the repo commit hash in qBraid's records: a hash-preimage proof that predictions predate data."),
     ("Audit every credit", "≈64k credits across 10 funded campaigns, each billed exactly to estimate; organizer-grade ledger with per-job IDs."),
-    ("Re-derive everything", "Bootstrap from committed raw counts reproduces every published number and quantifies every claim (9.7–24σ)."),
+    ("Re-derive everything", "Bootstrap from committed raw counts reproduces every published number and quantifies every claim (9.7–23.9σ)."),
 ]
 for i, (head, body) in enumerate(steps):
     x = 0.6 + i * 3.22
@@ -248,7 +248,7 @@ text(s, 0.95, 2.15, 5.2, 0.4, [[("PRE-REGISTERED, FALSIFIABLE, COSTED", {"size":
 road = [
     ("S5", "Hardware-in-the-loop forecast on the signal-bearing Emerald — degradation band computed before any run; 'does not beat HAR-X' committed."),
     ("S6", "Hardware-native dissipative reservoirs — the simulation's +60% autonomous-VPT mechanism, tested where damping is free."),
-    ("S7", "Mechanism isolation: same instance, permuted embedding, one session — embedding vs instance, falsifiable both ways."),
+    ("S7 ✓", "EXECUTED (cross-seed control): an independent seed-1 n=8 instance is signal-bearing while seed-0 scrambles — refutes a size law (in the paper). The embedding arm (H-EMBED) remains pre-registered for future work."),
 ]
 y = 2.6
 for tag, body in road:

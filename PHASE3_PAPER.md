@@ -11,8 +11,8 @@ baselines — **HAR-X**, size-matched ESN/RFF, under HAC-DM + Holm + MCS (H0 ref
 second **Heisenberg** reservoir family, so the negative is not Ising-specific). Our positive
 contribution is a **pre-registered, multi-vendor hardware characterization of the coherence-budget
 wall** (Fig. 3): the same circuit is signal-bearing on trapped-ion and newer/larger superconducting
-chips but scrambled on one specific n=8 instance — *instance, not size*, by a same-session
-cross-seed control. **Desk takeaway:** vol-time a simple RV forecast (≈halves the 2008 drawdown);
+chips but scrambled on the **seed-0 n=8 instance** — a same-session cross-seed control refutes a
+*size* law (an independent seed-1 n=8 instance is signal-bearing at that size). **Desk takeaway:** vol-time a simple RV forecast (≈halves the 2008 drawdown);
 quantum adds no economic value here. Reproduces offline in one command (`cli.py verify`).
 
 ## 1. Focus, track selection, and problem framing
@@ -156,8 +156,8 @@ reservoir **not more** — slightly *less* — nonlinearly expressive than a mat
 no excess expressivity to exploit. A frontier check (`cli.py run frontier`) adds that
 g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched ESN keeps pace).
 **Robustness (supporting study).** *Second family:* a **Heisenberg (XXZ)** reservoir — equally
-kernel-distinct (g≈55) — also fails to beat HAR-X (0.650 vs 0.642, 8 seeds), so the negative is
-**not Ising-specific** (`cli.py run second_family`). *Efficiency:* with input held fixed, a *smaller*
+kernel-distinct (g≈55) — also fails to beat HAR-X (0.650 vs 0.642, 8 seeds, full-sample config), so
+the negative is **not Ising-specific** (`cli.py run second_family`). *Efficiency:* with input held fixed, a *smaller*
 QRC cannot substitute for a *larger* classical reservoir — quantum accuracy **saturates** while the
 classical curves improve; per feature the static maps are comparable, so the negative is
 **saturation, not per-feature inferiority** (weather RMSE °C: CHIMERA 0.85 at its qubit-range
@@ -203,13 +203,13 @@ superconducting n=8 number: the **first signal-bearing hardware execution** of t
 (`results/qpu_scaling_outlook.md`) then refuted our own statements on metal (Fig. 3): Garnet turns **signal-bearing at n=10/n=12** while
 the **same-session seed-0 n=8 anchor** stays scrambled — but a pre-registered cross-seed
 control (**S7**) found an **independent seed-1 n=8 instance signal-bearing** in the same session,
-so the n=8 scrambling is **instance-specific, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
+so the n=8 scrambling is **specific to the seed-0 instance, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
 signal-bearing at the very size Garnet scrambles**, reproduced in a **same-window two-chip
 pair**: generation-dependent at fixed size, temporally controlled. We thus characterize all
 four challenge axes — reservoir size, encoding density, shot budget, noise — with the program
 in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k shots, IonQ 500):
 
-![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the size-matched depolarized limit (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.242). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — shows the wall is instance-specific, not size-driven. Per-n limits 0.196/0.179/0.214 at n=8/10/12.](figures/fig_coherence_wall.png)
+![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the size-matched depolarized limit (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — refutes a *size* law: the n=8 scrambling is specific to the seed-0 instance. Per-n limits 0.196/0.179/0.214 at n=8/10/12.](figures/fig_coherence_wall.png)
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
 predictions — the ten funded ones under a committed manifest (abort/decision
@@ -217,7 +217,7 @@ rules fixed *before* each launch); every job embeds the repo commit hash and cam
 in qBraid's timestamped records — a hash-preimage commitment that predictions predate data —
 and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits).
 Bootstrap from the committed counts re-derives every
-number above and puts **each regime claim 9.7–24σ beyond shot noise**; a readout-corrected
+number above and puts **each regime claim 9.7–23.9σ beyond shot noise**; a readout-corrected
 fingerprint attributes the scrambled regime to predominantly coherent error
 (`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where needed: a Rigetti
 replication (day-drift), a same-session n=8 anchor (drift), a same-window

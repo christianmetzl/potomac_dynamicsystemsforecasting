@@ -9,8 +9,8 @@ QPU job and by `git log`). One command checks the lot: `python3 cli.py verify`.*
 We think so, and we report the negative as the headline: against strong *fair* baselines (HAR-X, recurrent ESN,
 RFF; 8 seeds; HAC-DM; Holm) the reservoir shows **no significant forecasting advantage at
 simulable scale — H0 refuted** (`axisB_rigorous_findings.md`). A pre-registered,
-adversarially-controlled negative — plus a hardware program that refuted **three of its own
-four** predictions under controls — is a more reliable contribution to the field than an
+adversarially-controlled negative — plus a hardware program that refuted **four of its own
+pre-registered** predictions under controls (S1, S2, S3b, and the S7 cross-seed control) — is a more reliable contribution to the field than an
 overstated claim, and it is the opposite of cherry-picking.
 
 ### 2. "Weather RMSE (°C) appears in a financial-volatility submission."
@@ -38,7 +38,7 @@ fingerprint earns the coherent attribution. Wording corrected accordingly.
 ### 5. "Hardware point values drift day-to-day, so the numbers aren't reproducible."
 True, and we measured it rather than hiding it: a 4k-shot Rigetti replication showed ~0.04
 day-scale drift (> shot noise). The robust currency is therefore the **regime** (which side of
-the size-matched limit), not the point value — and every regime verdict sits **9.7–24σ** beyond
+the size-matched limit), not the point value — and every regime verdict sits **9.7–23.9σ** beyond
 shot noise (`qpu_bootstrap_ci.md`). The size effect is drift-controlled by a **same-session n=8
 anchor** and the generation effect by a **same-window two-chip pair** — both pre-registered.
 
