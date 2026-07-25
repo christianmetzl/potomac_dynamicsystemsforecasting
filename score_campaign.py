@@ -24,8 +24,24 @@ PREDICTIONS = {
                "+ ZNE linear": 0.144, "+ ZNE Richardson": 0.122},
 }
 # Fixed references for interpretation.
-DEPOLARIZED_LIMITS = {8: 0.1958, 10: 0.1790, 12: 0.2140}  # mean |engine features|, 3 RV windows
+# The fully-depolarized limit is mean|F_exact| — the error a device would show if it returned
+# the maximally-mixed state. F_exact depends on the reservoir INSTANCE (the seeded coupling
+# graph), not on n alone, so the comparator is instance-matched. The table below is keyed
+# (n, seed); the seed-0 row is the default used by every org-funded campaign, and the seed-1
+# rows are the S7 cross-seed controls. Regenerate any entry with:
+#   python3 -c "import numpy as np;from qbraid_submit import engine_features,real_rv_windows;\
+#   print(np.abs([engine_features(N,S)(w) for w in real_rv_windows(N,k=3)]).mean())"
+DEPOLARIZED_LIMITS_BY_INSTANCE = {
+    (8, 0): 0.1958, (10, 0): 0.1790, (12, 0): 0.2140,
+    (8, 1): 0.1806, (10, 1): 0.1693,          # S7 cross-seed control instances
+}
+DEPOLARIZED_LIMITS = {8: 0.1958, 10: 0.1790, 12: 0.2140}   # seed-0 (default instance)
 DEPOLARIZED_LIMIT = DEPOLARIZED_LIMITS[8]
+
+
+def depolarized_limit(n, seed=0):
+    """Instance-matched fully-depolarized limit (mean|F_exact| for that seeded reservoir)."""
+    return DEPOLARIZED_LIMITS_BY_INSTANCE[(n, seed)]
 RIGETTI_MEASURED_RAW = 0.2611       # committed characterized negative (2k shots)
 RIGETTI_REPLICATE_RAW = 0.2226      # 4k-shot replication (day-scale drift band ~0.04)
 GARNET_OQ_PREVIEW_RAW = 0.2382      # single-window OQ-route preview (4k shots)

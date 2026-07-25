@@ -20,11 +20,11 @@ negative a result rather than a null.**
 | 1 | Realized-volatility forecast | S&P RV vs HAR-X + canonical HAR family (SHAR/HAR-CJ/HARQ/HEAVY) | CHIMERA ties best; no Holm-significant win; **no model beats HAR-X** | `canonical_baselines_findings.md` |
 | 2 | Cross-asset / multi-horizon / crisis | 8–10 indices, GFC+COVID windows | competitive, **no advantage** | `v2_research/` |
 | 3 | Weather temperature, **5 stations** | Jena+O'Hare+Denver/Rapid City/Great Falls (chaos +0…+78%) | CHIMERA ties/trails ESN at every horizon; **1 statistical tie, 0 wins** | `V3_README.md §Exp1` |
-| 4 | Qubit-count scaling | weather n=5/10/15 | accuracy **improves** with n (0.864→0.692→0.677) yet still ties classical | `v3_weather_sweep_results.npy` |
+| 4 | Qubit-count scaling | weather n=5/10/15 | accuracy **improves** with n (0.864→0.692→0.677) yet still ties classical | `v3_research/v3_weather_sweep_results.npy` |
 | 5 | Information-processing capacity | Dambre 2012 probe, matched dim | CHIMERA nonlinear **2.77 < RFF 3.51 / ESN 2.89**; total 8.82 < 10.88/10.71 | `information_capacity_findings.md` |
 | 6 | Representational frontier g(n) | fully-informed encoding to n=16 | g **declines** with n (93.6→42.4; ρ=−0.90); matched ESN keeps pace | `frontier_scaling_findings.md` |
-| 7 | VPT, static reservoirs | Lorenz-63 autonomous rollout | CHIMERA 0.49 **< RFF 1.18** (matched); **no advantage** | `lorenz_vpt_results.npy` |
-| 8 | VPT, **recurrent** QRC | Lorenz-63, fair size-match | CHIMERA 0.50 **< matched ESN 0.61**; closest it ever gets | `recurrent_qrc_results.npy` |
+| 7 | VPT, static reservoirs | Lorenz-63 autonomous rollout | CHIMERA 0.49 **< RFF 1.18** (matched); **no advantage** | `v3_research/lorenz_vpt_results.npy` |
+| 8 | VPT, **recurrent** QRC | Lorenz-63, fair size-match | CHIMERA 0.50 **< matched ESN 0.61**; closest it ever gets | `v3_research/recurrent_qrc_results.npy` |
 | 9 | VPT, recurrent QRC on **real weather** | Jena/Denver autonomous rollout | CHIMERA 6.5/8.1 h **< matched ESN 13.4/12.3 h**; fails to beat climatology at Jena | `recurrent_weather_vpt_*.npy` |
 | 10 | Noise robustness | depol / amplitude-damping | readout-only = invariant (a standardization artifact); per-layer **degrades** | `noise_circuit_findings.md` |
 | 11 | **Resource efficiency** (small QRC vs larger classical) | quality vs #features, input held fixed | CHIMERA saturates at ~0.85; RFF reaches 0.78, ESN 0.71 — comparable per-feature only at the smallest sizes; **a small QRC cannot do a larger classical's job** | `efficiency_frontier_findings.md` |

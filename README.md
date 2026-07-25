@@ -140,7 +140,7 @@ comparison is significant.** An earlier draft reported "CHIMERA beats HAR (p=0.0
 adversarial review found that was an artifact of comparing against a *feature-poor* HAR; the
 gain came from the encoded realized measures (a known SHAR/HARQ effect), **not** from quantum
 nonlinearity. **By our pre-registered criteria, H0 is refuted — we report this honestly.**
-What survives for the quantum reservoir: it is *competitive* (within ~1% RMSE), **more stable
+What survives for the quantum reservoir: it is *competitive* (within ≈0.8–2.1% RMSE), **more stable
 than the ESN** (lower seed variance), and beats the recurrent ESN on the calm window (raw
 p=0.018). The encoding-density *mechanism* is real (informed qubits restore g 52→158, D_eff
 1.5→3.1 vs idle), but distinctness is **necessary, not sufficient** for advantage.
@@ -167,15 +167,15 @@ and **robust to amplitude damping** (<0.5% at 30%).
 
 A sparse-exact backend (`expm_multiply`, no dense propagator; matches the dense engine to
 2.4×10⁻¹⁴) reaches **n=16 exactly**. We measure the **entanglement / bond dimension** of the
-random ≈50%-connected reservoir across a balanced cut: χ_eff is **full at every n
-(= 2^(n/2): 16→256)** — an exact MPS gets zero compression — so there is **no low-bond-dimension
+random ≈50%-connected reservoir across a balanced cut: χ_eff is **essentially full at every n**
+(exactly 2^(n/2) at n=8–14; **255.9 of 256** at n=16) — an exact MPS gets zero compression — so there is **no low-bond-dimension
 shortcut** and exact simulation cost stays exponential in n. (Full entanglement is a *necessary,
 not sufficient* condition for true classical hardness — the precondition any beyond-frontier
 advantage would need; no advantage is observed at the simulable scale here.)
 
 ### 5. Phase-2 results (reproduced)
 `python3 cli.py run phase2` (+ `crisis`) — kernel geometry g(ESN→CHIMERA) ≈ 64 vs ≈ 3.7 control;
-explicit PennyLane circuit matches the engine to ≈ 5×10⁻¹⁶. CHIMERA-3scale tracks the crisis
+explicit PennyLane circuit matches the engine to ≈ 3.9×10⁻¹⁶. CHIMERA-3scale tracks the crisis
 regime on forecast efficiency (MZ R² 0.591 vs **plain** HAR 0.559) — *but note this is vs
 feature-poor HAR; the decisive HAR-X test (§1) shows no significant advantage*, so this is a
 regime-tracking property, not a win.
@@ -231,13 +231,16 @@ amendments with decision rules committed *before* execution), budget-audited to 
 
 - **IonQ Forte-1** (trapped-ion, n=8): raw feature error **0.104 — signal-bearing** (below the
   0.196 depolarized limit; prediction (ii) confirmed). Bonus finding: a 2,000-gate/circuit
-  device ceiling measured on both access routes → ZNE infeasible there (disclosed fallback).
+  device ceiling measured on the native route and corroborated (via an ambiguous platform failure) on the OpenQuantum route → ZNE infeasible there (disclosed fallback).
 - **IQM Garnet** n=10 / n=12: **0.159 / 0.190 — signal-bearing**, while a same-session n=8
-  anchor stayed scrambled (0.222) — size effect real, drift excluded (S1/S2 refuted).
+  anchor stayed scrambled (0.222) — a real effect, drift excluded (S1/S2 refuted). A later
+  **cross-seed control (S7)** localized it: it is **seed-0-instance-specific, not a size law**.
 - **IQM Emerald** (newer generation) at n=8: **0.169–0.179 — signal-bearing at the very size
   Garnet scrambles**, reproduced in a same-window two-chip pair (S3b refuted high).
-- **Garnet / Rigetti** at n=8: 0.222–0.261 across five runs and three days — the stable
-  **characterized negative** that anchors the contrast.
+- **Garnet / Rigetti** at n=8: 0.222–0.261 across six runs and four days — the **characterized
+  negative** that anchors the contrast. It is stable *for the seed-0 instance*: an independent
+  **seed-1 n=8 instance on the same chip, same session, is signal-bearing at 0.159** (S7), which
+  is why we claim an instance property rather than a size law.
 
 Full detail: `results/qpu_hardware_findings.md` · pre-registration:
 `results/qpu_campaign_manifest.md`, `results/qpu_scaling_outlook.md`. The simulator path

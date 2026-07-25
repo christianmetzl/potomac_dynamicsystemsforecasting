@@ -285,14 +285,18 @@ signal-bearing larger sizes on the same chip.
 S1 refuted (n=10, n=12 signal-bearing, drift-controlled) · S2 refuted (excess falls and flips
 sign with depth) · S3a confirmed / S3b refuted high (generation crosses the wall at n=8) ·
 S4 held on Garnet at n=10/12 (no ZNE recovery; marginal recovery appeared only on
-well-calibrated Emerald/anchor/Rigetti-replicate days). Three of four headline statements
-falsified by controlled measurement — committed before execution, reported as measured.
+well-calibrated Emerald/anchor/Rigetti-replicate days). Three of these four **scaling**
+statements falsified by controlled measurement — committed before execution, reported as
+measured. *(Scope note: counting the separately pre-registered S7 cross-seed control — H-INSTANCE,
+also refuted, §S7 below — the program falsified **four** of its own pre-registered predictions in
+total. Statements elsewhere citing "four" use this whole-program scope; "three of four" here is
+scoped to the S1–S4 scaling block.)*
 
 ## Cross-platform hardware data collected so far
 
 *Statistical hardening: multinomial bootstrap from each campaign's committed counts
 (`qpu_bootstrap_ci.py` → `results/qpu_bootstrap_ci.md`) re-derives every raw number below from
-the raw data and places **each regime claim 9.7–24σ beyond shot noise**; the engine-side limit
+the raw data and places **each regime claim 9.7–23.9σ beyond shot noise**; the engine-side limit
 check (documented limit = mean|F_exact| per n) is asserted in the same run. Shot noise is
 thereby excluded as an explanation for any regime verdict; day-scale drift remains the
 relevant uncertainty for cross-day point values, bounded by the replication/anchor/pair
@@ -315,16 +319,39 @@ Hypotheses, predictions, and the decision rule were pre-registered in
 `results/qpu_scaling_outlook.md`, committed at `89cce5f` **before launch** (hash-preimage:
 the prediction provably predates the data).*
 
-| campaign | n | raw | size-matched limit | excess | regime |
-|---|---|---|---|---|---|
-| seed-0 n=8 (same-session re-anchor) | 8 | **0.2284** | 0.1958 | +0.0326 | beyond — scrambled |
-| **seed-1 n=8** (independent instance) | 8 | **0.1594** | 0.1958 | −0.0364 | **inside — signal-bearing** |
-| seed-1 n=10 | 10 | **0.1455** | 0.1790 | −0.0335 | inside — signal-bearing |
+| campaign | n | seed | raw | **instance**-matched limit | excess | regime |
+|---|---|---|---|---|---|---|
+| seed-0 n=8 (same-session re-anchor) | 8 | 0 | **0.2284** | 0.1958 | +0.0326 | beyond — scrambled |
+| **seed-1 n=8** (independent instance) | 8 | 1 | **0.1594** | **0.1806** | −0.0212 | **inside — signal-bearing** |
+| seed-1 n=10 | 10 | 1 | **0.1455** | **0.1693** | −0.0238 | inside — signal-bearing |
 
-**Decision rule applied (branch 2, exactly as committed):** seed-1 n=8 raw 0.1594 sits **0.036
-below** its limit — beyond the ±0.02 unresolved band — so it is signal-bearing on a second
-instance. Therefore **H-INSTANCE is REFUTED**: the n=8 scrambling does **not** generalize across
-instances; the seed-0 n=8 instance is the outlier.
+> **Self-correction — comparator robustness (found and applied by us, 2026-07-25, pre-submission).**
+> The S7 decision rule was pre-registered (`qpu_scaling_outlook.md`, committed `89cce5f` before
+> launch, and **byte-identical today** — verify with
+> `git show 89cce5f:results/qpu_scaling_outlook.md`) against the **seed-0** limits 0.196 / 0.179.
+> Strictly, that is the wrong comparator for a seed-1 run: the fully-depolarized limit is
+> `mean|F_exact|`, a property of the *instance* (the seeded coupling graph), not of `n` alone.
+> The instance-matched limits are **0.1806** (n=8 seed-1) and **0.1693** (n=10 seed-1) — computed
+> by a method that reproduces the committed seed-0 values (0.1958, 0.1790) **exactly**.
+> **We did not touch the pre-registration.** We report both:
+>
+> | comparator | seed-1 n=8 | seed-1 n=10 | verdict |
+> |---|---|---|---|
+> | pre-registered (seed-0 limit, as committed) | 0.1594 < 0.196 (−0.036) | 0.1455 < 0.179 (−0.034) | signal-bearing |
+> | instance-matched (stricter, correct) | 0.1594 < 0.1806 (**−0.021**) | 0.1455 < 0.1693 (**−0.024**) | signal-bearing |
+>
+> The corrected margins are **~40% smaller**, and the n=8 one clears the pre-registered ±0.02
+> unresolved band **only just** — we say so plainly. **The verdict is unchanged under both
+> comparators**, and the decisive comparison below (raw-vs-raw, same chip, same session, fixed
+> size) is **limit-independent** entirely. Comparators are now instance-keyed in
+> `score_campaign.py` (`DEPOLARIZED_LIMITS_BY_INSTANCE`). Disclosed rather than silently patched.
+
+**Decision rule applied (branch 2, exactly as committed):** seed-1 n=8 raw 0.1594 sits **0.021
+below** its instance-matched limit — beyond the ±0.02 unresolved band, though **only just**, and
+we say so — so it is signal-bearing on a second instance. Therefore **H-INSTANCE is REFUTED**:
+the n=8 scrambling does **not** generalize across instances; the seed-0 n=8 instance is the
+outlier. The seed-1 n=10 margin (0.024) is likewise beyond the band. *Had either landed inside
+±0.02 the committed rule would have returned "unresolved", not a refutation.*
 
 **What this resolves (drift- and size-controlled).** In one session the re-anchor reproduces
 seed-0 n=8 scrambled (0.2284 — a **fourth** measurement of that instance: 0.2301 / 0.2216 /
@@ -339,8 +366,11 @@ open."
 **Consequence for S1/S2 (re-scoped exactly as the rule required):** the earlier "size effect"
 (seed-0 n=8 scrambled vs seed-0 n=10/n=12 signal-bearing) is real for that seed but **confounded
 with instance**; the clean statement is that seed-0's n=8 instance scrambles while other
-instances (seed-1 n=8) and larger sizes retain signal. A fifth pre-registered prediction
-falsified by controlled measurement, reported exactly as measured.
+instances (seed-1 n=8) and larger sizes retain signal. A further pre-registered prediction
+falsified by controlled measurement, reported exactly as measured. *(Counting convention: the
+paper, README and deck cite **four** falsified pre-registered predictions — S1, S2, S3b and this
+S7 cross-seed control. Counting the earlier hardware prediction (i) as well makes five. The
+four-item list is the whole-program scope used on every reader-facing surface.)*
 
 **H-EMBED (secondary arm):** not separately run — the transpiler-independent H-INSTANCE arm
 already answers the size-vs-instance question; H-EMBED (default vs permuted embedding of the

@@ -23,5 +23,5 @@ coherent-residual share means no scalar shrink-and-bias reproduces the measured 
 the error is structured, consistent with coherent routing error. The measured values
 above place each scrambled campaign on that spectrum; the paper's wording is set to
 match what they show, and no headline verdict (which side of the limit) depends on this
-attribution — that is fixed by the threshold test and hardened to 9.7–24σ by the
+attribution — that is fixed by the threshold test and hardened to 9.7–23.9σ by the
 bootstrap (`results/qpu_bootstrap_ci.md`).

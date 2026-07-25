@@ -18,7 +18,7 @@ isolates reservoir dynamics, not encoding richness.)*
 
 ## Findings
 
-1. **Bond dimension is full at every n: χ_eff = 2^(n/2).** Every Schmidt value across
+1. **Bond dimension is essentially full at every n: χ_eff ≈ 2^(n/2)** (exactly full at n=8–14: 16/32/64/128; **255.9375 of 256** at n=16).** Every Schmidt value across
    the balanced cut exceeds 10⁻⁵, so the state has *full* Schmidt rank — an **exact**
    matrix-product-state representation gets **zero compression** and costs χ = 2^(n/2)
    (16 → 256 as n: 8 → 16). For our **random ≈50%-connected** (connectivity=0.5) Ising reservoir this

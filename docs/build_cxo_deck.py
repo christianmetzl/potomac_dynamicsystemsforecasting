@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """EIGENNEXUS CxO deck (judge-safe, 9 slides; internal red-team panel omitted). Dark, 16:9.
-All numbers verified against results/*.json at commit 21bed92."""
+All numbers cross-checked against results/*.json and results/*.md; chart values are kept
+identical to the paper's Fig. 3 (make_coherence_wall_fig.py)."""
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -93,7 +94,7 @@ text(s, 0.9, 2.05, 11.5, 1.9,
      spacing=1.02)
 text(s, 0.9, 4.15, 11.5, 0.9,
      [[("Quantum reservoir computing for financial volatility — Track A.  ", {"size": 15, "color": INK2}),
-       ("Ten QPU campaigns · three vendors · four devices · every claim controlled.", {"size": 15, "bold": True})]])
+       ("13 QPU campaigns · three vendors · four devices · every claim controlled.", {"size": 15, "bold": True})]])
 text(s, 0.9, 6.2, 11.5, 1.0,
      [[("Christian Metzl (Lead / Architect)   ·   Fares Eldibani (Data Science)   ·   Juan Manuel Aguiar Hualde (PhD Physics)", {"size": 12, "color": INK2})],
       [("Every number in this deck traces to a committed artifact and a platform-timestamped job record.", {"size": 11, "color": MUTED, "italic": True})]])
@@ -108,11 +109,12 @@ cards = [
      "before the data existed. This machine — not any single number — is the durable asset."),
     ("3 devices", GOOD, "retained quantum signal on real hardware",
      "Trapped-ion (IonQ) and two superconducting chips (IQM Garnet at n=10/12, IQM Emerald) executed our "
-     "reservoir with signal intact — each verdict 9.7–23.9σ beyond shot noise, refuting our own "
+     "reservoir with signal intact — each bootstrapped verdict 9.7–23.9σ beyond shot noise, refuting our own "
      "pre-registered predictions under controls. Billing audited to the half-credit across ≈64k credits."),
-    ("$0", AMBER, "of quantum advantage for vol-forecasting today — proven",
-     "Across every fair, pre-registered test a plain classical formula (HAR-X) still wins: parity at "
-     "best, never advantage — the avoided-cost result your risk committee needs in writing, with receipts."),
+    ("$0", AMBER, "of measured quantum advantage for vol-forecasting today",
+     "Across every fair, pre-registered test: parity at best, never advantage. After Holm nothing is "
+     "significant either way and the 95% Model Confidence Set retains all models — a statistical tie, "
+     "with the simplest classical model (HAR-X) the rational choice. The avoided-cost result, with receipts."),
 ]
 for i, (stat, col, head, body) in enumerate(cards):
     x = 0.6 + i * 4.15
@@ -126,16 +128,18 @@ footer(s, 2)
 
 # ------------------------------------------------- 3 · the measurement chart
 s = slide()
-title_row(s, "Ten campaigns, one picture", "The coherence wall, measured from both sides")
+title_row(s, "Four devices, three vendors, one picture", "The coherence wall, measured from both sides")
 # bars: (label, raw, limit, signal_bearing, note)
+# Identical config list and values to the paper's Fig. 3 (make_coherence_wall_fig.py) so the
+# two charts of the same wall cannot disagree. Ticks are instance-matched limits (mean|F_exact|).
 bars = [
-    ("IonQ Forte-1\nn=8", 0.104, 0.196, True,  "ion, 500 shots"),
-    ("Garnet\nn=10",      0.159, 0.179, True,  ""),
-    ("Emerald n=8\nsame-window", 0.169, 0.196, True, ""),
-    ("Emerald\nn=8",      0.179, 0.196, True,  ""),
-    ("Garnet\nn=12",      0.190, 0.214, True,  ""),
-    ("Garnet n=8\nseed-0 (4 runs)", 0.231, 0.196, False, "0.222–0.231"),
-    ("Rigetti n=8\n(2 runs)", 0.261, 0.196, False, "0.223–0.261"),
+    ("IonQ Forte-1\nn=8 · ion", 0.104, 0.196, True,  "500 shots"),
+    ("IQM Emerald\nn=8 · new gen", 0.169, 0.196, True, ""),
+    ("IQM Garnet\nn=10",  0.159, 0.179, True,  ""),
+    ("IQM Garnet\nn=12",  0.190, 0.214, True,  ""),
+    ("Garnet n=8\nseed-1 (S7)", 0.159, 0.1806, True, "instance limit"),
+    ("Garnet n=8\nseed-0", 0.228, 0.196, False, "4 runs 0.222–0.231"),
+    ("Rigetti Cep-1\nn=8", 0.223, 0.196, False, "4k rep; 2k was 0.261"),
 ]
 x0, y_base, bw, gap, hmax = 1.05, 5.55, 1.30, 0.34, 3.1  # hmax inches at err=0.28
 for i, (lab, raw, lim, sig, note) in enumerate(bars):
@@ -162,7 +166,7 @@ box(s, 9.05, leg_y + 0.33, 0.24, 0.035, fill=INK)
 text(s, 9.36, leg_y + 0.21, 3.6, 0.3, [[("size-matched depolarized limit", {"size": 11, "color": INK2})]])
 text(s, 0.6, 6.45, 12.1, 0.55,
      [[("Bars: raw feature error vs the exact simulation (4,000 shots; IonQ 500). Below the white tick, the device retains the circuit's signal; "
-        "above it, the output is statistically indistinguishable from a fully scrambled state. Every verdict sits 9.7–23.9σ from its tick.", {"size": 11.5, "color": INK2})]],
+        "above it, the output is statistically indistinguishable from a fully scrambled state. Every bootstrapped verdict (9 campaigns with committed counts) sits 9.7–23.9σ from its tick.", {"size": 11.5, "color": INK2})]],
      spacing=1.1)
 footer(s, 3)
 
@@ -171,7 +175,7 @@ s = slide()
 title_row(s, "Why these results survive hostile review", "We bought controls — and refuted our own predictions")
 rows = [
     ("Same-session anchor", "n=8 and n=12 interleaved on one chip, matching calibration fingerprints",
-     "The size effect is real — day-drift excluded by a decision rule committed before the data existed.", GOOD),
+     "The effect is real for this instance — day-drift excluded by a rule committed before the data existed; S7 later localized it to the seed-0 instance, not size.", GOOD),
     ("Same-window two-chip pair", "Garnet and Emerald on the clock simultaneously, first jobs the same second",
      "The generation effect is temporally controlled: newer chip signal-bearing at the size the older one scrambles.", GOOD),
     ("4k-shot replication", "Rigetti re-run at double shots on a second day",
@@ -200,9 +204,9 @@ impl = [
     ("02", "Efficiency is a negative too",
      "On like-for-like accuracy (lower-is-better RMSE), the quantum reservoir saturates worst. Parity is the only surviving edge."),
     ("03", "The readiness buffer just shrank",
-     "Signal-bearing execution arrived on three devices, years before our own measured baseline implied. Move from ignore to monitor."),
+     "Signal-bearing execution arrived on three devices — the pre-registered upside (S3 failing high) that we said would materially upgrade the outlook, and it did. Move from ignore to monitor."),
     ("04", "Spec-sheet procurement is falsified",
-     "Gate-count heuristics failed on real metal — instance and embedding dominate. Qualify hardware per workload, empirically."),
+     "Gate-count heuristics failed on real metal — instance structure dominates. Qualify hardware per workload, empirically (the embedding arm, H-EMBED, is pre-registered and unrun)."),
     ("05", "Certainty is the product",
      "A pre-registered audit converts hype into policy at a known, small cost — and it is repeatable on demand."),
 ]
@@ -222,8 +226,8 @@ s = slide()
 title_row(s, "The audit machinery", "Trust is engineered, not asserted")
 steps = [
     ("Pre-register", "Predictions, budgets, abort and decision rules committed to the repo before execution — amendments timestamped per campaign."),
-    ("Tag every job", "Each QPU job embeds the repo commit hash in qBraid's records: a hash-preimage proof that predictions predate data."),
-    ("Audit every credit", "≈64k credits across 10 funded campaigns, each billed exactly to estimate; organizer-grade ledger with per-job IDs."),
+    ("Tag every job", "Each QPU job in every funded campaign embeds the repo commit hash in qBraid's records: a hash-preimage proof that predictions predate data."),
+    ("Audit every credit", "60,698.25 org credits across 10 funded campaigns (64,048.25 incl. a disclosed personal-account anomaly), each at or under its pre-approved reservation; organizer-grade ledger with per-job IDs."),
     ("Re-derive everything", "Bootstrap from committed raw counts reproduces every published number and quantifies every claim (9.7–23.9σ)."),
 ]
 for i, (head, body) in enumerate(steps):
@@ -235,7 +239,7 @@ for i, (head, body) in enumerate(steps):
 box(s, 0.6, 5.55, 12.1, 1.15, fill=CARD2, round_=True)
 text(s, 0.95, 5.75, 11.4, 0.8,
      [[("Side effect of auditing the platform this hard: ", {"size": 12.5, "color": INK2}),
-       ("three platform-level findings responsibly disclosed to qBraid", {"size": 12.5, "bold": True}),
+       ("two reproducible platform findings documented with reproduction bundles (plus one billing reconstruction, explicitly unconfirmed)", {"size": 12.5, "bold": True}),
        (" (silent negative-angle gate loss; a simulator anomaly; a billing-context fallback) — finding 3 not yet vendor-confirmed and labeled as our reconstruction. "
         "The audit made the ecosystem better while competing on it.", {"size": 12.5, "color": INK2})]],
      spacing=1.12)
@@ -282,7 +286,7 @@ text(s, 0.92, 2.6, 4.4, 3.6,
       [("• pre-registered predictions + decision rules, committed before any run", {"size": 12, "color": INK2})],
       [("• controlled measurement across vendors (same-session / same-window)", {"size": 12, "color": INK2})],
       [("• a report of what each QPU can and cannot do — every number re-derivable from raw data", {"size": 12, "color": INK2})],
-      [("• proof it works: our own program qualified 4 configs signal-bearing, 2 scrambled — on the SAME circuit; a ~$70 single-device test that pre-empts a six-figure wrong build", {"size": 12, "color": INK2})]],
+      [("• proof it works: our own program qualified 5 configs signal-bearing, 2 scrambled — on the SAME circuit (chart, slide 3); a ~$70 single-device test that pre-empts a six-figure wrong build", {"size": 12, "color": INK2})]],
      spacing=1.15, space_after=8)
 # pricing (middle) — REAL cost basis from our measured spend
 box(s, 5.8, 1.9, 3.4, 4.6, fill=CARD2, round_=True)

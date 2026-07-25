@@ -1,8 +1,10 @@
 """
 make_coherence_wall_fig.py — render figures/fig_coherence_wall.png:
 the cross-platform coherence-budget wall, one picture. Each bar is the measured mean raw
-feature error on hardware; the black tick is that run's size-matched fully-depolarized limit
-(mean|F_exact|). Green = below the tick (device retains circuit signal); red = above (scrambled).
+feature error on hardware; the black tick is that run's **instance-matched** fully-depolarized
+limit (mean|F_exact| for that seeded reservoir — a property of the instance, not of n alone; the
+seed-1 S7 bar therefore carries its own 0.1806 tick, not seed-0's 0.196).
+Green = below the tick (device retains circuit signal); red = above (scrambled).
 The adjacent Garnet n=8 seed-1 (S7, 0.159) vs seed-0 (0.228) pair refutes a size law — the n=8
 scrambling is specific to the seed-0 instance. Rigetti bar = 0.223 (the 4k-shot replicate; the 2k
 run was 0.261). All numbers trace to results/qpu_hardware_findings.md.
@@ -19,7 +21,7 @@ bars = [
     ("IQM Emerald\nn=8 · new gen",  0.169, 0.196, True),
     ("IQM Garnet\nn=10",            0.159, 0.179, True),
     ("IQM Garnet\nn=12",            0.190, 0.214, True),
-    ("Garnet n=8\nseed-1 (S7)",     0.159, 0.196, True),
+    ("Garnet n=8\nseed-1 (S7)",     0.159, 0.1806, True),   # instance-matched limit (seed-1)
     ("Garnet n=8\nseed-0",          0.228, 0.196, False),
     ("Rigetti Cep-1\nn=8",          0.223, 0.196, False),
 ]

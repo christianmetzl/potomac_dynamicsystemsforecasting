@@ -13,7 +13,7 @@ IQM, Rigetti). Two measurements stand on their own: an empirical **quantum-compl
 reservoir's MPS bond dimension is essentially full, **χ_eff ≈ 2^(n/2)**, marking the
 classical-simulability boundary) and a cross-platform **coherence-budget wall** (Fig. 3) whose
 readout-corrected fingerprint separates **coherent circuit routing from depolarizing/damping
-noise**, each regime verdict **9.7–23.9σ** beyond shot noise. Applied honestly, the instrument
+noise**, each bootstrapped regime verdict **9.7–23.9σ** beyond shot noise. Applied honestly, the instrument
 returns a **well-characterized negative**: at simulable scale (≤16 qubits) the reservoir is
 *distinct but not more accurate* than the strongest fair baselines — **HAR-X**, size-matched
 ESN/RFF, under HAC-DM + Holm + MCS (**H0 refuted**) — robust across a second **Heisenberg** reservoir
@@ -55,7 +55,7 @@ classical controls, isolating quantum-vs-classical. Four mechanisms extend the c
 τ-bank; RZ measurement feedback; regime-adaptive Ising↔Heisenberg via BOCPD; dissipation-as-
 feature); Phase 3 adds an **encoding-density / data-re-uploading path** (§5.2) and a
 **sparse/tensor backend** (§5.5). The engine is pure NumPy; an explicit PennyLane circuit
-reproduces it to ≈5×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
+reproduces it to ≈3.9×10⁻¹⁶ and compiles, at n=8, to **380 native gates** (220 two-qubit + 160
 one-qubit, 20 Trotter layers) — consistent with the ≈50%-connected graph.
 
 ![**Figure 1.** CHIMERA-QRC pipeline: lagged log-RV (and, in Axis B, realized-measure) inputs are angle-encoded onto qubits, evolved under a fixed random-coupled Ising Hamiltonian, and read out as single/pairwise Pauli-Z expectations into a ridge head fused with a linear block of the same inputs; a BOCPD detector selects the Hamiltonian for regime adaptivity.](figures/fig_architecture.png)
@@ -216,15 +216,15 @@ pair**: generation-dependent at fixed size, temporally controlled. We thus chara
 four challenge axes — reservoir size, encoding density, shot budget, noise — with the program
 in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k shots, IonQ 500):
 
-![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the size-matched depolarized limit (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — refutes a *size* law: the n=8 scrambling is specific to the seed-0 instance. Per-n limits 0.196/0.179/0.214 at n=8/10/12.](figures/fig_coherence_wall.png)
+![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — refutes a *size* law: the n=8 scrambling is specific to the seed-0 instance. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 (n=8) — verdict unchanged (§6).](figures/fig_coherence_wall.png)
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
 predictions — the ten funded ones under a committed manifest (abort/decision
-rules fixed *before* each launch); every job embeds the repo commit hash and campaign tag
+rules fixed *before* each launch); every funded-campaign job embeds the repo commit hash and campaign tag
 in qBraid's timestamped records — a hash-preimage commitment that predictions predate data —
 and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.md`: ≈64k credits).
 Bootstrap from the committed counts re-derives every
-number above and puts **each regime claim 9.7–23.9σ beyond shot noise**; a readout-corrected
+number above and puts **each of the nine bootstrapped regime claims 9.7–23.9σ beyond shot noise**; a readout-corrected
 fingerprint attributes the scrambled regime to predominantly coherent error
 (`qpu_bootstrap`, `qpu_fingerprint`). Controls were bought where needed: a Rigetti
 replication (day-drift), a same-session n=8 anchor (drift), a same-window
@@ -242,7 +242,7 @@ shot noise; combined noisy-plus-shot execution is measured in the QPU campaigns 
 exceeds shot noise, so *regime* — not point value — is the robust claim), while n=10/n=12 and the
 newer generation land inside their limits: the wall is instance- and generation-dependent, not
 absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation recovery on hardware is at
-best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat — the gate ceiling forbids ZNE).
+best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they
 convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
 nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical
@@ -260,8 +260,7 @@ single-device test (profiles, not customers). **Concrete desk impact today**
 (`cli.py run economics`): a vol-timing backtest **nearly halves the 2008 max drawdown (−61%→−32%)** —
 but a **plain HAR** captures it, so the decision-useful lever is **a simple RV forecast, not quantum
 hardware**.
-**Milestone plan:** (i)–(vi) all ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and
-drafting; all decisions and results are the team's own.
+**Milestone plan:** (i)–(vi) all ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are the team's own.
 
 <!-- pagebreak -->
 

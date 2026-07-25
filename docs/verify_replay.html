@@ -123,7 +123,7 @@
     <div class="chips">
       <span class="chip"><span class="d g"></span>checks 01–25 · re-executions</span>
       <span class="chip"><span class="d a"></span>checks 26–28 · evidence audits</span>
-      <span class="chip"><span class="d c"></span>160.7&nbsp;s real wall-clock</span>
+      <span class="chip"><span class="d c"></span>115.4&nbsp;s real wall-clock</span>
       <span class="chip"><span class="d g"></span>28 / 28 PASS</span>
     </div>
   </div>
@@ -246,7 +246,7 @@ function buildRows(){
   R.push({sub:true, name:'fold-3 = fold-1', q:' · noiseless identity', assert:'<span class="val">3.5e-12</span> <span class="op">&lt;</span> 1e-9'});
   R.push({ghead:'evidence audits — re-derived from committed data, not re-executed', gt:'#26–28', audit:true});
   R.push({idx:++n, name:'credit ledger reconciles',
-    assert:'<span class="val">64,048</span> <span class="op">≤</span> 65,000 cr <span class="op">·</span> re-derived = billed of record', time:c[2].seconds+'s'});
+    assert:'org <span class="val">60,698.25</span> <span class="op">≤</span> 65,000 ceiling <span class="op">·</span> hw total 64,048.25 <span class="op">·</span> re-derived = billed of record', time:c[2].seconds+'s'});
   R.push({idx:++n, name:'bootstrap CIs', q:' · 9 hardware campaigns',
     assert:'every regime claim <span class="val">9.7–23.9σ</span> beyond shot noise', time:c[3].seconds+'s'});
   for(const b of parseBootstrap(c[3].lines))
