@@ -31,27 +31,70 @@ MEASURED = {0: ("seed-0", 0.2284, "scrambled"), 1: ("seed-1", 0.1594, "signal-be
 
 
 def build():
+    from tensor_backend import entanglement_of_states
     wins = real_rv_windows(N, k=K_WINDOWS)
+    X = np.clip(np.array(wins), 0, 1)
     rows = []
     for seed in range(N_SEEDS):
         J = generate_coupling_matrix(N, CONN, seed=seed)
         edges = int(np.count_nonzero(np.triu(J, 1)))
         F = np.array([engine_features(N, seed)(w) for w in wins])
-        rows.append({"seed": seed, "edges": edges, "limit": float(np.abs(F).mean())})
+        S, _chi, _cm = entanglement_of_states(X, N, seed=seed, sample=len(X))
+        rows.append({"seed": seed, "edges": edges,
+                     "limit": float(np.abs(F).mean()), "S_ent": float(S)})
     return rows
+
+
+def _corr_t(x, y):
+    """Pearson r with a two-sided t-test p-value (no scipy dependency)."""
+    r = float(np.corrcoef(x, y)[0, 1])
+    n = len(x)
+    t = r * np.sqrt(n - 2) / np.sqrt(max(1 - r * r, 1e-15))
+    # two-sided p from the t distribution via its incomplete-beta form
+    from math import lgamma, log, exp
+    def betacf(a, b, x, it=200):
+        qab, qap, qam = a + b, a + 1.0, a - 1.0
+        c, d = 1.0, 1.0 - qab * x / qap
+        d = 1.0 / (d if abs(d) > 1e-30 else 1e-30); h = d
+        for m in range(1, it):
+            m2 = 2 * m
+            aa = m * (b - m) * x / ((qam + m2) * (a + m2))
+            d = 1.0 + aa * d; d = 1.0 / (d if abs(d) > 1e-30 else 1e-30)
+            c = 1.0 + aa / (c if abs(c) > 1e-30 else 1e-30); h *= d * c
+            aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+            d = 1.0 + aa * d; d = 1.0 / (d if abs(d) > 1e-30 else 1e-30)
+            c = 1.0 + aa / (c if abs(c) > 1e-30 else 1e-30)
+            de = d * c; h *= de
+            if abs(de - 1.0) < 3e-12: break
+        return h
+    def betai(a, b, x):
+        if x <= 0: return 0.0
+        if x >= 1: return 1.0
+        bt = exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * log(x) + b * log(1 - x))
+        return bt * betacf(a, b, x) / a if x < (a + 1) / (a + b + 2) \
+            else 1.0 - bt * betacf(b, a, 1 - x) / b
+    df = n - 2
+    p = betai(0.5 * df, 0.5, df / (df + t * t))
+    return r, float(p)
 
 
 def main():
     rows = build()
     edges = np.array([r["edges"] for r in rows], dtype=float)
     lims = np.array([r["limit"] for r in rows], dtype=float)
-    corr = float(np.corrcoef(edges, lims)[0, 1])
+    sent = np.array([r["S_ent"] for r in rows], dtype=float)
+    r_es, p_es = _corr_t(edges, sent)     # density -> expressivity
+    r_el, p_el = _corr_t(edges, lims)     # density -> hardware bar
+    r_sl, p_sl = _corr_t(sent, lims)      # expressivity -> hardware bar
+    corr = r_el
 
     print(f"n={N}, {N_SEEDS} instances (seeds 0-{N_SEEDS-1}), connectivity={CONN}, "
           f"{K_WINDOWS} RV windows — exact, no hardware")
     print(f"  two-qubit edges     min {edges.min():.0f}  median {np.median(edges):.0f}  max {edges.max():.0f}")
     print(f"  limit mean|F_exact| min {lims.min():.4f}  median {np.median(lims):.4f}  max {lims.max():.4f}")
-    print(f"  corr(edges, limit) = {corr:+.3f}   (denser instances face a TIGHTER bar)\n")
+    print(f"  corr(edges, S_ent) = {r_es:+.3f} (p={p_es:.4f})  density -> expressivity")
+    print(f"  corr(edges, limit) = {r_el:+.3f} (p={p_el:.4f})  density -> TIGHTER hardware bar")
+    print(f"  corr(S_ent, limit) = {r_sl:+.3f} (p={p_sl:.4f})  expressivity -> bar (weak)\n")
 
     lines = []
     for seed, (lab, raw, regime) in MEASURED.items():
@@ -98,6 +141,34 @@ unusually cheap circuit against an unusually expensive one?* This file answers i
         for lab, raw, regime, ed, pe, lim, pl in lines:
             fh.write(f"| **{lab}** | {raw:.4f} | {regime} | {ed} | {pe:.0f}th | {lim:.4f} | {pl:.0f}th |\n")
         fh.write(f"""
+## The density scissors — and why it does *not* let you skip measuring
+
+One knob, coupling density, moves quantum expressivity **up** and hardware feasibility **down**
+at the same time:
+
+| relationship | Pearson r (n={N_SEEDS}) | p | reading |
+|---|---|---|---|
+| density → entanglement S_ent | **{r_es:+.3f}** | {p_es:.4f} | denser instances are **more** entangled — more quantum-useful |
+| density → depolarized limit | **{r_el:+.3f}** | {p_el:.4f} | denser instances face a **tighter** signal-bearing bar |
+| entanglement → depolarized limit | {r_sl:+.3f} | {p_sl:.4f} | same direction, **not significant** — stated as such |
+
+So the direction that buys expressivity charges twice on hardware: **more two-qubit gates to
+accumulate error in, and a tighter bar to clear.**
+
+**But the tendency does not predict individual instances — and our own hardware inverts it.**
+The two instances we actually measured on metal run *opposite* to the structural expectation:
+seed-1 is denser ({e1} couplings), more entangled, and faced the tighter limit — and it was
+**signal-bearing**; seed-0 is sparser ({e0}), less entangled, had the looser limit — and it
+**scrambled**. A structural prior would have ranked them the other way round.
+
+**This is the scientific case for measuring rather than inferring.** Per-workload empirical
+qualification is not a convenience or a service upsell — on this evidence it is the *only*
+reliable method, because the structural signal is real but weak (and, for the entanglement
+channel, not statistically significant at n={N_SEEDS}), while the per-instance outcome is what
+actually decides whether a device returns signal or noise. Spec-sheet and gate-count reasoning
+fail here not because they are crude but because the quantity they estimate **is not the
+quantity that decides the outcome**.
+
 ## What this establishes
 
 1. **The S7 contrast is not a cheap-vs-expensive artifact — it runs the other way.** The instance

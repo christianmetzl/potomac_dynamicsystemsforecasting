@@ -27,6 +27,34 @@ unusually cheap circuit against an unusually expensive one?* This file answers i
 | **seed-0** | 0.2284 | scrambled | 11 | 13th | 0.1958 | 10th |
 | **seed-1** | 0.1594 | signal-bearing | 18 | 90th | 0.1806 | 7th |
 
+## The density scissors — and why it does *not* let you skip measuring
+
+One knob, coupling density, moves quantum expressivity **up** and hardware feasibility **down**
+at the same time:
+
+| relationship | Pearson r (n=30) | p | reading |
+|---|---|---|---|
+| density → entanglement S_ent | **+0.648** | 0.0001 | denser instances are **more** entangled — more quantum-useful |
+| density → depolarized limit | **-0.399** | 0.0287 | denser instances face a **tighter** signal-bearing bar |
+| entanglement → depolarized limit | -0.226 | 0.2292 | same direction, **not significant** — stated as such |
+
+So the direction that buys expressivity charges twice on hardware: **more two-qubit gates to
+accumulate error in, and a tighter bar to clear.**
+
+**But the tendency does not predict individual instances — and our own hardware inverts it.**
+The two instances we actually measured on metal run *opposite* to the structural expectation:
+seed-1 is denser (18 couplings), more entangled, and faced the tighter limit — and it was
+**signal-bearing**; seed-0 is sparser (11), less entangled, had the looser limit — and it
+**scrambled**. A structural prior would have ranked them the other way round.
+
+**This is the scientific case for measuring rather than inferring.** Per-workload empirical
+qualification is not a convenience or a service upsell — on this evidence it is the *only*
+reliable method, because the structural signal is real but weak (and, for the entanglement
+channel, not statistically significant at n=30), while the per-instance outcome is what
+actually decides whether a device returns signal or noise. Spec-sheet and gate-count reasoning
+fail here not because they are crude but because the quantity they estimate **is not the
+quantity that decides the outcome**.
+
 ## What this establishes
 
 1. **The S7 contrast is not a cheap-vs-expensive artifact — it runs the other way.** The instance
