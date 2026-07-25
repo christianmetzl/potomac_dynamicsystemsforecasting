@@ -23,7 +23,7 @@ python3 kernel_analysis.py
 
 echo "================================================================"
 echo " 4/4  Quantum-SDK reproduction - explicit PennyLane circuit"
-echo "      Expect: engine vs PennyLane max|d| ~5e-16; ~380-gate Trotter circuit"
+echo "      Expect: engine vs PennyLane max|d| ~3.9e-16; ~380-gate Trotter circuit"
 echo "================================================================"
 python3 sdk_demo.py
 

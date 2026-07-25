@@ -27,12 +27,12 @@ bars = [
 ]
 GREEN, RED, INK, GREY = "#2e8b57", "#c0392b", "#222222", "#888888"
 
-fig, ax = plt.subplots(figsize=(10.6, 2.05))
+fig, ax = plt.subplots(figsize=(10.6, 1.85))
 for i, (lab, raw, lim, sig) in enumerate(bars):
     ax.bar(i, raw, width=0.66, color=(GREEN if sig else RED), alpha=0.9, zorder=3)
     ax.plot([i - 0.36, i + 0.36], [lim, lim], color=INK, lw=2.6, zorder=5)   # limit tick
-    ax.text(i, raw + 0.007, f"{raw:.3f}", ha="center", va="bottom",
-            fontsize=10, color=INK, fontweight="bold")
+    ax.text(i, raw - 0.012, f"{raw:.3f}", ha="center", va="top",
+            fontsize=9.5, color="white", fontweight="bold", zorder=6)
 
 ax.axvline(4.5, color=GREY, ls=":", lw=1.3, zorder=1)                        # regime divider
 ax.text(2.0, 0.268, "signal-bearing", ha="center", fontsize=11, color=GREEN, fontweight="bold")
@@ -44,7 +44,7 @@ ax.set_ylabel("raw feature error", fontsize=11)
 ax.set_ylim(0, 0.29)
 ax.set_yticks([0.0, 0.1, 0.196, 0.29])
 ax.set_title("Cross-platform coherence-budget wall — hardware raw feature error vs the "
-             "size-matched depolarized limit (black tick)", fontsize=10.5)
+             "instance-matched depolarized limit (black tick)", fontsize=10.5)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 ax.grid(axis="y", alpha=0.22, zorder=0)

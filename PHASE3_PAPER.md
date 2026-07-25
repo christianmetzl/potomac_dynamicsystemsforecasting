@@ -73,8 +73,11 @@ matched classical reservoir: against the name-matched ESN-108 reference,
 **g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli.py run kernel`); against per-n *feature-matched*
 ESNs the gap is larger but **non-monotonic** (g ≈125 at n=8, peaking ≈158 at n=10, falling ≈88 at
 n=12). (g is at fixed ridge regularization; the qualitative separation, not the exact value, is the claim.)
-At ≤12–16 qubits the map remains classically simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
-here, it is indeed *not* sufficient.
+At ≤12–16 qubits the map stays classically simulable, so distinctness is **necessary, not
+sufficient** — which we now *measure*: over **30 seeded n=8 instances**, per-instance entanglement is
+**uncorrelated** with forecast error (r=−0.19, p=0.32; density r=+0.17, p=0.38) and **0/30 beat
+HAR-X** (best still +0.0088 worse). The design detects |r|≳0.5, so we exclude a *strong*
+structure→accuracy link, not a weak one (`expressivity_accuracy_findings.md`).
 
 ## 4. Data modeling strategy
 **Datasets (all bundled in-repo).** Oxford-Man `.SPX` 5-minute realized variance, 2000–2020, 5,029
@@ -209,7 +212,9 @@ so the n=8 scrambling is **specific to the seed-0 instance, not a size law** (se
 signal-bearing at the very size Garnet scrambles**, reproduced in a **same-window two-chip
 pair**: generation-dependent at fixed size, temporally controlled. The program characterizes
 reservoir size, encoding density, shot budget and noise, with
-in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k shots, IonQ 500):
+in one view. The criterion is exactly **SNR > 1** — raw error is mean|F−F_exact|, the limit is
+mean|F_exact| — so the bar is **instance**-matched (signal magnitude is a property of the circuit,
+not of n) and the test transfers to any quantum feature map:
 
 ![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip and session — refutes a *size* law. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 — verdict unchanged (§6).](figures/fig_coherence_wall.png)
 
@@ -237,7 +242,7 @@ newer generation land inside their limits: the wall is instance- and generation-
 absolute (n=8 scrambling is seed-0-instance-specific — S7; and in a 30-instance ensemble the
 scrambled instance is among the *sparsest*, so gate count **anti-predicts** the wall — §8). Mitigation recovery on hardware is at
 best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat).
-(vi) Distinctness and full-rank entanglement are *necessary, not sufficient*; whether they convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
+(vi) Distinctness and full-rank entanglement are *necessary, not sufficient* (measured: §3, r≈0 vs accuracy over 30 instances); whether they convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
 nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical shadows**
 (Huang–Kueng–Preskill 2020) at matched budgets — **wins wherever real information is extracted**,
 including the shadows-hard Tr(ρ³): closed negatively at simulable scale (`shadows_hard_findings.md`).
