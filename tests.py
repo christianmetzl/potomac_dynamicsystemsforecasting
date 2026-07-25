@@ -245,9 +245,10 @@ def test_multiscale_feature_concat():
 
 
 def test_skill_manifest_sync():
-    """qbraid_skill.yaml (the agent-facing index) stays in lockstep with cli.py:
-    every yaml action id resolves in cli.py ACTIONS; every yaml group member is a
-    defined yaml action; yaml headline/reproduce groups equal cli.py's."""
+    """qbraid_skill.yaml (the agent-facing index) stays in lockstep with cli.py -- in BOTH
+    directions. An earlier version asserted only yaml subset-of cli, which silently allowed the
+    manifest to fall 7 actions and 2 groups behind (including `verify`, the flagship audit).
+    An agent that navigates by the manifest must see every action a human sees."""
     import os
     import yaml
     import cli
@@ -256,10 +257,15 @@ def test_skill_manifest_sync():
     yaml_ids = {a["id"] for a in man["actions"]}
     unknown = yaml_ids - set(cli.ACTIONS)
     assert not unknown, f"yaml actions missing from cli.py: {unknown}"
+    # <-- the direction that was missing: cli must not outrun the manifest
+    undocumented = set(cli.ACTIONS) - yaml_ids
+    assert not undocumented, f"cli.py actions absent from qbraid_skill.yaml: {undocumented}"
     for gname, members in man["groups"].items():
         dangling = set(members) - yaml_ids
         assert not dangling, f"group '{gname}' references undefined actions: {dangling}"
-    for gname in ("headline", "reproduce"):
+    missing_groups = set(cli.GROUPS) - set(man["groups"])
+    assert not missing_groups, f"cli.py groups absent from qbraid_skill.yaml: {missing_groups}"
+    for gname in ("headline", "reproduce", "verify"):
         assert list(man["groups"][gname]) == list(cli.GROUPS[gname]), \
             f"group '{gname}' drifted from cli.py"
 

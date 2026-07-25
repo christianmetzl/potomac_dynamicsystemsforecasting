@@ -22,7 +22,8 @@ after every commit so the zip never lags the repo.
 
 ## 3. Reproduce / verify (for reference)
 - `python3 cli.py verify` — one-command **offline** integrity audit (24 engine tests + QASM
-  self-test + credit reconciliation + bootstrap CIs + noise fingerprint; ~2 min, no network/credits).
+  self-test + credit reconciliation + bootstrap CIs + noise fingerprint; ~2-5 min depending on core
+  count, no network/credits).
 - `docs/verify_replay.html` — a self-contained browser replay of that verify run, for a reviewer
   who prefers not to run it, plus the paper's core findings.
 - `python3 reproduce.py --quick` — fast full reproduction (~10 min for the headline story).

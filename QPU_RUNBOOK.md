@@ -55,8 +55,8 @@ python3 qpu_run.py --list-devices                          # 1. pick an ONLINE g
 python3 qpu_run.py --mode hw --device qbraid_qir_simulator # 2. free cloud smoke test (if listed)
 python3 qpu_run.py --mode hw --device <ionq/ibm/... id> --shots 4000   # 3. THE run
 ```
-Job IDs are logged and saved with the results (`qpu_run_hw_results.npy`,
-`results/qpu_run_hw.json`) for full provenance.
+Job IDs are logged and saved with the results (`results/qpu_run_hw_<tag>.json` and the resumable
+`results/qpu_ckpt_hw_<tag>.json`, which also holds the raw per-window counts) for full provenance.
 
 ## 3. Cost estimate
 3 windows × 3 fold-scales × 4,000 shots + 2 calibration circuits ≈ **11 circuits / ~44k

@@ -39,7 +39,7 @@ only for the explicit-circuit SDK demo). All data is bundled, so everything runs
 
 ## Quickstart
 
-**⏱ 10-minute judge verification (recommended first run):**
+**⏱ ~10-20-minute judge verification (recommended first run; depends on core count):**
 ```bash
 pip install -r requirements.txt
 python3 cli.py headline --quick   # the Phase-3 story: prereg → decisive test → canonical

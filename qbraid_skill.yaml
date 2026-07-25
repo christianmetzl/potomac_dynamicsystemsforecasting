@@ -144,13 +144,42 @@ actions:
     desc: "LSTM baseline (Track A, brief-named)"
     cmd: "python3 cli.py run lstm"
     expect: "LSTM does NOT beat HAR (DM > 0) - honest expected outcome"
-
+  - id: second_family
+    desc: "Second reservoir family (Heisenberg XXZ): the no-advantage negative is not Ising-specific"
+    cmd: "python3 cli.py run second_family"
+    expect: "Heisenberg XXZ also loses to HAR-X (0.650 vs 0.642): the negative is not Ising-specific"
+  - id: instance_ensemble
+    desc: "Locate the two hardware-measured n=8 instances in a 30-instance ensemble (exact, offline)"
+    cmd: "python3 cli.py run instance_ensemble"
+    expect: "30-instance ensemble; the scrambled seed-0 graph is the sparser one (exploratory)"
+  - id: expressivity
+    desc: "Does entanglement predict forecast accuracy? 30-instance test of necessary-not-sufficient"
+    cmd: "python3 cli.py run expressivity"
+    expect: "0/30 instances beat HAR-X on crisis and calm; no structural quantity predicts accuracy (exploratory)"
+  - id: s7_bootstrap
+    desc: "Shot-noise bootstrap for the three S7 cross-seed campaigns, incl. the band-test robustness that weakens our own n=8 arm"
+    cmd: "python3 cli.py run s7_bootstrap"
+    expect: "S7 shot-noise CIs; under the stricter instance-matched comparator the n=8 band test is not robust"
+  - id: qpu_bootstrap
+    desc: "Shot-noise bootstrap CIs for all 9 hardware campaigns from the committed counts (re-derives every paper number)"
+    cmd: "python3 cli.py run qpu_bootstrap"
+    expect: "9 campaigns re-derived from committed counts; every margin 9.7-23.9 sigma"
+  - id: qpu_fingerprint
+    desc: "Readout-corrected coherent-vs-damping noise fingerprint of the scrambled regime from committed counts"
+    cmd: "python3 cli.py run qpu_fingerprint"
+    expect: "scrambled regime: mean bias b=+0.128, 90% coherent residual"
+  - id: credit_audit
+    desc: "Re-derive the whole-program QPU cost from published pricing; assert every campaign + the org ceiling (no API key needed)"
+    cmd: "python3 cli.py run credit_audit"
+    expect: "ALL CAMPAIGNS RECONCILE; org settled 60,698.25 <= 65,000 ceiling"
 groups:   # kept in lockstep with cli.py GROUPS (tests.py asserts the sync)
   headline: [prereg, scaling, axisB_rig, canonical, mnist, tensor]
   phase2: [tests, calm, crisis, kernel, sdk]
   reproduce: [tests, calm, crisis, kernel, sdk, qsubmit, baselines, lstm, prereg, scaling,
               axisB, axisB_rig, canonical, mnist, mnist_noise, tensor,
               economics, capacity, frontier, noise_circuit]
+  verify: [tests, qpu_selftest, credit_audit, qpu_bootstrap, qpu_fingerprint]   # one-command offline integrity audit
+  all: []   # every action above; see `python3 cli.py list`
 
 hardware_plan:
   primary: "simulator-first (statevector dense <=12q; sparse/TN to ~16q)"
