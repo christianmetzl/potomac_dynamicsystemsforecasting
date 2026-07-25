@@ -5,6 +5,16 @@
 > placed after the required GIC_2026 cover page. Every number is produced by a script in this
 > repository and reproducible via `python3 cli.py run <action>` (fast path: `--quick`).*
 
+**Abstract.** A pre-registered, adversarially-controlled study: at classically-simulable scale
+(≤16 qubits) the quantum reservoir is *distinct but not more accurate* than the strongest fair
+baselines — **HAR-X**, size-matched ESN/RFF, under HAC-DM + Holm + MCS (H0 refuted; robust across a
+second **Heisenberg** reservoir family, so the negative is not Ising-specific). Our positive
+contribution is a **pre-registered, multi-vendor hardware characterization of the coherence-budget
+wall** (Fig. 3): the same circuit is signal-bearing on trapped-ion and newer/larger superconducting
+chips but scrambled on one specific n=8 instance — *instance, not size*, by a same-session
+cross-seed control. **Desk takeaway:** vol-time a simple RV forecast (≈halves the 2008 drawdown);
+quantum adds no economic value here. Reproduces offline in one command (`cli.py verify`).
+
 ## 1. Focus, track selection, and problem framing
 We target **Track A: financial volatility** — one-step-ahead forecasting of S&P 500 **realized
 variance (RV)** and the tracking of volatility **regime transitions**, the domain where
@@ -16,14 +26,10 @@ Phase 3, **HAR-X**: HAR augmented with the same realized-measure features we fee
 reservoir). We also report GARCH/GJR-GARCH, AR(3), persistence, LSTM, and an RFF/RBF kernel,
 and we implement the challenge's common **MNIST** benchmark on the identical engine.
 
-**This paper's honest thesis.** We pre-registered a falsifiable advantage hypothesis (H0) and
-then *attacked our own result* with the strongest fair controls. The finding is a **carefully
-bounded negative**: at simulable scale (≤16 qubits) the quantum reservoir shows **no
-statistically significant forecasting advantage** over strong classical baselines once they
-are given the same information; the dominant lever is *which features are encoded*, not the
-reservoir's quantum nonlinearity. We report what *does* survive — measurable kernel
-distinctness, lower seed variance, and full-rank entanglement (classical-simulation hardness) —
-as quantum-specific *properties* that are necessary, not sufficient, for advantage.
+**This paper's honest thesis.** We pre-registered H0 and *attacked our own result* with fair
+controls: the dominant accuracy lever is *which features are encoded*, not quantum nonlinearity.
+What survives for the reservoir — kernel distinctness, lower seed variance, full-rank entanglement
+(classical-simulation hardness) — is *necessary, not sufficient* for advantage.
 **Vs. prior work.** The closest study (Li et al. 2025/26 — QRC for realized volatility) presents
 the approach as a competitive, noise-resilient *proof-of-concept*; we add the control-hardened,
 pre-registered evaluation it omits — the decisive **HAR-X** control, HAC-DM/Holm/MCS, and explicit
@@ -85,15 +91,14 @@ reported against them. Full numbers/wall-clock: `results/*_findings.md`.
 
 **5.1 The input-bottleneck mechanism (pre-registered negative).** With a *fixed* univariate
 8-lag encoder, extra qubits receive no new input: g(n) and effective feature-rank
-**saturate/decline** (n=8→12: g 133→30 at N_sub=800; the quick-mode rerun reproduces the same
-monotone decline at lower magnitude, cf. §7(iv); D_eff 1.8→1.5). **H0 is refuted in this regime**
+**saturate/decline** (n=8→12: g 133→30 at N_sub=800; D_eff 1.8→1.5). **H0 is refuted in this regime**
 — the empirical case *for* enriching the encoding.
 
 **5.2 Encoding density (Axis B) — mechanism confirmed.** Feeding the extra qubits genuinely new
 realized-measure information (signed return/leverage, downside-semivariance share, jump share)
 restores the lost structure: at n=10, informed vs idle qubits, kernel distinctness and rank
-jump (**g 52→158, D_eff 1.5→3.1**), and effective rank grows with n (D_eff 1.81→3.10→3.14,
-n=8→12; near-flat 10→12). So the bottleneck is *fixable* — added qubits can carry new
+jump (**g 52→158, D_eff 1.5→3.1**), and effective rank grows with n (D_eff 1.81→3.14, n=8→12).
+So the bottleneck is *fixable* — added qubits can carry new
 information. The decisive question is whether this converts into forecasting **accuracy**.
 
 **5.3 The decisive, adversarially-controlled test (the honest headline).** We compare CHIMERA
@@ -110,24 +115,19 @@ span. With **8 seeds, HAC-DM, two windows, and Holm correction** (`cli.py run ax
 | calm n=10 | **0.6244** | 0.6445 | 0.6264 | 0.6291 | HAR-X |
 
 *(plain HAR for reference: crisis 0.6290, calm 0.6454 — HAR-X's rich features cut RMSE sharply.)*
-**HAR-X is best or co-best everywhere; CHIMERA never beats it** (slightly worse; raw-significant
-at n=8/12) and is indistinguishable from the classical ESN/RFF after Holm (one raw-significant
-loss to RFF at crisis n=8, p=0.049). **After Holm correction no comparison is significant in
-either direction, and the 95% Model Confidence Set retains all four models in both windows
-(n=10)** — a statistical tie. The earlier "beats HAR" result
-was an artifact of comparing against a *feature-poor* HAR: the gain comes from the encoded
-realized measures (a known SHAR/HARQ effect), not from quantum nonlinearity. **By our
+**HAR-X is best or co-best everywhere; CHIMERA never beats it** and is indistinguishable from the
+classical ESN/RFF after Holm (one raw loss to RFF at crisis n=8, p=0.049). **After Holm correction no comparison is significant in
+either direction, and the 95% MCS retains all four models (n=10)** — a statistical tie. The earlier
+"beats HAR" result was an artifact of a *feature-poor* HAR: the gain is the encoded realized
+measures (a known SHAR/HARQ effect), not quantum nonlinearity. **By our
 pre-registered criteria, H0 is refuted — we report this negative.** What honestly survives for
 the quantum reservoir: it is **competitive** (within ≈0.8–2.1% RMSE of the best at every n),
-with **lower per-seed dispersion than the recurrent ESN in 3 of 4 cells** (s.d., e.g. n=12: 0.009
-vs 0.015), and it **beats the recurrent ESN on the calm window** (raw p=0.018; n.s. after Holm).
-A **tuned, size-unconstrained ESN** (45-config validation-tail search, to 800 nodes) confirms the
-control was not crippled: tuned ESN 0.6020 vs CHIMERA 0.6094, within noise of HAR-X
-(`results/esn_tuning_robustness_findings.md`) — tuning the classical side only firms the negative.
-**Named canonical baselines** (`cli.py run canonical`): **SHAR, HAR-CJ, HARQ** (RQ≈RV² proxy) and
-**HEAVY-RM**, under MSE- *and* QLIKE-loss DM — **none beats HAR-X** (a fair, strong stand-in, not a
-strawman), and CHIMERA ties the best on RMSE with only a *raw, non-Holm* QLIKE/MZ edge
-(`results/canonical_baselines_findings.md`).
+with **lower per-seed dispersion than the recurrent ESN in 3 of 4 cells** (n=12: 0.009 vs 0.015)
+and **beats it on the calm window** (raw p=0.018; n.s. after Holm).
+A **tuned, size-unconstrained ESN** (45-config search to 800 nodes) confirms the control was not
+crippled (0.6020 vs CHIMERA 0.6094, within noise of HAR-X); and **named canonical models** (SHAR,
+HAR-CJ, HARQ, HEAVY-RM; MSE + QLIKE DM) — **none beats HAR-X**, with CHIMERA tying best on RMSE and
+only a *raw, non-Holm* QLIKE/MZ edge (`cli.py run canonical`, `esn_tuning_robustness_findings.md`).
 
 ![**Figure 2.** Rigorous Axis-B (8 seeds, crisis window). HAR-X (rich features, linear) is the best or co-best model at every n; the quantum reservoir is competitive but shows no advantage that survives HAC-DM + Holm correction. Left: RMSE(log-RV). Right: Mincer–Zarnowitz R².](figures/fig_axisB_rigorous.png)
 
@@ -140,53 +140,39 @@ exceeds** CHIMERA (within ≈1% for n≥8; 2.9% at n=5) — competitive, not dom
 depolarizing** noise (a uniform Bloch contraction that per-feature standardization removes exactly;
 accuracy identical across rates 0.05–0.30) and **robust to amplitude damping** (<0.5% at 30%). **Honesty check (`cli.py run noise_circuit`):** a
 per-Trotter-layer density-matrix study shows the *converse* — noise interleaved with the evolution
-(per-layer single-qubit channels, a proxy for the ≈220 two-qubit gates' accumulated error) is
-**not** removed by standardization (standardized error grows with rate, vs **≈0** for readout-only
-depolarizing): the invariance above is a *readout* property, not a circuit-level robustness claim;
-accumulated gate error over the 380-gate circuit — dominated on hardware by two-qubit gates — is
-the real NISQ cost (§6).
+(per-layer single-qubit channels) is **not** removed by standardization (standardized error grows
+with rate, vs **≈0** for readout-only depolarizing): the invariance is a *readout* property, not
+circuit-level robustness; accumulated gate error is the real NISQ cost (§6).
 
 **5.5 Scaling frontier + quantum-complexity metric.** A sparse-exact backend (`expm_multiply`,
 no dense propagator; matches the dense engine to **2.4×10⁻¹⁴**) reaches **n=16 exactly**. For
 the random ≈50%-connected reservoir we measure the **bond dimension** χ_eff across a balanced
 cut: it is **essentially full at every n, χ_eff ≈ 2^(n/2)** (16→255.9 for n=8→16) — an exact MPS
-gets **zero compression** — with entanglement entropy S ≈ 1.7–3.2 nats. The reservoir therefore admits
-**no low-bond-dimension (MPS/TEBD) shortcut** —
-exact cost stays exponential (full entanglement is *necessary, not sufficient* for true classical
-hardness) — the precondition any beyond-frontier advantage would need, even though no advantage
-appears at the simulable scale we can test. **Capability + efficiency checks.** An
+gets **zero compression** (S ≈ 1.7–3.2 nats): the reservoir admits **no low-bond-dimension
+(MPS/TEBD) shortcut**, exact cost stays exponential — the precondition any beyond-frontier
+advantage would need, though none appears at the scale we can test. **Capability + efficiency checks.** An
 information-processing-capacity probe (Dambre et al. 2012; `cli.py run capacity`) finds the quantum
 reservoir **not more** — slightly *less* — nonlinearly expressive than a matched RFF/ESN:
 no excess expressivity to exploit. A frontier check (`cli.py run frontier`) adds that
 g(n) does **not** widen toward n=16 (it declines; D_eff/rank grow but a matched ESN keeps pace).
-**Robustness (supporting study, `v3_research/`).** *Efficiency:* with input held fixed, a *smaller*
+**Robustness (supporting study).** *Second family:* a **Heisenberg (XXZ)** reservoir — equally
+kernel-distinct (g≈55) — also fails to beat HAR-X (0.650 vs 0.642, 8 seeds), so the negative is
+**not Ising-specific** (`cli.py run second_family`). *Efficiency:* with input held fixed, a *smaller*
 QRC cannot substitute for a *larger* classical reservoir — quantum accuracy **saturates** while the
 classical curves improve; per feature the static maps are comparable, so the negative is
-**saturation, not per-feature inferiority** (weather °C; CHIMERA at its qubit-range ceiling, classical
-at their larger-budget plateaus):
-
-| reservoir | CHIMERA (≤55 feat) | RFF (static) | ESN (recurrent) |
-|---|---|---|---|
-| RMSE (°C) | 0.85 | 0.78 | 0.71 |
-
-*Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations) and the
+**saturation, not per-feature inferiority** (weather RMSE °C: CHIMERA 0.85 at its qubit-range
+ceiling vs RFF 0.78 / recurrent ESN 0.71 at larger budgets). *Domain/architecture:* the *same* engine/protocol on chaotic **weather** (5 stations) and the
 autonomous **VPT** metric still show no advantage; the **recurrent** QRC is competitive-not-better
 — unitary evolution is non-dissipative, lacking the contraction behind ESN "generalized
-synchronization" (Ahmed–Tennie–Magri 2025). We then **demonstrated the mechanism by fixing
-it**: engineered memory-qubit damping shows the pre-registered inverted-U and lifts autonomous
-VPT ≈+60%, raising the recurrent QRC from clearly-behind to **statistical parity** with the
-size-matched ESN — not better (`results/dissipative_qrc_findings.md`).
+synchronization" (Ahmed–Tennie–Magri 2025). We then **fixed the mechanism**: engineered
+memory-qubit damping traces the pre-registered inverted-U, lifting autonomous VPT ≈+60% to
+**parity** with the matched ESN — not better (`results/dissipative_qrc_findings.md`).
 
 ## 6. Quantum platform and resource planning
 Simulator-first on qBraid: statevector ≤12 qubits, sparse/TN to ≈16, GPU beyond.
-**Resource estimates** (gate-Trotter, 20 layers; readout is single-basis — all `⟨Z_i⟩,⟨Z_iZ_j⟩`
-are computational-basis-diagonal, so one S-shot set yields **all** n+C(n,2) observables):
-
-| n | two-qubit gates | one-qubit gates | observables | shots S (ε≈1/√S) | sim wall-clock |
-|---|---|---|---|---|---|
-| 8 | 220 | 160 | 36 | 2k–8k (ε≈.011–.022) | <1 s/state |
-| 10 | 480 | 200 | 55 | 2k–8k | ~sec |
-| 12 | 760 | 240 | 78 | 2k–8k | ~1 min build |
+**Resource estimates** (gate-Trotter, 20 layers): n=8/10/12 use **220/480/760 two-qubit +
+160/200/240 one-qubit** gates, yielding **36/55/78 observables** — all Z-basis-diagonal, so **one
+S-shot set (S≈2–8k, ε≈1/√S) reads every observable** (statevector build ≤~1 min over this range).
 
 
 **QPU validation** uses this gate-Trotter circuit on **IonQ / IQM / Rigetti** via qBraid — the
@@ -204,19 +190,17 @@ coherence budget — the accumulated two-qubit-gate cost §5.4 predicts, measure
 drift). The pre-registered **Garnet protocol** replicated the regime on a second vendor
 (raw 0.230 > our routing-free 0.171 forecast — **prediction (iii) confirmed**).
 Cross-platform execution also surfaced a **platform-level finding**: negative-angle rotations
-are **silently lost server-side on the IonQ route** (an RY(π)RY(−π) identity pair executed as
-net RY(π); the client-side JSON provably contained both) — corrupting ZNE's negated fold
-gates. We hardened the emitter (angles mod 2π; diagonal-only calibrations) and validated
-on-device: P(|0⁸⟩)=0.996 vs 0.0 pre-fix. The decisive routing-free **IonQ Forte-1 campaign
+are **silently lost server-side on the IonQ route** (RY(π)RY(−π) executed as net RY(π); the
+client JSON provably contained both), corrupting ZNE's negated folds; we hardened the emitter
+(mod-2π angles) and validated on-device (P(|0⁸⟩)=0.996 vs 0.0). The decisive routing-free **IonQ Forte-1 campaign
 then executed** under the pre-committed manifest: a smoke gate measured a **2,000-gate/circuit
 device ceiling** on the native route (corroborated by an OpenQuantum-route probe), so per abort rule it ran scale-1-only (500 shots — a
 disclosed, cost-forced deviation from the 4k config, s.e.≈0.004; readout 0.08%/0.65%).
 **Raw 0.104 — below the 0.196 depolarized limit** and every
 superconducting n=8 number: the **first signal-bearing hardware execution** of this reservoir
-(**prediction (ii) confirmed**, under our 0.149 forecast) — one pre-registered circuit
-measuring the coherence wall from both sides (`results/qpu_hardware_findings.md`). A
-pre-registered **hardware scaling program** (`results/qpu_scaling_outlook.md`) then refuted
-our own statements on metal (table below): Garnet turns **signal-bearing at n=10/n=12** while
+(**prediction (ii) confirmed**, under our 0.149 forecast;
+`results/qpu_hardware_findings.md`). A pre-registered **hardware scaling program**
+(`results/qpu_scaling_outlook.md`) then refuted our own statements on metal (Fig. 3): Garnet turns **signal-bearing at n=10/n=12** while
 the **same-session seed-0 n=8 anchor** stays scrambled — but a pre-registered cross-seed
 control (**S7**) found an **independent seed-1 n=8 instance signal-bearing** in the same session,
 so the n=8 scrambling is **instance-specific, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
@@ -225,13 +209,7 @@ pair**: generation-dependent at fixed size, temporally controlled. We thus chara
 four challenge axes — reservoir size, encoding density, shot budget, noise — with the program
 in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k shots, IonQ 500):
 
-| device | technology | n | raw error | limit | regime |
-| --- | --- | --- | --- | --- | --- |
-| IonQ Forte-1 | trapped-ion | 8 | **0.104** | 0.196 | **signal-bearing** (prediction (ii) ✓) |
-| IQM Emerald | supercond., newer gen | 8 | **0.169–0.179** | 0.196 | **signal-bearing** (S3b refuted high; same-window pair) |
-| IQM Garnet | superconducting | 10 / 12 | **0.159 / 0.190** | 0.179 / 0.214 | **signal-bearing** (S1/S2 refuted; anchor-controlled) |
-| IQM Garnet | superconducting | 8 | 0.222–0.231 (4 sessions) | 0.196 | scrambled — seed-0-instance-specific (S7) |
-| Rigetti Cepheus-1 | superconducting | 8 | 0.223–0.261 (2 days) | 0.196 | scrambled (drift band measured) |
+![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the size-matched depolarized limit (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.242). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — shows the wall is instance-specific, not size-driven. Per-n limits 0.196/0.179/0.214 at n=8/10/12.](figures/fig_coherence_wall.png)
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
 predictions — the ten funded ones under a committed manifest (abort/decision
@@ -253,12 +231,11 @@ COVID just outside); broader assets/periods are daily-proxy supporting studies
 (iii) Task-level noise: per-layer single-qubit channels (density-matrix, §5.4) and simulator
 shot noise; combined noisy-plus-shot execution is measured in the QPU campaigns (§6).
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
-(v) Superconducting n=8 execution is a **characterized negative** (§6 table; measured
-day-scale drift exceeds shot noise, so *regime* — not point value — is the robust claim),
-while n=10/n=12 and the newer generation land inside their limits: the wall is instance-
-and generation-dependent, not absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation *recovery* on
-hardware is at best marginal (ZNE 0.223→0.217 on the Rigetti replicate; the ion chain is flat
-— readout 0.08%/0.65% leaves nothing to correct, the gate ceiling forbids ZNE).
+(v) Superconducting n=8 execution is a **characterized negative** (Fig. 3; day-scale drift
+exceeds shot noise, so *regime* — not point value — is the robust claim), while n=10/n=12 and the
+newer generation land inside their limits: the wall is instance- and generation-dependent, not
+absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation recovery on hardware is at
+best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat — the gate ceiling forbids ZNE).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they
 convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively
 reads nonlinear *state* functionals (purity, entanglement) a linear readout cannot — but the
@@ -270,13 +247,11 @@ hardware-native many-qubit inputs remain the one untested regime
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 Volatility forecasts feed hedging, risk limits and pricing; we make the impact **concrete**
 (`cli.py run economics`): a vol-timing backtest on the RV forecast **nearly halves the 2008 max
-drawdown (−61%→−32%)** — but a **plain HAR** captures it, so the decision-useful lever is
-**vol-timing on a simple RV forecast, not quantum hardware** (the reservoir adds no economic
-value; negative CE fees).
-**Milestone plan:** (i)–(v) pre-registration, sweeps, adversarial test, MNIST+noise, sparse/TN
-frontier ✓; (vi) QPU validation **executed on three vendors** (§6).
-**AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results
-are the team's own.
+drawdown (−61%→−32%)** — but a **plain HAR** captures it (negative CE fees for the reservoir), so
+the decision-useful lever is **a simple RV forecast, not quantum hardware**.
+**Milestone plan:** (i)–(vi) — pre-registration, sweeps, the adversarial test, MNIST+noise,
+sparse/TN frontier, QPU on three vendors — all ✓ (§6). **AI disclosure:** Claude (Anthropic)
+assisted with code and drafting; all decisions and results are the team's own.
 
 <!-- pagebreak -->
 

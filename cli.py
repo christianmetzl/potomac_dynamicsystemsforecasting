@@ -50,6 +50,7 @@ ACTIONS = {
     "economics":    (["vol_timing_backtest.py"], "Volatility-timing backtest: Sharpe/drawdown/turnover + CE fee (economic significance)", True),
     "capacity":     (["information_capacity.py"], "Information-processing capacity (linear/nonlinear) — CHIMERA vs matched RFF/ESN", True),
     "frontier":     (["frontier_scaling.py"], "Classical-irreproducibility g(n) to the n=16 sparse frontier under informed encoding", True),
+    "second_family": (["second_family_robustness.py"], "Second reservoir family (Heisenberg XXZ): the no-advantage negative is not Ising-specific", False),
     "noise_circuit":(["noisy_circuit_study.py"], "Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)", True),
     "qpu_dryrun":   (["qbraid_submit.py", "--dry-run"], "QPU readiness: print gate/shot/cost plan + validate device wiring (no credits needed)", False),
     "qpu_selftest": (["qpu_run.py", "--selftest"], "Verify the emitted QASM2 = the reservoir (independent interpreter; fold identity)", False),
