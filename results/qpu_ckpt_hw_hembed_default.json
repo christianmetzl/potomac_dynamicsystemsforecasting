@@ -1,0 +1,19 @@
+{
+ "config": {
+  "device": "openquantum:iqm:qpu:garnet",
+  "n": 8,
+  "layers": 20,
+  "shots": 4000,
+  "windows": 3,
+  "scales": [
+   1
+  ],
+  "seed": 0,
+  "perm_seed": 0,
+  "orientation": "probe"
+ },
+ "jobs": {},
+ "pending": {
+  "orient": "openquantum:iqm:qpu:garnet-bd52-qjob-6a6533930936bd6f4cec9d83"
+ }
+}
