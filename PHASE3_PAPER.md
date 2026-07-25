@@ -244,21 +244,24 @@ newer generation land inside their limits: the wall is instance- and generation-
 absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation recovery on hardware is at
 best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat — the gate ceiling forbids ZNE).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they
-convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively
-reads nonlinear *state* functionals (purity, entanglement) a linear readout cannot — but the
-proper baseline, **classical shadows** (Huang–Kueng–Preskill 2020), at matched per-state
-budgets, **wins wherever real information is extracted**, including the shadows-hard Tr(ρ³): **closed negatively at simulable scale**;
-hardware-native many-qubit inputs remain the one untested regime
-(`results/shadows_hard_findings.md`).
+convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
+nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical
+shadows** (Huang–Kueng–Preskill 2020) at matched per-state budgets — **wins wherever real
+information is extracted**, including the shadows-hard Tr(ρ³): closed negatively at simulable scale;
+hardware-native many-qubit inputs remain the one untested regime (`results/shadows_hard_findings.md`).
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
-Volatility forecasts feed hedging, risk limits and pricing; we make the impact **concrete**
-(`cli.py run economics`): a vol-timing backtest on the RV forecast **nearly halves the 2008 max
-drawdown (−61%→−32%)** — but a **plain HAR** captures it (negative CE fees for the reservoir), so
-the decision-useful lever is **a simple RV forecast, not quantum hardware**.
-**Milestone plan:** (i)–(vi) — pre-registration, sweeps, the adversarial test, MNIST+noise,
-sparse/TN frontier, QPU on three vendors — all ✓ (§6). **AI disclosure:** Claude (Anthropic)
-assisted with code and drafting; all decisions and results are the team's own.
+**The durable asset is the audit instrument, not the forecast.** It sells **trust in a quantum
+yes/no** — a pre-registered, vendor-neutral **workload→QPU qualification** (does a device retain a
+client's *own* circuit's signal?), and that trust is earned by an instrument that **falsifies its
+own predictions** rather than defending them: the same
+instrument split the runs **five signal-bearing, two scrambled** (Fig. 3), at ≈$70 QPU per
+single-device test (profiles, not customers). **Concrete desk impact today**
+(`cli.py run economics`): a vol-timing backtest **nearly halves the 2008 max drawdown (−61%→−32%)** —
+but a **plain HAR** captures it, so the decision-useful lever is **a simple RV forecast, not quantum
+hardware**.
+**Milestone plan:** (i)–(vi) all ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and
+drafting; all decisions and results are the team's own.
 
 <!-- pagebreak -->
 

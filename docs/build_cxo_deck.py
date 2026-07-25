@@ -273,12 +273,12 @@ footer(s, 7)
 
 # ---------------------------------------------------- 8 · audit-as-a-service
 s = slide()
-title_row(s, "The commercial artifact", "Audit-as-a-Service — the pre-registered 'can this QPU run my workload?' exam")
+title_row(s, "The commercial artifact", "We sell trust in a quantum yes/no — proven by an instrument that falsifies itself")
 # offering (left)
 box(s, 0.6, 1.9, 5.0, 4.6, fill=CARD, round_=True)
 text(s, 0.92, 2.15, 4.4, 0.4, [[("THE OFFERING", {"size": 11, "bold": True, "color": CYAN})]])
 text(s, 0.92, 2.6, 4.4, 3.6,
-     [[("The wedge — answered with receipts: does a given QPU retain signal on a client's OWN circuit, before they commit budget?", {"size": 13, "bold": True})],
+     [[("What the client buys is a trustworthy yes/no: does a given QPU retain signal on their OWN circuit, before they commit budget? — credible because the same instrument publishes negatives about itself.", {"size": 13, "bold": True})],
       [("• pre-registered predictions + decision rules, committed before any run", {"size": 12, "color": INK2})],
       [("• controlled measurement across vendors (same-session / same-window)", {"size": 12, "color": INK2})],
       [("• a report of what each QPU can and cannot do — every number re-derivable from raw data", {"size": 12, "color": INK2})],
