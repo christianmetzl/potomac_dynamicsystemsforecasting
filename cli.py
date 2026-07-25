@@ -51,6 +51,7 @@ ACTIONS = {
     "capacity":     (["information_capacity.py"], "Information-processing capacity (linear/nonlinear) — CHIMERA vs matched RFF/ESN", True),
     "frontier":     (["frontier_scaling.py"], "Classical-irreproducibility g(n) to the n=16 sparse frontier under informed encoding", True),
     "second_family": (["second_family_robustness.py"], "Second reservoir family (Heisenberg XXZ): the no-advantage negative is not Ising-specific", False),
+    "instance_ensemble": (["instance_ensemble.py"], "Locate the two hardware-measured n=8 instances in a 30-instance ensemble (exact, offline)", False),
     "noise_circuit":(["noisy_circuit_study.py"], "Per-Trotter-layer vs readout-only noise on the gate circuit (informative noise study)", True),
     "qpu_dryrun":   (["qbraid_submit.py", "--dry-run"], "QPU readiness: print gate/shot/cost plan + validate device wiring (no credits needed)", False),
     "qpu_selftest": (["qpu_run.py", "--selftest"], "Verify the emitted QASM2 = the reservoir (independent interpreter; fold identity)", False),

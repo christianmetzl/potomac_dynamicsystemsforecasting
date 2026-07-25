@@ -237,6 +237,11 @@ amendments with decision rules committed *before* execution), budget-audited to 
   **cross-seed control (S7)** localized it: it is **seed-0-instance-specific, not a size law**.
 - **IQM Emerald** (newer generation) at n=8: **0.169–0.179 — signal-bearing at the very size
   Garnet scrambles**, reproduced in a same-window two-chip pair (S3b refuted high).
+- **Instance ensemble (`cli.py run instance_ensemble`)**: across 30 seeded n=8 instances, the
+  **scrambled** seed-0 graph is among the *sparsest* (11 two-qubit couplings, 13th pctile) while
+  **signal-bearing** seed-1 is among the *densest* (18, 90th) and faced a *tighter* limit —
+  **entangling-gate count anti-predicts the wall.** Exact and offline; an ensemble
+  characterization, not extra hardware (`results/instance_ensemble_findings.md`).
 - **Garnet / Rigetti** at n=8: 0.222–0.261 across six runs and four days — the **characterized
   negative** that anchors the contrast. It is stable *for the seed-0 instance*: an independent
   **seed-1 n=8 instance on the same chip, same session, is signal-bearing at 0.159** (S7), which

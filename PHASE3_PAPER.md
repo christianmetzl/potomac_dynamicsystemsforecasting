@@ -72,10 +72,8 @@ the geometric difference (Huang et al. 2021). The quantum kernel is poorly repro
 matched classical reservoir: against the name-matched ESN-108 reference,
 **g(ESN→CHIMERA) ≈ 64 vs ≈3.7 control** (`cli.py run kernel`); against per-n *feature-matched*
 ESNs the gap is larger but **non-monotonic** (g ≈125 at n=8, peaking ≈158 at n=10, falling ≈88 at
-n=12). (g is at fixed ridge regularization; the qualitative ~15–40× separation, not the exact
-value, is the claim.)
-Crucially, at ≤12–16 qubits the map remains classically
-simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
+n=12). (g is at fixed ridge regularization; the qualitative separation, not the exact value, is the claim.)
+At ≤12–16 qubits the map remains classically simulable, so distinctness is **necessary, not sufficient** for accuracy — and §5.3 shows that,
 here, it is indeed *not* sufficient.
 
 ## 4. Data modeling strategy
@@ -197,23 +195,21 @@ coherence budget — the accumulated two-qubit-gate cost §5.4 predicts, measure
 drift). The pre-registered **Garnet protocol** replicated the regime on a second vendor
 (raw 0.230 > our routing-free 0.171 forecast — **prediction (iii) confirmed**).
 Cross-platform execution also surfaced a **platform-level finding**: negative-angle rotations
-are **silently lost server-side on the IonQ route** (RY(π)RY(−π) executed as net RY(π); the
-client JSON provably contained both), corrupting ZNE's negated folds; we hardened the emitter
-(mod-2π angles) and validated on-device (P(|0⁸⟩)=0.996 vs 0.0). The decisive routing-free **IonQ Forte-1 campaign
-then executed** under the pre-committed manifest: a smoke gate measured a **2,000-gate/circuit
-device ceiling** on the native route (corroborated by an OpenQuantum-route probe), so per abort rule it ran scale-1-only (500 shots — a
-disclosed, cost-forced deviation from the 4k config, s.e.≈0.004; readout 0.08%/0.65%).
-**Raw 0.104 — below the 0.196 depolarized limit** and every
-superconducting n=8 number: the **first signal-bearing hardware execution** of this reservoir
-(**prediction (ii) confirmed**, under our 0.149 forecast;
+are **silently lost server-side on the IonQ route** (RY(π)RY(−π) executed as net RY(π)), corrupting
+ZNE's negated folds; we hardened the emitter (mod-2π angles) and validated the diagonal calibration
+on-device. The routing-free **IonQ Forte-1 campaign** then ran under the pre-committed manifest: a
+smoke gate measured a **2,000-gate/circuit ceiling** on the native route, so per abort rule it ran
+scale-1-only (500 shots — a disclosed, cost-forced deviation, s.e.≈0.004).
+**Raw 0.104 — below the 0.196 depolarized limit** and every superconducting n=8 number: a
+**signal-bearing hardware execution** of this reservoir (**prediction (ii) confirmed**;
 `results/qpu_hardware_findings.md`). A pre-registered **hardware scaling program**
 (`results/qpu_scaling_outlook.md`) then refuted our own statements on metal (Fig. 3): Garnet turns **signal-bearing at n=10/n=12** while
 the **same-session seed-0 n=8 anchor** stays scrambled — but a pre-registered cross-seed
 control (**S7**) found an **independent seed-1 n=8 instance signal-bearing** in the same session,
 so the n=8 scrambling is **specific to the seed-0 instance, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
 signal-bearing at the very size Garnet scrambles**, reproduced in a **same-window two-chip
-pair**: generation-dependent at fixed size, temporally controlled. We thus characterize all
-four challenge axes — reservoir size, encoding density, shot budget, noise — with the program
+pair**: generation-dependent at fixed size, temporally controlled. The program characterizes
+reservoir size, encoding density, shot budget and noise, with
 in one view (raw mean feature error vs size-matched fully-depolarized limit; 4k shots, IonQ 500):
 
 ![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip, same session — refutes a *size* law: the n=8 scrambling is specific to the seed-0 instance. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 (n=8) — verdict unchanged (§6).](figures/fig_coherence_wall.png)
@@ -235,31 +231,32 @@ two-chip pair (generation). S5–S6 pre-committed; S7 executed (above).
 linear) is the best model on this task. (ii) The RV sample ends Feb-2020 (2008 in-sample,
 COVID just outside); broader assets/periods are daily-proxy supporting studies
 (v2_research — same negative), not 5-min RV.
-(iii) Task-level noise: per-layer single-qubit channels (density-matrix, §5.4) and simulator
-shot noise; combined noisy-plus-shot execution is measured in the QPU campaigns (§6).
+(iii) Task-level noise: per-layer single-qubit channels (§5.4) and shot noise; combined
+noisy-plus-shot execution is measured in the QPU campaigns (§6).
 (iv) g is regularization- and run-configuration-dependent (qualitative gap only).
 (v) Superconducting n=8 execution is a **characterized negative** (Fig. 3; day-scale drift
 exceeds shot noise, so *regime* — not point value — is the robust claim), while n=10/n=12 and the
 newer generation land inside their limits: the wall is instance- and generation-dependent, not
-absolute (n=8 scrambling is seed-0-instance-specific — S7). Mitigation recovery on hardware is at
+absolute (n=8 scrambling is seed-0-instance-specific — S7). Nor is S7 a cheap-vs-costly artifact: in a
+30-instance ensemble the scrambled seed-0 graph is among the *sparsest* (11 couplings) and
+signal-bearing seed-1 among the *densest* (18) under a tighter limit — gate count **anti-predicts**
+the wall (`instance_ensemble_findings.md`). Mitigation recovery on hardware is at
 best marginal (ZNE 0.223→0.217 on Rigetti; the ion chain is flat).
 (vi) Distinctness and full-rank entanglement are *necessary, not sufficient* — whether they
 convert beyond the simulable frontier is open. A quantum-data probe shows the QRC natively reads
-nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical
-shadows** (Huang–Kueng–Preskill 2020) at matched per-state budgets — **wins wherever real
-information is extracted**, including the shadows-hard Tr(ρ³): closed negatively at simulable scale;
-hardware-native many-qubit inputs remain the one untested regime (`results/shadows_hard_findings.md`).
+nonlinear *state* functionals a linear readout cannot, but the proper baseline — **classical shadows**
+(Huang–Kueng–Preskill 2020) at matched budgets — **wins wherever real information is extracted**,
+including the shadows-hard Tr(ρ³): closed negatively at simulable scale (`shadows_hard_findings.md`).
 
 ## 8. Stakeholder impact, milestone plan, AI disclosure
 **The durable asset is the audit instrument, not the forecast.** It sells **trust in a quantum
-yes/no** — a pre-registered, vendor-neutral **workload→QPU qualification** (does a device retain a
-client's *own* circuit's signal?), and that trust is earned by an instrument that **falsifies its
-own predictions** rather than defending them: the same
-instrument split the runs **five signal-bearing, two scrambled** (Fig. 3), at ≈$70 QPU per
-single-device test (profiles, not customers). **Concrete desk impact today**
-(`cli.py run economics`): a vol-timing backtest **nearly halves the 2008 max drawdown (−61%→−32%)** —
-but a **plain HAR** captures it, so the decision-useful lever is **a simple RV forecast, not quantum
-hardware**.
+yes/no** — a pre-registered, vendor-neutral **workload→QPU qualification** — and that trust is earned
+by an instrument that **falsifies its own predictions**: it split our own runs **five signal-bearing,
+two scrambled** (Fig. 3) at ≈6.8k–20k credits (≈$70–$205) per single-device campaign. Target
+profiles only; no customers or LOIs are claimed. **Concrete desk impact today**
+(`cli.py run economics`): vol-timing the GFC window **halves max drawdown (−61%→−32%)** and lifts
+Sharpe **0.00→0.14** net of costs — a *risk-control*, not an alpha, win — but **plain HAR** captures it
+(CHIMERA nets −0.00, CE fee −25bp/yr): the lever is **a simple RV forecast, not quantum hardware**.
 **Milestone plan:** (i)–(vi) all ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are the team's own.
 
 <!-- pagebreak -->
