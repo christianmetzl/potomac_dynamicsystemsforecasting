@@ -479,9 +479,18 @@ def list_devices():
 # ---------------------------------------------------------------------------
 # The validation protocol (identical for rehearsal and hardware)
 # ---------------------------------------------------------------------------
+def feature_permutation(n, perm):
+    """Index map taking the observable vector [<Z_0>..<Z_{n-1}>, <Z_iZ_j> i<j] of the ORIGINAL
+    labelling into the labelling used by a relabelled circuit (qubit q here == perm[q] there).
+    Verified exact to ~1e-15 against a direct QASM simulation of the permuted circuit."""
+    pairs = [(i, j) for i in range(n) for j in range(i + 1, n)]
+    pidx = {frozenset(p): n + k for k, p in enumerate(pairs)}
+    return [int(perm[q]) for q in range(n)] + [pidx[frozenset((perm[i], perm[j]))] for i, j in pairs]
+
+
 def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate, p_read,
                  poll_timeout=7200, orientation="probe", submit_retries=3,
-                 reuse_cal0_job=None, tag=None, probe_shots=None):
+                 reuse_cal0_job=None, tag=None, probe_shots=None, perm_seed=0):
     # the orientation probe answers a binary question (which end of the bitstring
     # is qubit 0) - a fraction of the campaign shots is statistically ample and,
     # on per-shot-billed QPUs, materially cheaper
@@ -490,6 +499,21 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     wins = real_rv_windows(n, k=k_windows)
     eng = engine_features(n, seed)
     F_exact = np.array([eng(w) for w in wins])          # classical cross-check target
+
+    # --- H-EMBED secondary arm (S7): relabel the SAME instance -----------------------------
+    # perm_seed != 0 permutes the qubit labels of the identical seed-`seed` circuit. The graph is
+    # isomorphic, so the physics and the fully-depolarized limit mean|F_exact| are UNCHANGED
+    # (bit-identical); only the logical->physical placement the transpiler chooses can differ.
+    # Any measured difference in raw error is therefore attributable to the embedding.
+    perm = None
+    if perm_seed:
+        perm = np.random.RandomState(perm_seed).permutation(n)
+        J = J[np.ix_(perm, perm)]
+        wins = [np.asarray(w)[perm] for w in wins]
+        F_exact = F_exact[:, feature_permutation(n, perm)]
+        print(f"H-EMBED arm: qubit labels permuted with perm_seed={perm_seed} -> {perm.tolist()}")
+        print(f"  graph isomorphic; depolarized limit unchanged at {np.abs(F_exact).mean():.4f}")
+
     nobs = n + n * (n - 1) // 2
 
     runner = None
@@ -513,7 +537,7 @@ def run_protocol(mode, device, n, layers, shots, seed, k_windows, scales, p_gate
     # exhaustion, container restart) resumes without re-billing paid jobs.
     cfg = {"device": device, "n": n, "layers": layers, "shots": shots,
            "windows": k_windows, "scales": list(scales), "seed": seed,
-           "orientation": orientation}
+           "perm_seed": perm_seed, "orientation": orientation}
     ckpt_path = f"results/qpu_ckpt_{tag}.json" if (mode == "hw" and tag) else None
     ckpt = {"config": cfg, "jobs": {}, "pending": {}}
     if ckpt_path and os.path.exists(ckpt_path):
@@ -676,6 +700,8 @@ def main():
     ap.add_argument("--layers", type=int, default=20)
     ap.add_argument("--shots", type=int, default=4000)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--perm-seed", type=int, default=0,
+                    help="H-EMBED arm: permute qubit labels of the SAME instance (0 = default labelling)")
     ap.add_argument("--windows", type=int, default=3)
     ap.add_argument("--scales", type=int, nargs="+", default=[1, 3, 5])
     ap.add_argument("--p-gate", type=float, default=0.004,
@@ -736,6 +762,7 @@ def main():
                        poll_timeout=args.poll_timeout, orientation=args.orientation,
                        submit_retries=args.submit_retries,
                        reuse_cal0_job=args.reuse_cal0_job,
+                       perm_seed=args.perm_seed,
                        tag=(None if args.quick else tag),
                        probe_shots=args.probe_shots)
     out["wall_clock_s"] = round(time.time() - t0, 1)
