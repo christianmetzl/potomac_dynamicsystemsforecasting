@@ -381,7 +381,13 @@ paper, README and deck cite **four** falsified pre-registered predictions — S1
 S7 cross-seed control. Counting the earlier hardware prediction (i) as well makes five. The
 four-item list is the whole-program scope used on every reader-facing surface.)*
 
-**H-EMBED (secondary arm):** not separately run — the transpiler-independent H-INSTANCE arm
+**H-EMBED (secondary arm):** ATTEMPTED 2026-07-25 and aborted before any campaign completed —
+the OpenQuantum-Garnet route did not return a terminal state even for a 1-qubit/1-gate/100-shot
+probe while reporting `ONLINE, queue_depth 0`. No data, nothing scored; see
+`results/h_embed_outcome.md` and the pre-committed method/abort rule in
+`results/h_embed_prerun.md`. The arm is now *execute-ready* (`qpu_run.py --perm-seed`,
+relabeling verified exact to 9e-16, limit provably identical between arms) rather than merely
+specified. Previously described as: not separately run — the transpiler-independent H-INSTANCE arm
 already answers the size-vs-instance question; H-EMBED (default vs permuted embedding of the
 *same* instance, to further split graph-structure from lattice-placement) remains pre-registered
 for future work.
