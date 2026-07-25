@@ -271,16 +271,16 @@ footer(s, 7)
 
 # ---------------------------------------------------- 8 · audit-as-a-service
 s = slide()
-title_row(s, "The commercial artifact", "Audit-as-a-Service — vendor-neutral QPU qualification")
+title_row(s, "The commercial artifact", "Audit-as-a-Service — the pre-registered 'can this QPU run my workload?' exam")
 # offering (left)
 box(s, 0.6, 1.9, 5.0, 4.6, fill=CARD, round_=True)
 text(s, 0.92, 2.15, 4.4, 0.4, [[("THE OFFERING", {"size": 11, "bold": True, "color": CYAN})]])
 text(s, 0.92, 2.6, 4.4, 3.6,
-     [[("The rigged-to-be-honest exam for a client's own workload:", {"size": 13, "bold": True})],
+     [[("The wedge — answered with receipts: does a given QPU retain signal on a client's OWN circuit, before they commit budget?", {"size": 13, "bold": True})],
       [("• pre-registered predictions + decision rules, committed before any run", {"size": 12, "color": INK2})],
       [("• controlled measurement across vendors (same-session / same-window)", {"size": 12, "color": INK2})],
-      [("• a report that says what each QPU can and cannot do — with receipts", {"size": 12, "color": INK2})],
-      [("• every number re-derivable from raw data; spend audited to the credit", {"size": 12, "color": INK2})]],
+      [("• a report of what each QPU can and cannot do — every number re-derivable from raw data", {"size": 12, "color": INK2})],
+      [("• proof it works: our own program qualified 4 configs signal-bearing, 2 scrambled — on the SAME circuit; a ~$70 single-device test that pre-empts a six-figure wrong build", {"size": 12, "color": INK2})]],
      spacing=1.15, space_after=8)
 # pricing (middle) — REAL cost basis from our measured spend
 box(s, 5.8, 1.9, 3.4, 4.6, fill=CARD2, round_=True)
@@ -295,12 +295,12 @@ text(s, 6.05, 2.62, 2.95, 3.7,
      spacing=1.12, space_after=7)
 # target segments (right) — profiles, NOT named customers
 box(s, 9.4, 1.9, 3.3, 4.6, fill=CARD, round_=True)
-text(s, 9.65, 2.15, 2.85, 0.4, [[("TARGET DESIGN PARTNERS", {"size": 11, "bold": True, "color": CYAN})]])
+text(s, 9.65, 2.15, 2.85, 0.4, [[("WHO BUYS FIRST", {"size": 11, "bold": True, "color": CYAN})]])
 text(s, 9.65, 2.62, 2.85, 3.7,
-     [[("Buy-side risk / quant desks vetting QPU vendor claims", {"size": 11.5, "color": INK2})],
-      [("Quantum hardware vendors needing independent benchmarks", {"size": 11.5, "color": INK2})],
-      [("CTO / innovation offices doing quantum-readiness diligence", {"size": 11.5, "color": INK2})],
-      [("Public-sector evaluation programs (assurance-grade)", {"size": 11.5, "color": INK2})]],
+     [[("BEACHHEAD — a buy-side risk / quant desk", {"size": 11.5, "bold": True, "color": INK2})],
+      [("about to fund a quantum pilot: we tell them which device (if any) survives THEIR circuit — before they build.", {"size": 11, "color": INK2})],
+      [("EXPANSION", {"size": 11.5, "bold": True, "color": INK2})],
+      [("Hardware vendors (independent benchmarks) · CTO quantum-readiness diligence · public-sector assurance.", {"size": 11, "color": INK2})]],
      spacing=1.12, space_after=10)
 text(s, 0.6, 6.65, 12.1, 0.35,
      [[("Honesty note: segments are target profiles, not signed customers. ", {"size": 11, "italic": True, "color": AMBER}),
