@@ -210,13 +210,12 @@ the **same-session seed-0 n=8 anchor** stays scrambled — but a pre-registered 
 control (**S7**) found an **independent seed-1 n=8 instance signal-bearing** in the same session,
 so the n=8 scrambling is **specific to the seed-0 instance, not a size law** (seed-1 n=10 also signal-bearing) — and the newer-generation **Emerald is
 signal-bearing at the very size Garnet scrambles**, reproduced in a **same-window two-chip
-pair**: generation-dependent at fixed size, temporally controlled. The program characterizes
-reservoir size, encoding density, shot budget and noise, with
-in one view. The criterion is exactly **SNR > 1** — raw error is mean|F−F_exact|, the limit is
-mean|F_exact| — so the bar is **instance**-matched (signal magnitude is a property of the circuit,
-not of n) and the test transfers to any quantum feature map:
+pair**: generation-dependent at fixed size, temporally controlled. The program spans reservoir
+size, encoding density, shot budget and noise; Fig. 3 collects the hardware verdicts. The criterion is exactly **SNR > 1** — raw error is mean|F−F_exact|, the limit is
+mean|F_exact| — so the bar is **instance**-matched (signal magnitude is a circuit property, not an
+n property) and the test transfers to any quantum feature map:
 
-![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip and session — refutes a *size* law. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 — verdict unchanged (§6).](figures/fig_coherence_wall.png)
+![**Figure 3.** Cross-platform coherence-budget wall: mean raw feature error vs the **instance-matched** depolarized limit mean|F_exact| (black ticks; 4k shots, IonQ 500). Five configs are signal-bearing (below the limit), two scrambled (Garnet n=8 seed-0 0.228; Rigetti 0.223). The adjacent Garnet n=8 seed-1 (0.159) vs seed-0 (0.228) pair — same chip and session — refutes a *size* law. Seed-0 limits 0.196/0.179/0.214 at n=8/10/12; seed-1 carries its own 0.1806 (§6).](figures/fig_coherence_wall.png)
 
 **Execution provenance (externally verifiable).** Every campaign ran against pre-committed
 predictions — the ten funded ones under a committed manifest (abort/decision
@@ -258,7 +257,7 @@ predictions** — it split our runs **five signal-bearing, two scrambled** (Fig.
 campaign. Target profiles only; no customers or LOIs claimed. **Desk impact** (`cli.py run economics`): vol-timing the GFC window **halves max drawdown
 (−61%→−32%)** and lifts Sharpe **0.00→0.14** net of costs — risk control, not alpha — but **plain HAR**
 captures it (CE fee −25bp/yr): the lever is **a simple RV forecast, not quantum hardware**.
-**Milestone plan:** (i)–(vi) ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are the team's own.
+**Milestone plan:** (i)–(vi) ✓ (§6). **AI disclosure:** Claude (Anthropic) assisted with code and drafting; all decisions and results are ours.
 
 <!-- pagebreak -->
 
