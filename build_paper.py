@@ -1,7 +1,7 @@
 """
 build_paper.py - render PHASE3_PAPER.md to a formatted .docx and .pdf for submission.
 
-Markdown -> .docx (Times New Roman 11pt, single-spaced, 0.75" margins) via python-docx,
+Markdown -> .docx (Times New Roman 11pt, single-spaced, 0.75" top/bottom, 0.5" side margins) via python-docx,
 then -> .pdf via LibreOffice headless. Keeps PHASE3_PAPER.md as the single source of truth.
 
 The official GIC_2026 cover page (downloaded from Aqora) must be prepended as page 1 of
@@ -73,7 +73,7 @@ def main():
     st.paragraph_format.space_after = Pt(2)
     for s in doc.sections:
         s.top_margin = s.bottom_margin = Inches(0.75)
-        s.left_margin = s.right_margin = Inches(0.75)
+        s.left_margin = s.right_margin = Inches(0.5)
 
     lines = merge_paragraph_lines(open(MD, encoding="utf-8").read().splitlines())
     i = 0
@@ -238,7 +238,7 @@ def build_pdf(lines):
             cap, path = m.group(1), m.group(2)
             ip = os.path.join(HERE, path)
             iw_px, ih_px = PILImage.open(ip).size
-            iw = 6.0 * inch; ih = iw * ih_px / iw_px
+            iw = 5.0 * inch; ih = iw * ih_px / iw_px
             img = Image(ip, width=iw, height=ih); img.hAlign = "CENTER"
             capstyle = ParagraphStyle("cap", parent=body, fontSize=8.5, leading=10,
                                       alignment=1, textColor=colors.grey)
@@ -265,8 +265,8 @@ def build_pdf(lines):
 
     out = os.path.join(HERE, "PHASE3_PAPER.pdf")
     doc = SimpleDocTemplate(out, pagesize=letter, topMargin=0.75 * inch,
-                            bottomMargin=0.75 * inch, leftMargin=0.75 * inch,
-                            rightMargin=0.75 * inch)
+                            bottomMargin=0.75 * inch, leftMargin=0.5 * inch,
+                            rightMargin=0.5 * inch)
     pages = []
     doc.build(story, onLaterPages=lambda c, d: pages.append(1),
               onFirstPage=lambda c, d: pages.append(1))

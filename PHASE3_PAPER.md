@@ -1,10 +1,6 @@
 # CHIMERA-QRC: A Pre-Registered, Adversarially-Controlled Study of Quantum Reservoir Computing for S&P 500 Realized-Volatility Forecasting
 ### Team EIGENNEXUS — C. Metzl, F. Eldibani, J. M. Aguiar Hualde · Track A (Financial Volatility) · GIC 2026 Phase 3
 
-> *Content for the 5-page Phase-3 write-up (11-pt Times New Roman, single-spaced), to be
-> placed after the required GIC_2026 cover page. Every number is produced by a script in this
-> repository and reproducible via `python3 cli.py run <action>` (fast path: `--quick`).*
-
 **Abstract.** We contribute a pre-registered, adversarially controlled **evaluation instrument**
 for quantum reservoir computing and apply it to S&P 500 realized-volatility forecasting on four
 devices from three QPU vendors (IonQ, IQM, Rigetti). The full audit reruns offline in one command
@@ -241,6 +237,17 @@ attributes the scrambled regime to predominantly coherent error (`qpu_bootstrap`
 (day-drift), a same-session n=8 anchor, and a same-window two-chip pair (generation). S5–S6 are
 pre-committed; S7 executed (above).
 
+The instrument's discipline was also exercised live in the campaign's final days. A
+pre-registered secondary arm (H-EMBED — does logical→physical placement drive the seed-0 n=8
+scrambling?) was made execute-ready (label permutation exact to 9.0×10⁻¹⁶; depolarized limit
+provably identical between arms; scoring rule and vacuity guard committed before launch,
+`results/h_embed_prerun.md`), then aborted by its own committed rule when the target device
+stopped accepting work: ~21 h and 24 probes without a completion while the route advertised it
+online with an empty queue. A matched-pair control — the identical one-qubit probe, same route,
+second device, completed in 182 s — localized the fault to the device, and the committed
+`route_health_probe.py` reproduces it in minutes. Nothing was scored; the arm remains open
+(`results/h_embed_outcome.md`).
+
 ## 7. Limitations
 (i) No quantum advantage is demonstrated at the ≤16-qubit simulable scale; HAR-X, a classical
 linear model, is the best model on this task. (ii) The RV sample ends Feb-2020 (COVID falls just
@@ -269,7 +276,15 @@ predicts accuracy at all. Structure does not give the answer; measurement does
 (`instance_ensemble_findings.md`, exploratory). What follows is trust in a quantum yes/no: a
 pre-registered, vendor-neutral workload→QPU qualification, earned by an instrument that
 falsifies its own predictions. It split our runs five signal-bearing, two scrambled (Fig. 3) at
-≈$70–$205 per campaign. Target profiles only; no customers or LOIs are claimed. On desk impact
+≈$70–$205 per campaign. The economics are measured, not modelled
+(`results/AUDIT_ECONOMICS.md`): the 13-campaign, four-device program settled at 64,048.25
+credits — about $650 at the only rate we measurably paid (≈$14 per ≈1,380 credits) — and the
+gate flagged 29.3% of our own settled hardware spend (four campaigns, 18,793.25 credits) as
+scrambled at ≥9.7σ: features that would otherwise have entered a pipeline as data. The
+audit is a rounding error of any serious pilot budget (1.3% of $50k;
+0.065% of $1M), and re-running every verdict is free: this zip, extracted into a clean directory
+with no API key, passes `cli.py verify` end-to-end — the judge's path. Target profiles only; no
+customers or LOIs are claimed. On desk impact
 (`cli.py run economics`): vol-timing the GFC window halves max drawdown (−61%→−32%) and lifts
 Sharpe from 0.00 to 0.14 net of costs — risk control, not alpha — but plain HAR captures it
 (CE fee −25bp/yr). The lever is a simple RV forecast, not quantum hardware.
