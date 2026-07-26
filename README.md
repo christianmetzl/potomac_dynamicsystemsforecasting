@@ -43,6 +43,18 @@ only for the explicit-circuit SDK demo). All data is bundled, so everything runs
 
 ## Quickstart
 
+**Run on qBraid, step by step:**
+1. Click **Launch on qBraid** at the top of this README — qBraid clones this repository into
+   your qBraid Lab workspace.
+2. In qBraid Lab, open a terminal in the cloned repository directory.
+3. `pip install -r requirements.txt` — Python 3.9+ (results generated on 3.11); CPU-only,
+   no GPU, no other system dependencies.
+4. `python3 cli.py verify` — the one-command offline integrity audit (engine tests, QASM
+   self-test, credit reconciliation, bootstrap CIs, noise fingerprint; ~2–5 min), or
+   `python3 cli.py headline --quick` for the ~10-minute Phase-3 story.
+5. Optional full pass: `python3 reproduce.py`. Everything runs offline — no API key, credits,
+   or accounts needed (optional QPU re-execution via `qpu_run.py` is the sole exception).
+
 **Compute environment.** All classical computation is CPU-only (pure NumPy/SciPy) — **no GPU is
 used or required** anywhere in this repository. The committed results were generated on a 4-core
 Intel Xeon @ 2.10 GHz container; everything reproduces on laptop-class hardware, and the only
