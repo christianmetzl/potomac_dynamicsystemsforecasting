@@ -3,7 +3,7 @@
 **Team EIGENNEXUS** · Global Industry Challenge 2026 (qBraid · MITRE · JonesTrading) · **Track A — Financial Volatility**
 Christian Metzl (Lead / Architect) · Fares Eldibani (Data Science) · Juan Manuel Aguiar Hualde (PhD Physics)
 
-[<img src="https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png" width="150">](https://account.qbraid.com/?gitHubUrl=https://github.com/christianmetzl/potomac_dynamicsystemsforecasting.git)
+[<img src="https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png" width="150">](https://account.qbraid.com/?gitHubUrl=https://github.com/christianmetzl/potomac_dynamicsystemsforecasting.git&redirectUrl=LAUNCH_ME.ipynb)
 
 > One-command, offline, agent-reproducible. `pip install -r requirements.txt && python3 cli.py reproduce`
 
@@ -45,8 +45,8 @@ only for the explicit-circuit SDK demo). All data is bundled, so everything runs
 
 **Run on qBraid, step by step:**
 1. Click **Launch on qBraid** at the top of this README — qBraid clones this repository into
-   your qBraid Lab workspace.
-2. In qBraid Lab, open a terminal in the cloned repository directory.
+   your qBraid Lab workspace and opens `LAUNCH_ME.ipynb` (Run All = install + full audit).
+2. Alternatively, open a terminal in the cloned repository directory.
 3. `pip install -r requirements.txt` — Python 3.9+ (results generated on 3.11); CPU-only,
    no GPU, no other system dependencies.
 4. `python3 cli.py verify` — the one-command offline integrity audit (engine tests, QASM
