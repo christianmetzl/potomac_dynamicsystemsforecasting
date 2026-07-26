@@ -279,8 +279,42 @@ are the team's own. Milestones (i)–(vi) all ✓ (§6).
 <!-- pagebreak -->
 
 ## References
-Kornjača et al. 2024 · Zhu et al. 2025 · Ahmed, Tennie & Magri 2025 · Li et al. 2025 ·
-Tandon et al. 2025 · Hou et al. 2025 · Čindrak et al. 2026 · Antoncich et al. 2026 ·
-Kobayashi & Motome 2026 · Huang et al. 2021 · Huang, Kueng & Preskill 2020 (classical shadows) ·
-Dambre et al. 2012 · Corsi 2009 · Patton 2011 · Hansen et al. 2011 · Harvey et al. 1997 ·
-Diebold & Mariano 1995 · Bollerslev 1986 · Jaeger 2001 · Heber et al. 2009.
+Ahmed, O., Tennie, F. & Magri, L. (2025). Robust quantum reservoir computers for forecasting chaotic dynamics: generalized synchronization and stability. *Proceedings of the Royal Society A* 481, 20250550. arXiv:2506.22335.
+
+Antoncich, L., Moodley, Y., Varetto, U., Wang, J., Wurtz, J., Chen, J., Elahi, P. J. & Myers, C. R. (2026). Quantum reservoir computing with neutral atoms on a small, complex, medical dataset. arXiv:2602.14641.
+
+Bollerslev, T. (1986). Generalized autoregressive conditional heteroskedasticity. *Journal of Econometrics* 31(3), 307–327.
+
+Čindrak, S., et al. (2026). Memory–nonlinearity trade-off across quantum reservoir computing frameworks. arXiv:2603.21371.
+
+Corsi, F. (2009). A simple approximate long-memory model of realized volatility. *Journal of Financial Econometrics* 7(2), 174–196.
+
+Dambre, J., Verstraeten, D., Schrauwen, B. & Massar, S. (2012). Information processing capacity of dynamical systems. *Scientific Reports* 2, 514.
+
+Diebold, F. X. & Mariano, R. S. (1995). Comparing predictive accuracy. *Journal of Business & Economic Statistics* 13(3), 253–263.
+
+Hansen, P. R., Lunde, A. & Nason, J. M. (2011). The model confidence set. *Econometrica* 79(2), 453–497.
+
+Harvey, D., Leybourne, S. & Newbold, P. (1997). Testing the equality of prediction mean squared errors. *International Journal of Forecasting* 13(2), 281–291.
+
+Heber, G., Lunde, A., Shephard, N. & Sheppard, K. (2009). Oxford-Man Institute's Realized Library. Oxford-Man Institute, University of Oxford.
+
+Hou, Y., Hua, J., Wu, Z., Xia, W., Chen, Y., Li, X., Li, Z., Peng, X. & Du, J. (2025). High-accuracy temporal prediction via experimental quantum reservoir computing in correlated spins. arXiv:2508.12383; *Physical Review Letters* (2026).
+
+Huang, H.-Y., Broughton, M., Mohseni, M., Babbush, R., Boixo, S., Neven, H. & McClean, J. R. (2021). Power of data in quantum machine learning. *Nature Communications* 12, 2631.
+
+Huang, H.-Y., Kueng, R. & Preskill, J. (2020). Predicting many properties of a quantum system from very few measurements. *Nature Physics* 16, 1050–1057.
+
+Jaeger, H. (2001). The "echo state" approach to analysing and training recurrent neural networks. GMD Report 148, German National Research Center for Information Technology.
+
+Kobayashi, K. & Motome, Y. (2026). Edge of many-body quantum chaos in quantum reservoir computing. *Physical Review Letters* 136, 040602. arXiv:2506.17547.
+
+Kornjača, M., et al. (2024). Large-scale quantum reservoir learning with an analog quantum computer. arXiv:2407.02553.
+
+Li, Q., Mukhopadhyay, C., Bayat, A. & Habibnia, A. (2026). Quantum reservoir computing for realized volatility forecasting. *Physical Review Research*; arXiv:2505.13933.
+
+Patton, A. J. (2011). Volatility forecast comparison using imperfect volatility proxies. *Journal of Econometrics* 160(1), 246–256.
+
+Tandon, A., et al. (2025). Quantum reservoir computing for corrosion prediction in aerospace: a hybrid approach for enhanced material degradation forecasting. arXiv:2505.22837.
+
+Zhu, C., et al. (2025). Minimalistic and scalable quantum reservoir computing enhanced with feedback. *npj Quantum Information* 11; arXiv:2412.17817.
