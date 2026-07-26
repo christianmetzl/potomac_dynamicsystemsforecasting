@@ -24,6 +24,10 @@ after every commit so the zip never lags the repo.
 - `python3 cli.py verify` — one-command **offline** integrity audit (24 engine tests + QASM
   self-test + credit reconciliation + bootstrap CIs + noise fingerprint; ~2-5 min depending on core
   count, no network/credits).
+- **End-to-end judge simulation, last run 2026-07-26 16:10 UTC:** the zip was extracted into a
+  clean directory and both judge paths executed **with no API key in the environment** —
+  `cli.py verify` passed 5/5, and `build_paper.py` regenerated the PDF at the committed pagination
+  (5 body pages, References on page 6). What judges receive is what was tested.
 - `docs/verify_replay.html` — a self-contained browser replay of that verify run, for a reviewer
   who prefers not to run it, plus the paper's core findings.
 - `python3 reproduce.py --quick` — fast full reproduction (~10 min for the headline story).

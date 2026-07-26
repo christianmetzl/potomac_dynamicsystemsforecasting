@@ -144,6 +144,18 @@ same machine. A user polling only the first has no signal to stop on. We report 
 observation, not a vendor-confirmed defect**. It cost us an experiment we had funded and were ready
 to run.
 
+**Continued monitoring (addendum, 2026-07-26 16:20 UTC).** After the control pair, an automated
+monitor re-ran the identical probe every ~25 minutes so the arm could launch the moment the device
+recovered. Through 16:13 UTC — 15 further 100-shot probes — none succeeded, and the **symptom
+changed at 14:03 UTC**: probes stopped hanging indefinitely in `INITIALIZING` and began returning
+`FAILED` **instantly** (`endedAt` == `createdAt`, `executionDuration: 0`, no error text exposed in
+job metadata), while `aws:iqm:qpu:garnet` held `UNAVAILABLE` with `queue_depth` 855–856 throughout.
+Same bottom line — the device is not accepting work — but the two failure modes are materially
+different for a client: an instant reject is at least a signal one can act on; a silent swallow is
+not. The monitor runs until 3 h before the Phase-3 deadline; if Garnet recovers inside that window
+the pre-registered arms run and are scored exactly per `h_embed_prerun.md`, and if it does not,
+this addendum is the final record of the attempt.
+
 The reproduction is committed, not described — `route_health_probe.py` is the exact script that
 produced both rows of the table above:
 

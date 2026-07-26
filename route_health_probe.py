@@ -69,4 +69,5 @@ if __name__ == "__main__":
     try:
         sys.exit(probe(sys.argv[1]))
     except Exception as exc:                                  # noqa: BLE001 - report, don't mask
-        sys.exit(f"probe error: {type(exc).__name__}: {exc}")
+        print(f"probe error: {type(exc).__name__}: {exc}", file=sys.stderr)
+        sys.exit(2)
