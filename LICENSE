@@ -1,0 +1,30 @@
+CHIMERA-QRC — Proprietary License with Evaluation Grant
+
+Copyright (c) 2026 Team EIGENNEXUS (Christian Metzl, Fares Eldibani,
+Juan Manuel Aguiar Hualde). All rights reserved.
+
+1. EVALUATION GRANT. Permission is granted, free of charge, to view, clone,
+   and execute this repository solely for the purposes of (a) judging and
+   evaluation within the Global Industry Challenge (GIC) 2026 and any
+   related organizer review, and (b) verifying and reproducing the results
+   reported in the accompanying Phase-3 submission, in each case on a
+   non-commercial basis.
+
+2. ALL OTHER RIGHTS RESERVED. Except as stated in Section 1, no license is
+   granted. Any other use of this software, its documentation, findings,
+   figures, or methods — including without limitation any commercial use,
+   production use, incorporation into other software or services, model
+   training, redistribution, or creation of derivative works — requires
+   the prior written permission of the copyright holders. Contact the team
+   via the repository owner.
+
+3. THIRD-PARTY COMPONENTS. Bundled datasets and third-party dependencies
+   (e.g., the Oxford-Man Realized Library extract, MNIST, and packages
+   listed in requirements.txt) remain governed by their own respective
+   licenses and terms, which this license does not alter.
+
+4. NO WARRANTY. THE SOFTWARE AND ALL RESULTS ARE PROVIDED "AS IS", WITHOUT
+   WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT SHALL THE
+   COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY
+   ARISING FROM THE USE OF THE SOFTWARE. NOTHING IN THIS REPOSITORY
+   CONSTITUTES FINANCIAL ADVICE.

@@ -9,6 +9,10 @@ Christian Metzl (Lead / Architect) · Fares Eldibani (Data Science) · Juan Manu
 
 ---
 
+**License.** Proprietary — free to view, clone, and execute **for GIC 2026 judging and results
+verification only**; any other use, commercial or otherwise, requires the team's written
+permission (see `LICENSE`). Bundled datasets keep their own terms.
+
 ## The one-paragraph version
 
 We built the **evaluation instrument** most quantum-ML work is missing — pre-registered,
