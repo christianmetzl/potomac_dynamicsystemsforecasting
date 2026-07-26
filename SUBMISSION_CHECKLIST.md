@@ -16,14 +16,17 @@ after every commit so the zip never lags the repo.
    `TeamName__Phase3_VersionX.pdf`; 7 pages = 1 cover + 5 body + references. Compliance re-checked
    against the template's own disclaimer: max 5 pages excluding cover and references ✓, 11-pt
    Times New Roman ✓, single spacing ✓. **The filled cover and the merged PDF contain personal
-   contact data, so both are `.gitignore`d and live only locally — they are uploaded directly to
-   Aqora, never committed.** The public repo/zip carry the identical paper as `PHASE3_PAPER.pdf`
-   (no cover, no personal data).
+   contact data, so both are `.gitignore`d and never committed.** `package_submission.sh` injects
+   the merged PDF into the upload zip at package time (the GIC criteria require the write-up
+   *inside* the zip), so the zip is complete while the public repo carries only the cover-less
+   `PHASE3_PAPER.pdf` — no personal data.
    **Still open on the cover: the Aqora Username cell (left blank — fill before upload).**
 2. **Confirm the repository is public**, so the qBraid "Launch" button and the committed evidence
    (job IDs, counts, `results/`) are reachable by judges.
-3. Upload `EIGENNEXUS__Phase3_Version1.pdf` (and `EIGENNEXUS_Challenge_Phase3.zip` where the
-   portal accepts supplementary material) via Aqora.
+3. Upload **`EIGENNEXUS_Challenge_Phase3.zip`** via the Aqora Competition page — it contains the
+   write-up (`EIGENNEXUS__Phase3_Version1.pdf`, cover + 5 body pages + references), full source,
+   and README. One submission per team. If the portal offers a separate write-up slot, upload the
+   same PDF there as well.
 
 ## 3. Reproduce / verify (for reference)
 - `python3 cli.py verify` — one-command **offline** integrity audit (24 engine tests + QASM
