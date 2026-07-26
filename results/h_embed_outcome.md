@@ -152,9 +152,15 @@ changed at 14:03 UTC**: probes stopped hanging indefinitely in `INITIALIZING` an
 job metadata), while `aws:iqm:qpu:garnet` held `UNAVAILABLE` with `queue_depth` 855–856 throughout.
 Same bottom line — the device is not accepting work — but the two failure modes are materially
 different for a client: an instant reject is at least a signal one can act on; a silent swallow is
-not. The monitor runs until 3 h before the Phase-3 deadline; if Garnet recovers inside that window
-the pre-registered arms run and are scored exactly per `h_embed_prerun.md`, and if it does not,
-this addendum is the final record of the attempt.
+not.
+
+**Final record (2026-07-26 19:04 UTC).** Monitoring was ended by decision, ~9 h before the
+Phase-3 deadline, to freeze the submission. Totals: **24 automated probes between 11:07 and
+19:03 UTC — none succeeded** — on top of the original attempt and the matched control pair.
+IQM Garnet never accepted work in the ~21 hours from the first submission (22:07 UTC, 2026-07-25)
+to the end of monitoring, while the OQ route advertised it `ONLINE, queue_depth 0` throughout.
+H-EMBED therefore stands exactly as scored above: attempted, aborted per the pre-committed rule,
+**OPEN** — execute-ready for whenever the device returns.
 
 The reproduction is committed, not described — `route_health_probe.py` is the exact script that
 produced both rows of the table above:
