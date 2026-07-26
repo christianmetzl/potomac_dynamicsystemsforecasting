@@ -23,6 +23,22 @@ bit-order orientation probe — never reached a terminal state.
 
 Throughout both attempts the platform reported the device as **`ONLINE` with `queue_depth: 0`**.
 
+**Precise diagnosis (queried 2026-07-26 05:13 UTC, 7.1 h after submission).** The orientation job
+is still in state **`INITIALIZING`**, with `endedAt: None` and `executionDuration: None`:
+
+```
+job  openquantum:iqm:qpu:garnet-bd52-qjob-6a6533930936bd6f4cec9d83
+     createdAt  2026-07-25 22:07:19 UTC
+     status     INITIALIZING        (7.1 h and counting)
+     endedAt    None
+     executionDuration  None
+```
+
+`INITIALIZING` means the job **never entered the device queue** — it is stuck at dispatch. That
+resolves the apparent contradiction of an idle `queue_depth: 0` device not returning work: nothing
+is being handed to the device. This is a dispatch-layer failure, not contention, and it is why no
+amount of waiting would have helped.
+
 A single-gate, one-qubit, 100-shot circuit that does not return within ten minutes on an
 idle-and-online device is not a load or queueing effect. We record the route as **degraded at that
 time** and stopped, rather than spend the remaining credits submitting into it.
@@ -68,6 +84,7 @@ guard) is committed. The arm can be run in ~2.2 h whenever the route is healthy.
 
 This is our **third** independent OpenQuantum-route reliability observation, after the two in
 `platform_feedback_qbraid.md` and the abandoned single-window preview noted in
-`qpu_hardware_findings.md`. The pattern is consistent: the route reports `ONLINE` with an empty
-queue while submitted jobs do not reach a terminal state. We report it as **our observation, not a
+`qpu_hardware_findings.md`. The pattern is consistent, and this instance pins it down: the route reports `ONLINE` with an
+empty queue while submitted jobs sit in **`INITIALIZING`** and never enter the device queue —
+a dispatch-layer failure rather than device contention. We report it as **our observation, not a
 vendor-confirmed defect**, and it costs us an experiment we had funded and were ready to run.
