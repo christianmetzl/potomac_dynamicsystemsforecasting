@@ -38,5 +38,5 @@ v3_research/_jena.csv.zip
 v3_research/_isd_*.gz
 
 # Submission artifacts containing personal contact data -- NEVER commit (kept local only)
-EIGENNEXUS__Phase3_Version*.pdf
+EIGENNEXUS__Phase3_Version*.*
 *Cover_Page*.docx
