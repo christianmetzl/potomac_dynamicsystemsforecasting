@@ -39,6 +39,13 @@ only for the explicit-circuit SDK demo). All data is bundled, so everything runs
 
 ## Quickstart
 
+**Compute environment.** All classical computation is CPU-only (pure NumPy/SciPy) — **no GPU is
+used or required** anywhere in this repository. The committed results were generated on a 4-core
+Intel Xeon @ 2.10 GHz container; everything reproduces on laptop-class hardware, and the only
+non-CPU compute is the 13 QPU campaigns themselves (IonQ Forte-1, IQM Garnet/Emerald, Rigetti
+Cepheus-1-108q via qBraid). GPU statevector simulation is a scaling option beyond n≈16 (§ paper
+5.5), not something any reported number depends on.
+
 **⏱ ~10-20-minute judge verification (recommended first run; depends on core count):**
 ```bash
 pip install -r requirements.txt
