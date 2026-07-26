@@ -208,6 +208,8 @@ mnist_benchmark.py                      common cross-team MNIST benchmark (+ noi
 tensor_backend.py                       sparse/TN frontier + bond-dimension complexity
 data/                                   Oxford-Man RV, SPY 2022-26, MNIST subset (all public)
 figures/  results/                      generated figures + findings write-ups
+results/AUDIT_ECONOMICS.md              the audit instrument in dollars: measured cost vs. what it caught
+docs/EIGENNEXUS_desk_briefing.pptx      customer-facing desk briefing (generator: docs/build_desk_briefing.js)
 ```
 
 ## Data provenance (all public; no proprietary data)
