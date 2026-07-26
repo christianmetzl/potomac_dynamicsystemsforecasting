@@ -8,7 +8,7 @@ set -e
 cd "$(dirname "$0")"
 NAME="EIGENNEXUS_Challenge_Phase3"
 OUT="${NAME}.zip"
-WRITEUP="EIGENNEXUS__Phase3_Version1.pdf"
+WRITEUP="EIGENNEXUS__Phase3_VersionDynamicSystemsForecastingTrackA.pdf"
 rm -f "$OUT"
 git archive --format=zip --prefix="${NAME}/" -o "$OUT" HEAD
 echo "wrote $OUT ($(du -h "$OUT" | cut -f1))  [from commit $(git rev-parse --short HEAD)]"
