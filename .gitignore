@@ -36,3 +36,7 @@ v2_research/_covid_*.csv
 v3_research/_jena.csv.zip
 # V3 Track-B NOAA ISD raw per-year downloads (5.7MB; small cached noaa_hourly.npz committed instead)
 v3_research/_isd_*.gz
+
+# Submission artifacts containing personal contact data -- NEVER commit (kept local only)
+EIGENNEXUS__Phase3_Version*.pdf
+*Cover_Page*.docx
