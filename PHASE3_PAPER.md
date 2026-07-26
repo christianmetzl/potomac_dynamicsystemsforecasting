@@ -128,8 +128,8 @@ HAR-X is best or co-best everywhere; CHIMERA never beats it and is indistinguish
 classical ESN/RFF after Holm (one raw loss to RFF at crisis n=8, p=0.049). After Holm correction
 no comparison is significant in either direction, and the 95% MCS retains all four models
 (n=10) — a statistical tie. The earlier "beats HAR" result was an artifact of a feature-poor
-HAR: the gain came from the encoded realized measures (a known SHAR/HARQ effect), not from
-quantum nonlinearity. **By our pre-registered criteria, H0 is refuted, and we report this
+HAR: the gain is the encoded realized measures (a known SHAR/HARQ effect), not quantum
+nonlinearity. **By our pre-registered criteria, H0 is refuted, and we report this
 negative.** What does survive for the quantum reservoir: it is competitive (within ≈0.8–2.1%
 RMSE of the best at every n), it shows lower per-seed dispersion than the recurrent ESN in 3 of
 4 cells (n=12: 0.009 vs 0.015), and it beats the ESN on the calm window (raw p=0.018; not
@@ -149,11 +149,10 @@ nonlinear lift, confirming sufficient expressivity. A matched ESN ties or slight
 CHIMERA (within ≈1% for n≥8; 2.9% at n=5): competitive, not dominant. On noise, the classifier
 is invariant to depolarizing noise — a uniform Bloch contraction that per-feature
 standardization removes exactly, with accuracy identical across rates 0.05–0.30 — and robust to
-amplitude damping (<0.5% at 30%). A converse check (`cli.py run noise_circuit`) keeps this
-result in its place: a per-Trotter-layer density-matrix study shows that noise interleaved with
-the evolution (per-layer single-qubit channels) is *not* removed by standardization
-(standardized error grows with rate, versus ≈0 for readout-only depolarizing). The invariance is
-a readout property, not circuit-level robustness; accumulated gate error is the real NISQ cost
+amplitude damping (<0.5% at 30%). A converse check (`cli.py run noise_circuit`): per-layer
+single-qubit channels interleaved with the evolution are *not* removed by standardization
+(standardized error grows with rate, versus ≈0 for readout-only depolarizing) — the invariance
+is a readout property, not circuit robustness; accumulated gate error is the real NISQ cost
 (§6).
 
 **5.5 Scaling frontier and the quantum-complexity metric.** A sparse-exact backend
@@ -161,13 +160,12 @@ a readout property, not circuit-level robustness; accumulated gate error is the 
 exactly. For the random ≈50%-connected reservoir we measure the bond dimension χ_eff across a
 balanced cut: it is essentially full at every n, **χ_eff ≈ 2^(n/2)** (16→255.9 for n=8→16), and
 an exact MPS gets zero compression (S ≈ 1.7–3.2 nats). The reservoir admits no
-low-bond-dimension (MPS/TEBD) shortcut; exact cost stays exponential. That is the precondition
-any beyond-frontier advantage would need, though none appears at the scale we can test.
-Capability and efficiency checks agree: an information-processing-capacity probe (Dambre et al.
-2012; `cli.py run capacity`) finds the quantum reservoir not more — in fact slightly less —
-nonlinearly expressive than a matched RFF/ESN, so there is no excess expressivity to exploit,
-and a frontier check (`cli.py run frontier`) shows g(n) does not widen toward n=16 (it declines;
-D_eff and rank grow but a matched ESN keeps pace). Robustness studies close the loop. Second
+low-bond-dimension (MPS/TEBD) shortcut; exact cost stays exponential — the precondition any
+beyond-frontier advantage would need, though none appears at testable scale.
+Capability checks agree: an information-processing-capacity probe (Dambre et al. 2012;
+`cli.py run capacity`) finds the reservoir slightly *less* nonlinearly expressive than a matched
+RFF/ESN — no excess expressivity to exploit — and g(n) does not widen toward n=16
+(`cli.py run frontier`: it declines; D_eff and rank grow but a matched ESN keeps pace). Robustness studies close the loop. Second
 family: a Heisenberg (XXZ) reservoir, equally kernel-distinct (g≈55), also fails to beat HAR-X
 (0.650 vs 0.642, 8 seeds, full-sample config), so the negative is not Ising-specific
 (`cli.py run second_family`). Efficiency: with input held fixed, a smaller QRC cannot substitute
@@ -186,12 +184,10 @@ autonomous VPT by ≈60% to parity with the matched ESN — parity, not advantag
 Simulator-first on qBraid: statevector to 12 qubits, sparse/TN to ≈16, GPU beyond.
 Resource estimates (gate-Trotter, 20 layers): n=8/10/12 use 220/480/760 two-qubit plus
 160/200/240 one-qubit gates, yielding 36/55/78 observables — all Z-basis-diagonal, so one
-S-shot set (S≈2–8k, ε≈1/√S) reads every observable (statevector build under ~1 min over this
-range).
+S-shot set (S≈2–8k, ε≈1/√S) reads every observable (statevector build ≲1 min).
 
-QPU validation uses this gate-Trotter circuit on IonQ, IQM and Rigetti via qBraid — the random-
-sparse Ising needs fewer two-qubit gates than an all-to-all reservoir, which eases NISQ
-mapping — with ZNE, measurement mitigation, and a classical cross-check on every run. The
+QPU validation uses this gate-Trotter circuit on IonQ, IQM and Rigetti via qBraid — the
+random-sparse Ising needs fewer two-qubit gates than all-to-all, easing NISQ mapping — with ZNE, measurement mitigation, and a classical cross-check on every run. The
 submission path is executable now (`cli.py run qsubmit`): on a simulator it (i) reproduces the
 engine to 3.9×10⁻¹⁶ (the per-run classical cross-check), (ii) characterizes the shot budget
 (ε≈1/√S; feature error 0.046→0.0066 at S=256→16k; gate-Trotter(20) adds ≈0.04), and
@@ -215,7 +211,9 @@ below the 0.196 depolarized limit and below every superconducting n=8 number: a
 turns signal-bearing at n=10 and n=12 while the same-session seed-0 n=8 anchor stays scrambled;
 a pre-registered cross-seed control (S7) found an independent seed-1 n=8 instance signal-bearing
 in the same session, so the n=8 scrambling is specific to the seed-0 instance, not a size law
-(seed-1 n=10 is signal-bearing as well). The newer-generation Emerald is signal-bearing at the
+(seed-1 n=10 is signal-bearing as well). The split is **33σ**: the same-session instances
+differ in raw error by 0.069 under the committed bootstrap, independent of any limit convention.
+The newer-generation Emerald is signal-bearing at the
 very size Garnet scrambles, reproduced in a same-window two-chip pair — generation-dependent at
 fixed size, temporally controlled. The program spans reservoir size, encoding density, shot
 budget and noise; Fig. 3 collects the hardware verdicts. The criterion is exactly **SNR > 1** —
@@ -233,11 +231,11 @@ data, and billing matched estimates to the half-credit (`results/CREDIT_BUDGET.m
 credits). Bootstrap from the committed counts re-derives every number above and puts each of the
 nine bootstrapped regime claims 9.7–23.9σ beyond shot noise; a readout-corrected fingerprint
 attributes the scrambled regime to predominantly coherent error (`qpu_bootstrap`,
-`qpu_fingerprint`). Controls were bought where they were needed: a Rigetti replication
+`qpu_fingerprint`). Controls were bought where needed: a Rigetti replication
 (day-drift), a same-session n=8 anchor, and a same-window two-chip pair (generation). S5–S6 are
 pre-committed; S7 executed (above).
 
-The instrument's discipline was also exercised live in the campaign's final days. A
+The instrument's discipline was exercised live in the final days. A
 pre-registered secondary arm (H-EMBED — does logical→physical placement drive the seed-0 n=8
 scrambling?) was made execute-ready (label permutation exact to 9.0×10⁻¹⁶; depolarized limit
 provably identical between arms; scoring rule and vacuity guard committed before launch,
@@ -283,8 +281,15 @@ gate flagged 29.3% of our own settled hardware spend (four campaigns, 18,793.25 
 scrambled at ≥9.7σ: features that would otherwise have entered a pipeline as data. The
 audit is a rounding error of any serious pilot budget (1.3% of $50k;
 0.065% of $1M), and re-running every verdict is free: this zip, extracted into a clean directory
-with no API key, passes `cli.py verify` end-to-end — the judge's path. Target profiles only; no
-customers or LOIs are claimed. On desk impact
+with no API key, passes `cli.py verify` end-to-end — the judge's path; a self-contained browser
+replay (`docs/verify_replay.html`) covers reviewers who prefer not to run it. Auditing a new
+workload is mechanical; this repository is the pilot kit: (i) compute the workload's
+instance-matched depolarized limit offline, before any hardware is bought; (ii) qualify the route
+with the near-zero-cost health probe; (iii) run the orientation probe, two calibrations, and the
+scale-1 windows (folds where the gate ceiling allows); (iv) score mean error against the
+limit with a multinomial-bootstrap σ from the raw counts; (v) apply the pre-committed abort and
+decision rules as written. Every step ran at least once on real hardware here; none is
+hypothetical. Target profiles only; no customers or LOIs are claimed. On desk impact
 (`cli.py run economics`): vol-timing the GFC window halves max drawdown (−61%→−32%) and lifts
 Sharpe from 0.00 to 0.14 net of costs — risk control, not alpha — but plain HAR captures it
 (CE fee −25bp/yr). The lever is a simple RV forecast, not quantum hardware.

@@ -186,11 +186,11 @@ def build_pdf(lines):
 
     ss = getSampleStyleSheet()
     body = ParagraphStyle("body", parent=ss["Normal"], fontName=serif,
-                          fontSize=11, leading=12.6, alignment=TA_JUSTIFY, spaceAfter=2)
+                          fontSize=11, leading=12.6, alignment=TA_JUSTIFY, spaceAfter=1)
     h1 = ParagraphStyle("h1", parent=body, fontName=serif_b, fontSize=14,
-                        leading=16, alignment=0, spaceAfter=2)
+                        leading=16, alignment=0, spaceAfter=1)
     h2 = ParagraphStyle("h2", parent=body, fontName=serif_b, fontSize=12,
-                        leading=14, alignment=0, spaceBefore=3, spaceAfter=2)
+                        leading=14, alignment=0, spaceBefore=2, spaceAfter=1)
     h3 = ParagraphStyle("h3", parent=body, fontName=serif_b, fontSize=11,
                         leading=13, alignment=0, spaceAfter=1)
     h4 = ParagraphStyle("h4", parent=h3, fontName=serif_bi)
@@ -238,7 +238,7 @@ def build_pdf(lines):
             cap, path = m.group(1), m.group(2)
             ip = os.path.join(HERE, path)
             iw_px, ih_px = PILImage.open(ip).size
-            iw = 5.0 * inch; ih = iw * ih_px / iw_px
+            iw = (4.1 if 'architecture' in path else 4.6) * inch; ih = iw * ih_px / iw_px
             img = Image(ip, width=iw, height=ih); img.hAlign = "CENTER"
             capstyle = ParagraphStyle("cap", parent=body, fontSize=8.5, leading=10,
                                       alignment=1, textColor=colors.grey)
