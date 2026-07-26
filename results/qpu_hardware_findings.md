@@ -382,8 +382,12 @@ S7 cross-seed control. Counting the earlier hardware prediction (i) as well make
 four-item list is the whole-program scope used on every reader-facing surface.)*
 
 **H-EMBED (secondary arm):** ATTEMPTED 2026-07-25 and aborted before any campaign completed —
-the OpenQuantum-Garnet route did not return a terminal state even for a 1-qubit/1-gate/100-shot
-probe while reporting `ONLINE, queue_depth 0`. No data, nothing scored; see
+`openquantum:iqm:qpu:garnet` did not return a terminal state even for a 1-qubit/1-gate/100-shot
+probe while reporting `ONLINE, queue_depth 0`. A matched control run the next morning (identical
+probe, same route, `rigetti:qpu:cepheus-1-108q`) **completed in 182 s**, which localises the fault
+to the *device* and withdraws our earlier, broader "the route is degraded" wording; the alternative
+route to the same machine, `aws:iqm:qpu:garnet`, concurrently reported `UNAVAILABLE, queue_depth
+855`. No data, nothing scored; see
 `results/h_embed_outcome.md` and the pre-committed method/abort rule in
 `results/h_embed_prerun.md`. The arm is now *execute-ready* (`qpu_run.py --perm-seed`,
 relabeling verified exact to 9e-16, limit provably identical between arms) rather than merely
